@@ -126,6 +126,7 @@ build:
 release_to_maven_repo:
   stage: deploy
   script:
+    - mkdir -p ~/.gradle
     - echo "signing.keyId=${SIGNING_KEY_ID}" >> ~/.gradle/gradle.properties
     - echo "signing.password=${SIGNING_PASSWORD}" >> ~/.gradle/gradle.properties
     - echo "ossrhUsername=${OSSRH_USERNAME}" >> ~/.gradle/gradle.properties
