@@ -1,9 +1,7 @@
 FROM adoptopenjdk/openjdk11:alpine AS build
 
-ADD base ./base/
+ADD src ./src/
 ADD gradle ./gradle/
-ADD load ./load/
-ADD storage ./storage/
 ADD build.gradle ./build.gradle
 ADD gradlew ./gradlew
 ADD settings.gradle ./settings.gradle
