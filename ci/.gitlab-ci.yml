@@ -126,9 +126,16 @@ test_api_remote_run:
 release_to_maven_repo:
   stage: deploy
   script:
+    - echo "signing.keyId=${SIGNING_KEY_ID}" >> ~/.gradle/gradle.properties
+    - echo "signing.password=${SIGNING_PASSWORD}" >> ~/.gradle/gradle.properties
+    - echo "ossrhUsername=${OSSRH_USERNAME}" >> ~/.gradle/gradle.properties
+    - echo "ossrhPassword=${OSSRH_PASSWORD}" >> ~/.gradle/gradle.properties
+    - if [ ! -z "$GPG_SECRET_KEYS" ]; then echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import; fi
+    - if [ ! -z "$GPG_OWNERTRUST" ]; then echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust; fi
     - ./gradlew clean uploadArchives
   only:
-    - tags
+    refs:
+      - master
 
 release_to_docker_hub:
   stage: deploy
