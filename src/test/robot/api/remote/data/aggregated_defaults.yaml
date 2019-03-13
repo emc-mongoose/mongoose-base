@@ -53,15 +53,15 @@ run:
   scenario: null
   version: "5.0.0"
 storage:
-  namespace: null
   driver:
     limit:
       queue:
         output: 1000000
         input: 1000000
       concurrency: 1
-    type: "s3"
+    type: "dummy-mock"
     threads: 0
+  namespace: null
   auth:
     uid: null
     file: null

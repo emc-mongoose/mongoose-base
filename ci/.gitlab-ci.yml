@@ -123,14 +123,14 @@ test_api_remote_run:
     SUITE: api.remote
     TEST: run
 
-deploy_to_maven_repo:
+release_to_maven_repo:
   stage: deploy
-  script: # TODO
-    - echo TODO
+  script:
+    - ./gradlew clean uploadArchives
   only:
     - tags
 
-deploy_to_docker_hub:
+release_to_docker_hub:
   stage: deploy
   script:
     - docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}

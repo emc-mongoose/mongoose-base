@@ -96,7 +96,7 @@ storage:
         input: 1000000
         output: 1000000
     threads: 0
-    type: s3
+    type: dummy-mock
   namespace: null
 
 aliasing:

@@ -313,7 +313,7 @@ javadoc {
 
 jar {
 	dependsOn += mergeLog4j2PluginsDat
-	baseName = project.name
+	baseName = "mongoose"
 	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 	excludes = [
 		"**/*.css",
