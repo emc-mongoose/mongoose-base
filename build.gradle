@@ -130,7 +130,7 @@ ext {
 		"it/unimi/dsi/fastutil/ints/IntSet.class",
 		"it/unimi/dsi/fastutil/longs/Long2LongFunction.class",
 	]
-	jarFileName = project.name
+	jarFileName = "mongoose"
 	javaHome = System.properties["java.home"]
 	jreOutputDir = "${project.buildDir}${File.separator}jre"
 	modulesDepsFilePath = "${project.buildDir}${File.separator}modules.deps"
