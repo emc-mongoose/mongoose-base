@@ -1,0 +1,528 @@
+import org.yaml.snakeyaml.Yaml
+
+buildscript {
+	repositories {
+		mavenCentral()
+		maven {
+			url "https://plugins.gradle.org/m2/"
+		}
+	}
+	dependencies {
+		classpath(
+			"org.yaml:snakeyaml:1.24",
+		)
+	}
+}
+
+plugins {
+	id "com.bmuschko.docker-remote-api" version "4.0.5"
+	id "com.diffplug.gradle.spotless" version "3.18.0"
+}
+
+description = "Mongoose is a high-load storage performance testing tool"
+
+ext {
+	depVersion = [
+		confuse            : "1.2.1",
+		confuseIoYaml      : "1.0.0",
+		commonsCodec       : "1.11",
+		commonsLang        : "2.6",
+		disruptor          : "3.4.2",
+		fastutil           : "8.2.2",
+		fiber4j            : "1.1.0",
+		jackson            : "2.9.8",
+		javaCommons        : "2.3.5",
+		javassist          : "3.23.1-GA",
+		jetty              : "9.4.14.v20181114",
+		junit              : "4.12",
+		scala              : "2.12.6",
+		slf4j              : "1.7.25",
+		log4j              : "2.8.2",
+		tsdbMetrics        : "0.6.0",
+		nagaina            : "3.6.11",
+		netty              : "4.1.25.Final",
+		nettyConnectionPool: "1.2.1",
+		nettyTcNative      : "2.0.12.Final",
+	]
+	baseProject = project(":base")
+	extProjects = subprojects.findAll {
+		!it.path.equals(":base") &&
+			!it.path.equals(":load") &&
+			!it.path.equals(":load:step") &&
+			!it.path.equals(":storage") &&
+			!it.path.equals(":storage:driver")
+	}
+	jarFileName = rootProject.name
+	javaHome = System.properties["java.home"]
+	jreOutputDir = "${rootProject.buildDir}${File.separator}jre"
+	rootPkg = "com.emc.mongoose"
+	modulesDepsFilePath = "${rootProject.buildDir}${File.separator}modules.deps"
+}
+
+allprojects {
+
+	buildscript {
+		repositories {
+			mavenCentral()
+		}
+	}
+
+	repositories {
+		jcenter()
+		mavenCentral()
+	}
+
+	apply plugin: "java"
+	apply plugin: "maven"
+	apply plugin: "scala"
+	apply plugin: "signing"
+
+	group = "com.github.emc-mongoose"
+	version = defineVersion()
+
+	sourceCompatibility = 11
+	targetCompatibility = 11
+
+	configurations {
+		provided
+		testCompile {
+			extendsFrom(compileOnly, provided)
+		}
+	}
+
+	sourceSets {
+		main {
+			compileClasspath += configurations.provided
+		}
+	}
+
+	test {
+		useJUnit()
+		exclude "com/emc/mongoose/endurance/*"
+		exclude "com/emc/mongoose/integration/*"
+		exclude "com/emc/mongoose/params/*"
+		exclude "com/emc/mongoose/perf/*"
+		exclude "com/emc/mongoose/system/*"
+		exclude "com/emc/mongoose/util/*"
+		exclude "**/TemplateTest.*"
+		exclude "**/*PerfTest.*"
+		jvmArgs "-XX:MaxDirectMemorySize=2g"
+		jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
+		maxHeapSize "2g"
+		testLogging {
+			events = [
+				"standardOut", "skipped", "started", "failed",
+			]
+			showExceptions = true
+			showStandardStreams = true
+		}
+	}
+
+	task perfTest(type: Test) {
+		useJUnit()
+		include "com/emc/mongoose/perf/*"
+		jvmArgs "-XX:MaxDirectMemorySize=2g"
+		jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
+		maxHeapSize "2g"
+		testLogging {
+			events = [
+				"standardOut", "skipped", "started", "failed",
+			]
+			showExceptions = true
+			showStandardStreams = true
+		}
+	}
+
+	task integrationTest(type: Test) {
+		useJUnit()
+		include "com/emc/mongoose/integration/*"
+		exclude "**/RollingAppenderTest*"
+		jvmArgs "-XX:MaxDirectMemorySize=2g"
+		jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
+		maxHeapSize "2g"
+		testLogging {
+			events = [
+				"standardOut", "skipped", "started", "failed",
+			]
+			showExceptions = true
+			showStandardStreams = true
+		}
+	}
+
+	task systemTest(type: Test) {
+		useJUnit()
+		include "com/emc/mongoose/system/*"
+		maxHeapSize "1g"
+		testLogging {
+			events = [
+				"standardOut", "skipped", "started", "failed",
+			]
+			showExceptions = true
+			showStandardStreams = true
+		}
+	}
+
+	task enduranceTest(type: Test) {
+		useJUnit()
+		include "com/emc/mongoose/endurance/*"
+		maxHeapSize "1g"
+		testLogging {
+			events = [
+				"standardOut", "skipped", "started", "failed",
+			]
+			showExceptions = true
+			showStandardStreams = true
+		}
+	}
+
+	// travis deploy stage runs "./gradlew check" again which is unnecessary
+	check.dependsOn -= test
+
+	javadoc {
+		classpath += configurations.provided
+	}
+
+	signing {
+		required {
+			gradle.taskGraph.hasTask("uploadArchives")
+		}
+		sign configurations.archives
+	}
+
+	// see http://central.sonatype.org/pages/gradle.html for details
+	uploadArchives {
+
+		// upload base artifact and extensions
+		if(project != rootProject && !(project in extProjects)) {
+			return
+		}
+
+		LinkedList nameParts = new LinkedList()
+		collectName(project, nameParts)
+
+		def ossrhUsername = project.hasProperty("ossrhUsername") ?
+			project.property("ossrhUsername") : null
+		def ossrhPassword = project.hasProperty("ossrhPassword") ?
+			project.property("ossrhPassword") : null
+
+		repositories {
+			mavenDeployer {
+				beforeDeployment {
+					MavenDeployment deployment -> signing.signPom(deployment)
+				}
+
+				repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+					authentication(userName: ossrhUsername, password: ossrhPassword)
+				}
+
+				snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+					authentication(userName: ossrhUsername, password: ossrhPassword)
+				}
+
+				pom {
+
+					groupId = rootProject.group
+					name = nameParts.join("-")
+					artifactId = name
+
+					project {
+						description = rootProject.description
+
+						url "https://github.com/emc-mongoose/mongoose/wiki"
+
+						scm {
+							connection "https://github.com/emc-mongoose/mongoose.git"
+							developerConnection "https://github.com/emc-mongoose/mongoose.git"
+							url "https://github.com/emc-mongoose/mongoose.git"
+						}
+
+						licenses {
+							license {
+								name "The MIT License (MIT)"
+								url "https://github.com/emc-mongoose/mongoose/wiki/License"
+							}
+						}
+
+						developers {
+							developer {
+								id "akurilov"
+								name "Andrey Kurilov"
+								email "akurilov123@gmail.com"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+String defineVersion() {
+	def configFilePath = [ rootProject.rootDir, "base", "src", "main", "resources", "config", "defaults.yaml", ]
+		.join(File.separator);
+	def inputFile = new File(configFilePath)
+	def parser = new Yaml()
+	def y = parser.load(inputFile.text)
+	y.run.version
+}
+
+task mongooseVersion {
+	group = "versioning"
+	description = "Prints Mongoose version."
+	doLast { logger.quiet version }
+}
+
+void collectName(final Project p, final LinkedList<String> names) {
+	names.addFirst p.name
+	if(p.parent != null) {
+		collectName(p.parent, names)
+	}
+}
+
+subprojects {
+
+	jar {
+
+		duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+		manifest {
+			attributes(
+				"Implementation-Version": rootProject.version,
+			)
+		}
+
+		excludes = [
+			"**/*.css",
+			"**/*.html",
+			"META-INF/*.DSA",
+			"META-INF/*.LIST",
+			"META-INF/*.RSA",
+			"META-INF/*.SF",
+			"module-info.class",
+		]
+	}
+
+	task sourcesJar(type: Jar, dependsOn: classes) {
+		LinkedList names = new LinkedList()
+		collectName(project, names)
+		baseName = names.join("-")
+		classifier = "sources"
+		from sourceSets.main.allSource
+	}
+
+	task javadocJar(type: Jar, dependsOn: javadoc) {
+		LinkedList names = new LinkedList()
+		collectName(project, names)
+		baseName = names.join("-")
+		classifier = "javadoc"
+		from javadoc.destinationDir
+	}
+
+	artifacts {
+		archives jar
+		archives sourcesJar
+		archives javadocJar
+	}
+}
+
+wrapper {
+	gradleVersion = "4.10.3"
+}
+
+jar {
+
+	baseName = rootProject.name
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+	manifest {
+		attributes(
+			"Automatic-Module-Name": rootPkg,
+			"Implementation-Title": rootProject.name,
+			"Implementation-Version": version,
+			"Main-Class": "${rootPkg}.base.Main",
+		)
+	}
+
+	from baseProject.jar.outputs.files.collect {
+		zipTree(it)
+	}
+
+	extProjects
+		.each {
+			final Project p = it
+			from(p.jar.outputs.files) {
+				into "${File.separator}ext"
+				rename {
+					fileName -> "${p.description}.jar"
+				}
+			}
+		}
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+	classifier = "sources"
+	from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+	classifier = "javadoc"
+	from javadoc.destinationDir
+}
+
+artifacts {
+	archives jar
+	archives sourcesJar
+	archives javadocJar
+}
+
+assemble.dependsOn += jar
+
+// Custom JRE //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+def execute(cmd, dir = null) {
+	def stdOut = new StringBuilder(), stdErr = new StringBuilder()
+	def proc = dir == null ? cmd.execute() : cmd.execute([], dir)
+	proc.consumeProcessOutput(stdOut, stdErr)
+	proc.waitForOrKill(100_000)
+	println "${cmd}\n\t$stdErr"
+	stdOut.toString()
+}
+
+task listAllModulesDeps(dependsOn: jar) {
+	doLast {
+		def modulesDepsFile = new File(modulesDepsFilePath)
+		modulesDepsFile.delete()
+		def projects = []
+		projects.add(baseProject)
+		projects.addAll(extProjects)
+		projects.each {
+			def cmd = [
+				"${javaHome}${File.separator}bin${File.separator}jdeps",
+				"--module-path ${javaHome}${File.separator}jmods",
+				"--list-deps ${it.jar.outputs.files.iterator().next()}",
+			].join(' ')
+			def deps = execute(cmd)
+				.takeWhile { it != '/' } + '\n'
+			modulesDepsFile.append(deps)
+		}
+	}
+}
+
+task dedupModulesDeps(dependsOn: listAllModulesDeps) {
+	doLast {
+		def deps = execute("sort -b -u ${modulesDepsFilePath}")
+			.lines()
+			.findAll { !it.isBlank() }
+			.join('\n')
+		def modulesDepsFile = new File(modulesDepsFilePath)
+		modulesDepsFile.delete()
+		modulesDepsFile.append(deps)
+	}
+}
+
+task jre(dependsOn: dedupModulesDeps) {
+	doLast {
+		def modulesToAdd = new File(modulesDepsFilePath)
+			.readLines()
+			*.trim()
+			.join(',')
+		execute(
+			[
+				"${javaHome}${File.separator}bin${File.separator}jlink",
+				"--no-header-files --no-man-pages --strip-debug --compress=2 --bind-services",
+				"--module-path ${javaHome}${File.separator}jmods --add-modules ${modulesToAdd}",
+				"--output ${jreOutputDir}",
+			].join(' ')
+		)
+	}
+}
+
+// Docker tasks ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+import com.bmuschko.gradle.docker.tasks.image.*
+import com.bmuschko.gradle.docker.tasks.container.*
+
+task dockerBuildImage(type: DockerBuildImage, dependsOn: jar) {
+	inputDir = rootProject.projectDir
+	dockerFile = project.file("ci${File.separator}docker${File.separator}Dockerfile")
+	imageId = "emcmongoose/mongoose"
+	tags = [
+		"emcmongoose/mongoose:${version}".toString(),
+		"emcmongoose/mongoose:testing",
+	]
+}
+
+task dockerPushProductionImage(type: DockerPushImage, dependsOn: dockerBuildImage) {
+	imageName = "emcmongoose/mongoose"
+	tag = "emcmongoose/mongoose:${version}".toString()
+}
+
+task dockerPushTestingImage(type: DockerPushImage, dependsOn: dockerBuildImage) {
+	imageName = "emcmongoose/mongoose"
+	tag = "emcmongoose/mongoose:testing".toString()
+}
+
+// Robot Framework /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+task dockerBuildImageRobotest(type: DockerBuildImage) {
+	inputDir = rootProject.projectDir
+	dockerFile = project.file("ci${File.separator}docker${File.separator}Dockerfile.robotest")
+	imageId = "emcmongoose/mongoose-robotest"
+	tags = [
+		"emcmongoose/mongoose-robotest:${version}",
+	]
+}
+
+task dockerCreateContainerRobotest(type: DockerCreateContainer, dependsOn: [dockerBuildImage, dockerBuildImageRobotest]) {
+	attachStderr = true
+	attachStdout = true
+	autoRemove = true
+	binds = [
+		"${rootProject.buildDir}": "/root/mongoose/build",
+		"/var/run/docker.sock": "/var/run/docker.sock",
+	]
+	envVars = [
+		"HOST_WORKING_DIR": rootProject.projectDir.absolutePath,
+		"MONGOOSE_VERSION": version,
+		"MONGOOSE_IMAGE_VERSION": version,
+		"SERVICE_HOST": "localhost",
+		"SUITE": System.getenv("SUITE"),
+		"TEST": System.getenv("TEST"),
+	]
+	imageId = dockerBuildImageRobotest.getImageId()
+	network = "host"
+	tty = true
+	doLast {
+		println "Created the container for the ${System.env.SUITE}.${System.env.TEST} test"
+	}
+}
+
+task dockerStartContainerRobotest(type: DockerStartContainer, dependsOn: dockerCreateContainerRobotest) {
+	targetContainerId dockerCreateContainerRobotest.getContainerId()
+}
+
+task robotest(type: DockerWaitContainer, dependsOn: dockerStartContainerRobotest) {
+	targetContainerId dockerCreateContainerRobotest.getContainerId()
+	timeout = 600 // 10 min w/o output -> fail on Travis CI
+	doLast {
+		if(0 != exitCode) {
+			throw new GradleException("Some robotests FAILED")
+		} else {
+			println "Robotests PASSED"
+		}
+	}
+}
+
+spotless {
+	format "misc", {
+		target "**/*.gradle", "**/*.js", "**/*.groovy", "**/*.py", "**/*.scala"
+		indentWithTabs()
+		endWithNewline()
+	}
+	java {
+		target "**/*.java"
+		endWithNewline()
+		removeUnusedImports()
+		eclipse().configFile "spotless.eclipseformat.xml"
+	}
+}
