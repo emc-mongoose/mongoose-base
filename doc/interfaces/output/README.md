@@ -65,7 +65,7 @@ Use parameter `Dlog4j.configurationFile` for this:
 ```bash
 java -Dlog4j.configurationFile=/path/to/custom/config/log4j2.yaml -jar mongoose-<VERSION>.jar
 ```
-An example of a default configuration [here](base/src/main/resources/log4j2.yaml).
+An example of a default configuration [here](src/main/resources/log4j2.yaml).
 
 ##### 1.1.4.1. Docker Custom Logging
 

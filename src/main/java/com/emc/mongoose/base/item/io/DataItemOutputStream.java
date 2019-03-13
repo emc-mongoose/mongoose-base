@@ -19,7 +19,6 @@ public final class DataItemOutputStream extends ByteCountOutputStream {
 		this.dataItem = dataItem;
 	}
 
-	/** @throws IOException does not throw actually */
 	@Override
 	public final void write(final int b) throws DataCorruptionException {
 		buffWrapper = ByteBuffer.allocate(1);
@@ -34,7 +33,6 @@ public final class DataItemOutputStream extends ByteCountOutputStream {
 		byteCount.increment();
 	}
 
-	/** @throws IOException does not throw actually */
 	@Override
 	@SuppressWarnings("ArrayEquality")
 	public final void write(final byte buff[], final int offset, final int length)
@@ -52,7 +50,6 @@ public final class DataItemOutputStream extends ByteCountOutputStream {
 		byteCount.add(length);
 	}
 
-	/** @throws IOException does not throw actually */
 	@Override
 	@SuppressWarnings("ArrayEquality")
 	public final void write(final byte buff[]) throws DataCorruptionException {

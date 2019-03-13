@@ -18,6 +18,7 @@ plugins {
 }
 
 repositories {
+	jcenter()
 	mavenCentral()
 }
 
@@ -306,6 +307,7 @@ task mergeLog4j2PluginsDat(dependsOn: compileJava) {
 }
 
 javadoc {
+	failOnError = false
 	classpath += configurations.provided
 }
 
@@ -403,7 +405,7 @@ uploadArchives {
 					scm {
 						connection "https://github.com/emc-mongoose/mongoose-base.git"
 						developerConnection "https://github.com/emc-mongoose/mongoose-base.git"
-						url "https://github.com/emc-mongoose/mongoose.git"
+						url "https://github.com/emc-mongoose/mongoose-base.git"
 					}
 
 					licenses {
@@ -423,6 +425,60 @@ uploadArchives {
 				}
 			}
 		}
+	}
+}
+
+// Custom JRE //////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+def execute(cmd, dir = null) {
+	def stdOut = new StringBuilder(), stdErr = new StringBuilder()
+	def proc = dir == null ? cmd.execute() : cmd.execute([], dir)
+	proc.consumeProcessOutput(stdOut, stdErr)
+	proc.waitForOrKill(100_000)
+	println "${cmd}\n\t$stdErr"
+	stdOut.toString()
+}
+
+task listAllModulesDeps(dependsOn: jar) {
+	doLast {
+		def modulesDepsFile = new File(modulesDepsFilePath)
+		modulesDepsFile.delete()
+		def cmd = [
+			"${javaHome}${File.separator}bin${File.separator}jdeps",
+			"--module-path ${javaHome}${File.separator}jmods",
+			"--list-deps ${jar.outputs.files.iterator().next()}",
+		].join(' ')
+		def deps = execute(cmd).takeWhile { it != '/' } + '\n'
+		modulesDepsFile.append(deps)
+	}
+}
+
+task dedupModulesDeps(dependsOn: listAllModulesDeps) {
+	doLast {
+		def deps = execute("sort -b -u ${modulesDepsFilePath}")
+			.lines()
+			.findAll { !it.isBlank() }
+			.join('\n')
+		def modulesDepsFile = new File(modulesDepsFilePath)
+		modulesDepsFile.delete()
+		modulesDepsFile.append(deps)
+	}
+}
+
+task jre(dependsOn: dedupModulesDeps) {
+	doLast {
+		def modulesToAdd = new File(modulesDepsFilePath)
+			.readLines()
+			*.trim()
+			.join(',')
+		execute(
+			[
+				"${javaHome}${File.separator}bin${File.separator}jlink",
+				"--no-header-files --no-man-pages --strip-debug --compress=2 --bind-services",
+				"--module-path ${javaHome}${File.separator}jmods --add-modules ${modulesToAdd}",
+				"--output ${jreOutputDir}",
+			].join(' ')
+		)
 	}
 }
 
