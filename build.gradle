@@ -1,5 +1,3 @@
-import org.yaml.snakeyaml.Yaml
-
 buildscript {
 	repositories {
 		mavenCentral()
@@ -19,7 +17,26 @@ plugins {
 	id "com.diffplug.gradle.spotless" version "3.18.0"
 }
 
+repositories {
+	jcenter()
+	mavenCentral()
+}
+
+apply plugin: "java"
+apply plugin: "maven"
+apply plugin: "scala"
+apply plugin: "signing"
+
 description = "Mongoose is a high-load storage performance testing tool"
+group = "com.github.emc-mongoose"
+version = defineVersion()
+sourceCompatibility = 11
+targetCompatibility = 11
+
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardOpenOption
+import org.yaml.snakeyaml.Yaml
 
 ext {
 	depVersion = [
@@ -32,233 +49,210 @@ ext {
 		fiber4j            : "1.1.0",
 		jackson            : "2.9.8",
 		javaCommons        : "2.3.5",
-		javassist          : "3.23.1-GA",
 		jetty              : "9.4.14.v20181114",
 		junit              : "4.12",
 		scala              : "2.12.6",
 		slf4j              : "1.7.25",
 		log4j              : "2.8.2",
 		tsdbMetrics        : "0.6.0",
-		nagaina            : "3.6.11",
-		netty              : "4.1.25.Final",
-		nettyConnectionPool: "1.2.1",
-		nettyTcNative      : "2.0.12.Final",
 	]
-	baseProject = project(":base")
-	extProjects = subprojects.findAll {
-		!it.path.equals(":base") &&
-			!it.path.equals(":load") &&
-			!it.path.equals(":load:step") &&
-			!it.path.equals(":storage") &&
-			!it.path.equals(":storage:driver")
-	}
-	jarFileName = rootProject.name
+	log4j2PluginsDatPath = Paths.get(
+		"META-INF", "org", "apache", "logging", "log4j", "core", "config", "plugins", "Log4j2Plugins.dat",
+	)
+	rootPkg = "com.emc.mongoose.base"
+	mainClass = "${rootPkg}.Main"
+	provided3rdPartyClasses = [
+		"it/unimi/dsi/fastutil/bytes/ByteIterator.class",
+		"it/unimi/dsi/fastutil/Stack.class",
+		"it/unimi/dsi/fastutil/Arrays.class",
+		"it/unimi/dsi/fastutil/Swapper.class",
+		"it/unimi/dsi/fastutil/Hash.class",
+		"it/unimi/dsi/fastutil/Hash\$Strategy.class",
+		"it/unimi/dsi/fastutil/Function.class",
+		"it/unimi/dsi/fastutil/HashCommon.class",
+		"it/unimi/dsi/fastutil/objects/AbstractObjectCollection.class",
+		"it/unimi/dsi/fastutil/objects/ObjectSet.class",
+		"it/unimi/dsi/fastutil/objects/ObjectBidirectionalIterator.class",
+		"it/unimi/dsi/fastutil/objects/Object2IntMap.class",
+		"it/unimi/dsi/fastutil/objects/Object2IntMap\$FastEntrySet.class",
+		"it/unimi/dsi/fastutil/objects/ObjectList.class",
+		"it/unimi/dsi/fastutil/objects/AbstractObjectList.class",
+		"it/unimi/dsi/fastutil/objects/ObjectCollection.class",
+		"it/unimi/dsi/fastutil/objects/AbstractObjectListIterator.class",
+		"it/unimi/dsi/fastutil/objects/ObjectArrayList.class",
+		"it/unimi/dsi/fastutil/objects/AbstractObject2IntFunction.class",
+		"it/unimi/dsi/fastutil/objects/Object2IntFunction.class",
+		"it/unimi/dsi/fastutil/objects/ObjectIterators.class",
+		"it/unimi/dsi/fastutil/objects/AbstractObject2IntMap.class",
+		"it/unimi/dsi/fastutil/objects/ObjectArrays.class",
+		"it/unimi/dsi/fastutil/objects/AbstractObjectBidirectionalIterator.class",
+		"it/unimi/dsi/fastutil/objects/ObjectIterator.class",
+		"it/unimi/dsi/fastutil/objects/ObjectArraySet.class",
+		"it/unimi/dsi/fastutil/objects/Object2IntOpenHashMap.class",
+		"it/unimi/dsi/fastutil/objects/ObjectListIterator.class",
+		"it/unimi/dsi/fastutil/objects/ObjectIterable.class",
+		"it/unimi/dsi/fastutil/objects/AbstractObjectSet.class",
+		"it/unimi/dsi/fastutil/objects/AbstractObjectIterator.class",
+		"it/unimi/dsi/fastutil/BidirectionalIterator.class",
+		"it/unimi/dsi/fastutil/shorts/ShortIterator.class",
+		"it/unimi/dsi/fastutil/ints/IntArrayList.class",
+		"it/unimi/dsi/fastutil/ints/AbstractIntIterator.class",
+		"it/unimi/dsi/fastutil/ints/IntListIterator.class",
+		"it/unimi/dsi/fastutil/ints/AbstractIntCollection.class",
+		"it/unimi/dsi/fastutil/ints/AbstractInt2IntMap.class",
+		"it/unimi/dsi/fastutil/ints/AbstractInt2ObjectFunction.class",
+		"it/unimi/dsi/fastutil/ints/AbstractIntBidirectionalIterator.class",
+		"it/unimi/dsi/fastutil/ints/Int2IntFunction.class",
+		"it/unimi/dsi/fastutil/ints/AbstractIntSet.class",
+		"it/unimi/dsi/fastutil/ints/Int2IntOpenHashMap.class",
+		"it/unimi/dsi/fastutil/ints/IntArraySet.class",
+		"it/unimi/dsi/fastutil/ints/IntList.class",
+		"it/unimi/dsi/fastutil/ints/IntStack.class",
+		"it/unimi/dsi/fastutil/ints/IntIterator.class",
+		"it/unimi/dsi/fastutil/ints/IntBidirectionalIterator.class",
+		"it/unimi/dsi/fastutil/ints/IntIterable.class",
+		"it/unimi/dsi/fastutil/ints/Int2ObjectFunction.class",
+		"it/unimi/dsi/fastutil/ints/Int2ObjectOpenHashMap.class",
+		"it/unimi/dsi/fastutil/ints/Int2ObjectOpenHashMap\$KeyIterator.class",
+		"it/unimi/dsi/fastutil/ints/Int2ObjectOpenHashMap\$KeySet.class",
+		"it/unimi/dsi/fastutil/ints/Int2ObjectOpenHashMap\$MapIterator.class",
+		"it/unimi/dsi/fastutil/ints/IntArrays.class",
+		"it/unimi/dsi/fastutil/ints/IntCollection.class",
+		"it/unimi/dsi/fastutil/ints/AbstractInt2IntFunction.class",
+		"it/unimi/dsi/fastutil/ints/Int2ObjectMap.class",
+		"it/unimi/dsi/fastutil/ints/Int2ObjectMap\$FastEntrySet.class",
+		"it/unimi/dsi/fastutil/ints/Int2IntMap.class",
+		"it/unimi/dsi/fastutil/ints/Int2IntMap\$FastEntrySet.class",
+		"it/unimi/dsi/fastutil/ints/IntIterators.class",
+		"it/unimi/dsi/fastutil/ints/IntComparator.class",
+		"it/unimi/dsi/fastutil/ints/AbstractIntListIterator.class",
+		"it/unimi/dsi/fastutil/ints/AbstractIntList.class",
+		"it/unimi/dsi/fastutil/ints/AbstractInt2ObjectMap.class",
+		"it/unimi/dsi/fastutil/ints/IntSet.class",
+		"it/unimi/dsi/fastutil/longs/Long2LongFunction.class",
+	]
+	jarFileName = "mongoose"
 	javaHome = System.properties["java.home"]
-	jreOutputDir = "${rootProject.buildDir}${File.separator}jre"
-	rootPkg = "com.emc.mongoose"
-	modulesDepsFilePath = "${rootProject.buildDir}${File.separator}modules.deps"
+	jreOutputDir = "${project.buildDir}${File.separator}jre"
+	modulesDepsFilePath = "${project.buildDir}${File.separator}modules.deps"
 }
 
-allprojects {
+wrapper {
+	gradleVersion = "4.10.3"
+}
 
-	buildscript {
-		repositories {
-			mavenCentral()
-		}
+configurations {
+	partial.extendsFrom compileOnly
+	provided
+	testCompile {
+		extendsFrom(compileOnly, provided)
+	}
+}
+
+sourceSets {
+	main {
+		compileClasspath += configurations.provided
+	}
+}
+
+dependencies {
+
+	compileOnly("it.unimi.dsi:fastutil:${depVersion.fastutil}") {
+		transitive = false
 	}
 
-	repositories {
-		jcenter()
-		mavenCentral()
+	provided(
+		"commons-codec:commons-codec:${depVersion.commonsCodec}",
+		"commons-lang:commons-lang:${depVersion.commonsLang}",
+		"com.fasterxml.jackson.core:jackson-annotations:${depVersion.jackson}",
+		"com.fasterxml.jackson.core:jackson-core:${depVersion.jackson}",
+		"com.fasterxml.jackson.core:jackson-databind:${depVersion.jackson}",
+		"com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${depVersion.jackson}",
+		"com.github.akurilov:confuse:${depVersion.confuse}",
+		"com.github.akurilov:confuse-io-yaml:${depVersion.confuseIoYaml}",
+		"com.github.akurilov:fiber4j:${depVersion.fiber4j}",
+		"com.github.akurilov:java-commons:${depVersion.javaCommons}",
+		"com.lmax:disruptor:${depVersion.disruptor}",
+		"io.prometheus:simpleclient:${depVersion.tsdbMetrics}",
+		"io.prometheus:simpleclient_servlet:${depVersion.tsdbMetrics}",
+		"io.prometheus:simpleclient_hotspot:${depVersion.tsdbMetrics}",
+		"org.apache.logging.log4j:log4j-api:${depVersion.log4j}",
+		"org.apache.logging.log4j:log4j-core:${depVersion.log4j}",
+		"org.eclipse.jetty:jetty-server:${depVersion.jetty}",
+		"org.eclipse.jetty:jetty-servlet:${depVersion.jetty}",
+		"org.eclipse.jetty:jetty-rewrite:${depVersion.jetty}",
+		// actually the deps below are the runtime deps
+		"org.apache.logging.log4j:log4j-jul:${depVersion.log4j}",
+		"org.apache.logging.log4j:log4j-slf4j-impl:${depVersion.log4j}",
+		"org.slf4j:slf4j-api:${depVersion.slf4j}",
+	)
+
+	testCompile(
+		"com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:${depVersion.jackson}",
+		"junit:junit:${depVersion.junit}",
+		"org.scala-lang:scala-compiler:${depVersion.scala}",
+		"org.scala-lang:scala-library:${depVersion.scala}",
+		"com.github.docker-java:docker-java:[3,)",
+		"org.apache.commons:commons-csv:1.1",
+		"com.google.guava:guava:25.1-jre",
+		"org.apache.commons:commons-math3:3.6.1",
+		"org.mockito:mockito-core:2.23.0",
+	)
+}
+
+test {
+	useJUnit()
+	exclude "com/emc/mongoose/integration/*"
+	exclude "com/emc/mongoose/params/*"
+	exclude "com/emc/mongoose/perf/*"
+	exclude "com/emc/mongoose/util/*"
+	exclude "**/TemplateTest.*"
+	exclude "**/*PerfTest.*"
+	jvmArgs "-XX:MaxDirectMemorySize=2g"
+	jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
+	maxHeapSize "2g"
+	testLogging {
+		events = [
+			"standardOut", "skipped", "started", "failed",
+		]
+		showExceptions = true
+		showStandardStreams = true
 	}
+}
 
-	apply plugin: "java"
-	apply plugin: "maven"
-	apply plugin: "scala"
-	apply plugin: "signing"
-
-	group = "com.github.emc-mongoose"
-	version = defineVersion()
-
-	sourceCompatibility = 11
-	targetCompatibility = 11
-
-	configurations {
-		provided
-		testCompile {
-			extendsFrom(compileOnly, provided)
-		}
+task perfTest(type: Test) {
+	useJUnit()
+	include "com/emc/mongoose/perf/*"
+	jvmArgs "-XX:MaxDirectMemorySize=2g"
+	jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
+	maxHeapSize "2g"
+	testLogging {
+		events = [
+			"standardOut", "skipped", "started", "failed",
+		]
+		showExceptions = true
+		showStandardStreams = true
 	}
+}
 
-	sourceSets {
-		main {
-			compileClasspath += configurations.provided
-		}
-	}
-
-	test {
-		useJUnit()
-		exclude "com/emc/mongoose/endurance/*"
-		exclude "com/emc/mongoose/integration/*"
-		exclude "com/emc/mongoose/params/*"
-		exclude "com/emc/mongoose/perf/*"
-		exclude "com/emc/mongoose/system/*"
-		exclude "com/emc/mongoose/util/*"
-		exclude "**/TemplateTest.*"
-		exclude "**/*PerfTest.*"
-		jvmArgs "-XX:MaxDirectMemorySize=2g"
-		jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
-		maxHeapSize "2g"
-		testLogging {
-			events = [
-				"standardOut", "skipped", "started", "failed",
-			]
-			showExceptions = true
-			showStandardStreams = true
-		}
-	}
-
-	task perfTest(type: Test) {
-		useJUnit()
-		include "com/emc/mongoose/perf/*"
-		jvmArgs "-XX:MaxDirectMemorySize=2g"
-		jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
-		maxHeapSize "2g"
-		testLogging {
-			events = [
-				"standardOut", "skipped", "started", "failed",
-			]
-			showExceptions = true
-			showStandardStreams = true
-		}
-	}
-
-	task integrationTest(type: Test) {
-		useJUnit()
-		include "com/emc/mongoose/integration/*"
-		exclude "**/RollingAppenderTest*"
-		jvmArgs "-XX:MaxDirectMemorySize=2g"
-		jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
-		maxHeapSize "2g"
-		testLogging {
-			events = [
-				"standardOut", "skipped", "started", "failed",
-			]
-			showExceptions = true
-			showStandardStreams = true
-		}
-	}
-
-	task systemTest(type: Test) {
-		useJUnit()
-		include "com/emc/mongoose/system/*"
-		maxHeapSize "1g"
-		testLogging {
-			events = [
-				"standardOut", "skipped", "started", "failed",
-			]
-			showExceptions = true
-			showStandardStreams = true
-		}
-	}
-
-	task enduranceTest(type: Test) {
-		useJUnit()
-		include "com/emc/mongoose/endurance/*"
-		maxHeapSize "1g"
-		testLogging {
-			events = [
-				"standardOut", "skipped", "started", "failed",
-			]
-			showExceptions = true
-			showStandardStreams = true
-		}
-	}
-
-	// travis deploy stage runs "./gradlew check" again which is unnecessary
-	check.dependsOn -= test
-
-	javadoc {
-		classpath += configurations.provided
-	}
-
-	signing {
-		required {
-			gradle.taskGraph.hasTask("uploadArchives")
-		}
-		sign configurations.archives
-	}
-
-	// see http://central.sonatype.org/pages/gradle.html for details
-	uploadArchives {
-
-		// upload base artifact and extensions
-		if(project != rootProject && !(project in extProjects)) {
-			return
-		}
-
-		LinkedList nameParts = new LinkedList()
-		collectName(project, nameParts)
-
-		def ossrhUsername = project.hasProperty("ossrhUsername") ?
-			project.property("ossrhUsername") : null
-		def ossrhPassword = project.hasProperty("ossrhPassword") ?
-			project.property("ossrhPassword") : null
-
-		repositories {
-			mavenDeployer {
-				beforeDeployment {
-					MavenDeployment deployment -> signing.signPom(deployment)
-				}
-
-				repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-					authentication(userName: ossrhUsername, password: ossrhPassword)
-				}
-
-				snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-					authentication(userName: ossrhUsername, password: ossrhPassword)
-				}
-
-				pom {
-
-					groupId = rootProject.group
-					name = nameParts.join("-")
-					artifactId = name
-
-					project {
-						description = rootProject.description
-
-						url "https://github.com/emc-mongoose/mongoose/wiki"
-
-						scm {
-							connection "https://github.com/emc-mongoose/mongoose.git"
-							developerConnection "https://github.com/emc-mongoose/mongoose.git"
-							url "https://github.com/emc-mongoose/mongoose.git"
-						}
-
-						licenses {
-							license {
-								name "The MIT License (MIT)"
-								url "https://github.com/emc-mongoose/mongoose/wiki/License"
-							}
-						}
-
-						developers {
-							developer {
-								id "akurilov"
-								name "Andrey Kurilov"
-								email "akurilov123@gmail.com"
-							}
-						}
-					}
-				}
-			}
-		}
+task integrationTest(type: Test) {
+	useJUnit()
+	include "com/emc/mongoose/integration/*"
+	exclude "**/RollingAppenderTest*"
+	jvmArgs "-XX:MaxDirectMemorySize=2g"
+	jvmArgs "-XX:+HeapDumpOnOutOfMemoryError"
+	maxHeapSize "2g"
+	testLogging {
+		events = [
+			"standardOut", "skipped", "started", "failed",
+		]
+		showExceptions = true
+		showStandardStreams = true
 	}
 }
 
 String defineVersion() {
-	def configFilePath = [ rootProject.rootDir, "base", "src", "main", "resources", "config", "defaults.yaml", ]
+	def configFilePath = [ project.rootDir, "src", "main", "resources", "config", "defaults.yaml", ]
 		.join(File.separator);
 	def inputFile = new File(configFilePath)
 	def parser = new Yaml()
@@ -272,91 +266,82 @@ task mongooseVersion {
 	doLast { logger.quiet version }
 }
 
-void collectName(final Project p, final LinkedList<String> names) {
-	names.addFirst p.name
-	if(p.parent != null) {
-		collectName(p.parent, names)
-	}
-}
+task mergeLog4j2PluginsDat(dependsOn: compileJava) {
+	doLast {
 
-subprojects {
+		byte[] pluginsData
+		byte[] customPluginsData
 
-	jar {
-
-		duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-		manifest {
-			attributes(
-				"Implementation-Version": rootProject.version,
-			)
-		}
-
-		excludes = [
-			"**/*.css",
-			"**/*.html",
-			"META-INF/*.DSA",
-			"META-INF/*.LIST",
-			"META-INF/*.RSA",
-			"META-INF/*.SF",
-			"module-info.class",
-		]
-	}
-
-	task sourcesJar(type: Jar, dependsOn: classes) {
-		LinkedList names = new LinkedList()
-		collectName(project, names)
-		baseName = names.join("-")
-		classifier = "sources"
-		from sourceSets.main.allSource
-	}
-
-	task javadocJar(type: Jar, dependsOn: javadoc) {
-		LinkedList names = new LinkedList()
-		collectName(project, names)
-		baseName = names.join("-")
-		classifier = "javadoc"
-		from javadoc.destinationDir
-	}
-
-	artifacts {
-		archives jar
-		archives sourcesJar
-		archives javadocJar
-	}
-}
-
-wrapper {
-	gradleVersion = "4.10.3"
-}
-
-jar {
-
-	baseName = rootProject.name
-	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-	manifest {
-		attributes(
-			"Automatic-Module-Name": rootPkg,
-			"Implementation-Title": rootProject.name,
-			"Implementation-Version": version,
-			"Main-Class": "${rootPkg}.base.Main",
-		)
-	}
-
-	from baseProject.jar.outputs.files.collect {
-		zipTree(it)
-	}
-
-	extProjects
-		.each {
-			final Project p = it
-			from(p.jar.outputs.files) {
-				into "${File.separator}ext"
-				rename {
-					fileName -> "${p.description}.jar"
+		configurations.provided
+			.each {
+			if(!it.isDirectory()) {
+				zipTree(it)
+					.filter {
+					it.toString().endsWith(log4j2PluginsDatPath.toString())
+				}
+				.each {
+					pluginsData = Files.readAllBytes(Paths.get(it.toString()))
 				}
 			}
 		}
+
+		sourceSets.main.output.classesDirs
+			.any {
+			customPluginsData = Files.readAllBytes(
+				Paths.get(it.toString(), log4j2PluginsDatPath.toString(),)
+			)
+		}
+
+		sourceSets.main.output.classesDirs
+			.any {
+			Files.write(
+				Paths.get(it.toString(), log4j2PluginsDatPath.toString(),),
+				pluginsData, StandardOpenOption.TRUNCATE_EXISTING
+			)
+			Files.write(
+				Paths.get(it.toString(), log4j2PluginsDatPath.toString(),),
+				customPluginsData, StandardOpenOption.APPEND
+			)
+		}
+	}
+}
+
+javadoc {
+	failOnError = false
+	classpath += configurations.provided
+}
+
+jar {
+	dependsOn += mergeLog4j2PluginsDat
+	baseName = "mongoose"
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+	excludes = [
+		"**/*.css",
+		"**/*.html",
+		"META-INF/*.DSA",
+		"META-INF/*.LIST",
+		"META-INF/*.RSA",
+		"META-INF/*.SF",
+		"OSGI-INF/*",
+		"module-info.class",
+	]
+	manifest {
+		attributes(
+			"Automatic-Module-Name": rootPkg,
+			"Main-Class": mainClass,
+			"Implementation-Title": project.description,
+			"Implementation-Version": project.version,
+		)
+	}
+	provided3rdPartyClasses.each {
+		final clsName = it
+		from(configurations.partial.collect { zipTree(it) }) {
+			include "**" + clsName
+		}
+	}
+	from configurations.provided.collect {
+		it.isDirectory() ? it : zipTree(it)
+	}
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
@@ -377,6 +362,72 @@ artifacts {
 
 assemble.dependsOn += jar
 
+signing {
+	required {
+		gradle.taskGraph.hasTask("uploadArchives")
+	}
+	sign configurations.archives
+}
+
+// see http://central.sonatype.org/pages/gradle.html for details
+uploadArchives {
+
+	def ossrhUsername = project.hasProperty("ossrhUsername") ?
+		project.property("ossrhUsername") : null
+	def ossrhPassword = project.hasProperty("ossrhPassword") ?
+		project.property("ossrhPassword") : null
+
+	repositories {
+		mavenDeployer {
+			beforeDeployment {
+				MavenDeployment deployment -> signing.signPom(deployment)
+			}
+
+			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+				authentication(userName: ossrhUsername, password: ossrhPassword)
+			}
+
+			snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+				authentication(userName: ossrhUsername, password: ossrhPassword)
+			}
+
+			pom {
+
+				groupId = project.group
+				name = project.name
+				artifactId = name
+
+				project {
+					description = project.description
+
+					url "https://github.com/emc-mongoose/mongoose-base"
+
+					scm {
+						connection "https://github.com/emc-mongoose/mongoose-base.git"
+						developerConnection "https://github.com/emc-mongoose/mongoose-base.git"
+						url "https://github.com/emc-mongoose/mongoose-base.git"
+					}
+
+					licenses {
+						license {
+							name "The MIT License (MIT)"
+							url "https://github.com/emc-mongoose/mongoose-base/LICENSE"
+						}
+					}
+
+					developers {
+						developer {
+							id "akurilov"
+							name "Andrey Kurilov"
+							email "akurilov123@gmail.com"
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
 // Custom JRE //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 def execute(cmd, dir = null) {
@@ -392,19 +443,13 @@ task listAllModulesDeps(dependsOn: jar) {
 	doLast {
 		def modulesDepsFile = new File(modulesDepsFilePath)
 		modulesDepsFile.delete()
-		def projects = []
-		projects.add(baseProject)
-		projects.addAll(extProjects)
-		projects.each {
-			def cmd = [
-				"${javaHome}${File.separator}bin${File.separator}jdeps",
-				"--module-path ${javaHome}${File.separator}jmods",
-				"--list-deps ${it.jar.outputs.files.iterator().next()}",
-			].join(' ')
-			def deps = execute(cmd)
-				.takeWhile { it != '/' } + '\n'
-			modulesDepsFile.append(deps)
-		}
+		def cmd = [
+			"${javaHome}${File.separator}bin${File.separator}jdeps",
+			"--module-path ${javaHome}${File.separator}jmods",
+			"--list-deps ${jar.outputs.files.iterator().next()}",
+		].join(' ')
+		def deps = execute(cmd).takeWhile { it != '/' } + '\n'
+		modulesDepsFile.append(deps)
 	}
 }
 
@@ -443,33 +488,33 @@ import com.bmuschko.gradle.docker.tasks.image.*
 import com.bmuschko.gradle.docker.tasks.container.*
 
 task dockerBuildImage(type: DockerBuildImage, dependsOn: jar) {
-	inputDir = rootProject.projectDir
+	inputDir = project.projectDir
 	dockerFile = project.file("ci${File.separator}docker${File.separator}Dockerfile")
-	imageId = "emcmongoose/mongoose"
+	imageId = "emcmongoose/${project.name}".toString()
 	tags = [
-		"emcmongoose/mongoose:${version}".toString(),
-		"emcmongoose/mongoose:testing",
+		"emcmongoose/${project.name}:${version}",
+		"emcmongoose/${project.name}:testing",
 	]
 }
 
 task dockerPushProductionImage(type: DockerPushImage, dependsOn: dockerBuildImage) {
-	imageName = "emcmongoose/mongoose"
-	tag = "emcmongoose/mongoose:${version}".toString()
+	imageName = "emcmongoose/${project.name}".toString()
+	tag = "emcmongoose/${project.name}:${version}".toString()
 }
 
 task dockerPushTestingImage(type: DockerPushImage, dependsOn: dockerBuildImage) {
-	imageName = "emcmongoose/mongoose"
-	tag = "emcmongoose/mongoose:testing".toString()
+	imageName = "emcmongoose/${project.name}".toString()
+	tag = "emcmongoose/${project.name}:testing".toString()
 }
 
 // Robot Framework /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 task dockerBuildImageRobotest(type: DockerBuildImage) {
-	inputDir = rootProject.projectDir
+	inputDir = project.projectDir
 	dockerFile = project.file("ci${File.separator}docker${File.separator}Dockerfile.robotest")
-	imageId = "emcmongoose/mongoose-robotest"
+	imageId = "emcmongoose/${project.name}-robotest".toString()
 	tags = [
-		"emcmongoose/mongoose-robotest:${version}",
+		"emcmongoose/${project.name}-robotest:${version}",
 	]
 }
 
@@ -478,11 +523,11 @@ task dockerCreateContainerRobotest(type: DockerCreateContainer, dependsOn: [dock
 	attachStdout = true
 	autoRemove = true
 	binds = [
-		"${rootProject.buildDir}": "/root/mongoose/build",
+		"${project.buildDir}": "/root/mongoose/build",
 		"/var/run/docker.sock": "/var/run/docker.sock",
 	]
 	envVars = [
-		"HOST_WORKING_DIR": rootProject.projectDir.absolutePath,
+		"HOST_WORKING_DIR": projectDir.absolutePath,
 		"MONGOOSE_VERSION": version,
 		"MONGOOSE_IMAGE_VERSION": version,
 		"SERVICE_HOST": "localhost",
