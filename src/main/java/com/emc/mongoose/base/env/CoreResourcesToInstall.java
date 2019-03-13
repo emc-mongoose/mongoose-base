@@ -76,20 +76,7 @@ public final class CoreResourcesToInstall extends InstallableJarResources {
 									"example/scenario/py/types/parallel_shell_commands.py",
 									"example/scenario/py/types/weighted.py",
 									"example/scenario/py/default.py",
-									"example/scenario/py/rampup.py",
-									// provided extensions
-									"ext/mongoose-load-step-linear.jar",
-									"ext/mongoose-load-step-pipeline.jar",
-									"ext/mongoose-load-step-weighted.jar",
-									"ext/mongoose-storage-driver-coop.jar",
-									"ext/mongoose-storage-driver-coop-netty.jar",
-									"ext/mongoose-storage-driver-coop-netty-http.jar",
-									"ext/mongoose-storage-driver-coop-netty-http-atmos.jar",
-									"ext/mongoose-storage-driver-coop-netty-http-s3.jar",
-									"ext/mongoose-storage-driver-coop-netty-http-swift.jar",
-									"ext/mongoose-storage-driver-coop-nio.jar",
-									"ext/mongoose-storage-driver-coop-nio-fs.jar",
-									"ext/mongoose-storage-driver-preempt.jar"));
+									"example/scenario/py/rampup.py"));
 	private final Path appHomePath;
 
 	public CoreResourcesToInstall() {

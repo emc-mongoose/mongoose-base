@@ -20,7 +20,6 @@ output:
 item:
   output:
     path: "%{date:format(\"yyyyMMdd.HHmmss.SSS\").format(date:from(time:millisSinceEpoch()))}"
-    delay: 0
     file: null
   input:
     path: null
@@ -63,34 +62,6 @@ storage:
       concurrency: 1
     type: "s3"
     threads: 0
-  net:
-    keepAlive: true
-    bindBacklogSize: 0
-    linger: 0
-    transport: "epoll"
-    interestOpQueued: false
-    ioRatio: 50
-    ssl: false
-    reuseAddr: true
-    node:
-      connAttemptsLimit: 0
-      port: 9020
-      slice: false
-      addrs:
-      - "127.0.0.1"
-    timeoutMilliSec: 0
-    sndBuf: 0
-    http:
-      fsAccess: false
-      headers:
-        Connection: "Keep-Alive"
-        Date: "#{date:formatNowRfc1123()}%{date:formatNowRfc1123()}"
-        User-Agent: "mongoose/5.0.0"
-      versioning: false
-      uri:
-        args: {}
-    rcvBuf: 0
-    tcpNoDelay: true
   auth:
     uid: null
     file: null
@@ -108,7 +79,6 @@ load:
         rate: false
       rate: 0.0
     recycle: false
-    weight: 1
     shuffle: false
     type: "create"
     retry: false

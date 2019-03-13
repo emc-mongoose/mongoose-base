@@ -3,7 +3,7 @@ image: docker:stable
 variables:
   DOCKER_HOST: tcp://docker:2375
   DOCKER_DRIVER: overlay2
-  IMAGE_NAME: emcmongoose/mongoose
+  IMAGE_NAME: emcmongoose/mongoose-base
   IMAGE_FILE_NAME: build/mongoose.tar
   JAVA_HOME: /opt/jdk-11.0.2+9
   ROBOTEST_CONTAINER_WORKING_DIR: /root/mongoose

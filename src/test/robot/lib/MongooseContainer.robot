@@ -7,7 +7,7 @@ Library  RequestsLibrary
 ${LOG_DIR} =  base/build/log
 ${MONGOOSE_CONTAINER_DATA_DIR} =  /data
 ${MONGOOSE_CONTAINER_NAME} =  mongoose
-${MONGOOSE_IMAGE_NAME} =  emcmongoose/mongoose
+${MONGOOSE_IMAGE_NAME} =  emcmongoose/mongoose-base
 ${MONGOOSE_NODE_PORT} =  9999
 
 *** Keywords ***
