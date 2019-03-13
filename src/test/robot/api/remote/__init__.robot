@@ -7,7 +7,7 @@ Suite Setup  Start Mongoose Node
 Suite Teardown  Remove Mongoose Node
 
 *** Variables ***
-${MONGOOSE_IMAGE_NAME} =  emcmongoose/mongoose
+${MONGOOSE_IMAGE_NAME} =  emcmongoose/mongoose-base
 ${MONGOOSE_NODE_PORT} =  9999
 
 *** Keywords ***
