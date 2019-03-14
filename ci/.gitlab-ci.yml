@@ -136,8 +136,7 @@ release_to_maven_repo:
     - if [ ! -z "$GPG_OWNERTRUST" ]; then echo $GPG_OWNERTRUST | base64 -d | gpg --import-ownertrust --batch; fi
     - ./gradlew clean uploadArchives
   only:
-    refs:
-      - master
+    - tags
 
 release_to_docker_hub:
   stage: deploy
