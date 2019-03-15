@@ -20,7 +20,6 @@ plugins {
 	id "com.bmuschko.docker-remote-api" version "4.0.5"
 	id "com.diffplug.gradle.spotless" version "3.18.0"
 	id "io.codearte.nexus-staging" version "0.20.0"
-	id "de.marcphilipp.nexus-publish" version "0.2.0"
 }
 
 repositories {
@@ -365,61 +364,13 @@ artifacts {
 	archives javadocJar
 }
 
+assemble.dependsOn += jar
+
 signing {
 	required {
-		gradle.taskGraph.hasTask("uploadArchives")
+		gradle.taskGraph.hasTask("publish")
 	}
 	sign configurations.archives
-}
-
-// see http://central.sonatype.org/pages/gradle.html for details
-uploadArchives {
-
-	def ossrhUsername = project.hasProperty("ossrhUsername") ?
-		project.property("ossrhUsername") : null
-	def ossrhPassword = project.hasProperty("ossrhPassword") ?
-		project.property("ossrhPassword") : null
-
-	repositories {
-		mavenDeployer {
-			beforeDeployment {
-				MavenDeployment deployment -> signing.signPom(deployment)
-			}
-			repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
-				authentication(userName: ossrhUsername, password: ossrhPassword)
-			}
-			snapshotRepository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
-				authentication(userName: ossrhUsername, password: ossrhPassword)
-			}
-			pom {
-				groupId = project.group
-				name = project.name
-				artifactId = name
-				project {
-					description = project.description
-					url "https://github.com/emc-mongoose/mongoose-base"
-					scm {
-						connection "https://github.com/emc-mongoose/mongoose-base.git"
-						developerConnection "https://github.com/emc-mongoose/mongoose-base.git"
-						url "https://github.com/emc-mongoose/mongoose-base.git"
-					}
-					licenses {
-						license {
-							name "The MIT License (MIT)"
-							url "https://github.com/emc-mongoose/mongoose-base/LICENSE"
-						}
-					}
-					developers {
-						developer {
-							id "akurilov"
-							name "Andrey Kurilov"
-							email "akurilov123@gmail.com"
-						}
-					}
-				}
-			}
-		}
-	}
 }
 
 publishing {
@@ -433,23 +384,23 @@ publishing {
 			pom {
 				name = project.name
 				description = project.description
-				url "https://github.com/emc-mongoose/mongoose-base"
+				url = "https://github.com/emc-mongoose/mongoose-base"
 				scm {
-					connection "https://github.com/emc-mongoose/mongoose-base.git"
-					developerConnection "https://github.com/emc-mongoose/mongoose-base.git"
-					url "https://github.com/emc-mongoose/mongoose-base.git"
+					connection = "https://github.com/emc-mongoose/mongoose-base.git"
+					developerConnection = "https://github.com/emc-mongoose/mongoose-base.git"
+					url = "https://github.com/emc-mongoose/mongoose-base.git"
 				}
 				licenses {
 					license {
-						name "The MIT License (MIT)"
-						url "https://github.com/emc-mongoose/mongoose-base/LICENSE"
+						name = "The MIT License (MIT)"
+						url = "https://github.com/emc-mongoose/mongoose-base/LICENSE"
 					}
 				}
 				developers {
 					developer {
-						id "akurilov"
-						name "Andrey Kurilov"
-						email "akurilov123@gmail.com"
+						id = "akurilov"
+						name = "Andrey Kurilov"
+						email = "akurilov123@gmail.com"
 					}
 				}
 			}
@@ -466,18 +417,8 @@ publishing {
 	}
 }
 
-nexusPublishing {
-	username.set(project.hasProperty("ossrhUsername") ? project.property("ossrhUsername") : null)
-	password.set(project.hasProperty("ossrhPassword") ? project.property("ossrhPassword") : null)
-}
-
-nexusStaging {
-	username = project.hasProperty("ossrhUsername") ? project.property("ossrhUsername") : null
-	password = project.hasProperty("ossrhPassword") ? project.property("ossrhPassword") : null
-}
-
 task releaseToMavenCentral {
-	dependsOn += uploadArchives
+	dependsOn += publish
 	dependsOn += closeAndReleaseRepository
 }
 
