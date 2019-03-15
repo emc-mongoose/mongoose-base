@@ -70,14 +70,14 @@ build:
 #      - build/reports/tests/integrationTest/*
 #    when: on_failure
 #
-#build_docker_image:
-#  stage: build_docker_image
-#  script:
-#    - docker build -f ci/docker/Dockerfile -t ${IMAGE_NAME}:${CI_COMMIT_SHA} .
-#    - docker save ${IMAGE_NAME}:${CI_COMMIT_SHA} > ${IMAGE_FILE_NAME}
-#  artifacts:
-#    paths:
-#      - ${IMAGE_FILE_NAME}
+build_docker_image:
+  stage: build_docker_image
+  script:
+    - docker build -f ci/docker/Dockerfile -t ${IMAGE_NAME}:${CI_COMMIT_SHA} .
+    - docker save ${IMAGE_NAME}:${CI_COMMIT_SHA} > ${IMAGE_FILE_NAME}
+  artifacts:
+    paths:
+      - ${IMAGE_FILE_NAME}
 #
 #.test_robot:
 #  stage: test_functional
@@ -129,7 +129,7 @@ release_to_maven_repo:
     - mkdir -p ~/.gradle
     - echo "signing.keyId=${SIGNING_KEY_ID}" >> ~/.gradle/gradle.properties
     - echo "signing.password=${SIGNING_PASSWORD}" >> ~/.gradle/gradle.properties
-    - echo "signing.secretKeyringFile=~/.gnupg/secring.gpg" >> ~/.gradle/gradle.properties
+    - echo "signing.secretKeyringFile=/root/.gnupg/secring.gpg" >> ~/.gradle/gradle.properties
     - echo "ossrhUsername=${OSSRH_USERNAME}" >> ~/.gradle/gradle.properties
     - echo "ossrhPassword=${OSSRH_PASSWORD}" >> ~/.gradle/gradle.properties
     - if [ ! -z "$GPG_SECRET_KEYS" ]; then echo $GPG_SECRET_KEYS | base64 -d | gpg --import --batch; fi
