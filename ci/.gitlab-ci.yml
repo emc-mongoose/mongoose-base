@@ -134,9 +134,11 @@ release_to_maven_repo:
     - echo "ossrhPassword=${OSSRH_PASSWORD}" >> ~/.gradle/gradle.properties
     - if [ ! -z "$GPG_SECRET_KEYS" ]; then echo $GPG_SECRET_KEYS | base64 -d | gpg --import --batch; fi
     - if [ ! -z "$GPG_OWNERTRUST" ]; then echo $GPG_OWNERTRUST | base64 -d | gpg --import-ownertrust --batch; fi
-    - ./gradlew clean uploadArchives
+    - ./gradlew publishToNexus closeAndReleaseRepository
   only:
-    - tags
+    - latest
+  except:
+    - branches
 
 release_to_docker_hub:
   stage: deploy
@@ -148,4 +150,6 @@ release_to_docker_hub:
     - docker tag ${IMAGE_NAME}:${CI_COMMIT_SHA} ${IMAGE_NAME}:latest
     - docker push ${IMAGE_NAME}:latest
   only:
-    - tags
+    - latest
+  except:
+    - branches

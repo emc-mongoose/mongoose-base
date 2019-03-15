@@ -20,6 +20,7 @@ plugins {
 	id "com.bmuschko.docker-remote-api" version "4.0.5"
 	id "com.diffplug.gradle.spotless" version "3.18.0"
 	id "io.codearte.nexus-staging" version "0.20.0"
+	id "de.marcphilipp.nexus-publish" version "0.2.0"
 }
 
 repositories {
@@ -354,8 +355,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 	from sourceSets.main.allSource
 }
 
-assemble.dependsOn += jar
-
 // Maven Central deployment ////////////////////////////////////////////////////////////////////////////////////////////
 
 artifacts {
@@ -364,13 +363,13 @@ artifacts {
 	archives javadocJar
 }
 
-assemble.dependsOn += jar
-
-signing {
-	required {
-		gradle.taskGraph.hasTask("publish")
-	}
-	sign configurations.archives
+nexusStaging {
+	packageGroup = project.group
+	username = project.hasProperty("ossrhUsername") ? project.property("ossrhUsername") : null
+	password = project.hasProperty("ossrhPassword") ? project.property("ossrhPassword") : null
+	//stagingProfileId = "491ac45c9daed9"
+	numberOfRetries = 10
+	delayBetweenRetriesInMillis = 10000
 }
 
 publishing {
@@ -417,8 +416,12 @@ publishing {
 	}
 }
 
+signing {
+	sign publishing.publications
+}
+
 task releaseToMavenCentral {
-	dependsOn += publish
+	dependsOn += publishToNexus
 	dependsOn += closeAndReleaseRepository
 }
 
