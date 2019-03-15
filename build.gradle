@@ -368,7 +368,7 @@ nexusStaging {
 	username = project.hasProperty("ossrhUsername") ? project.property("ossrhUsername") : null
 	password = project.hasProperty("ossrhPassword") ? project.property("ossrhPassword") : null
 	//stagingProfileId = "491ac45c9daed9"
-	numberOfRetries = 10
+	numberOfRetries = 100
 	delayBetweenRetriesInMillis = 10000
 }
 
