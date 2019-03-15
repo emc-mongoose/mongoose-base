@@ -48,14 +48,14 @@ before_script:
   - apk del binutils
   - rm -rf /tmp/${GLIBC_VER}.apk /tmp/gcc /tmp/gcc-libs.tar.xz /tmp/libz /tmp/libz.tar.xz /var/cache/apk/*
 
-build:
-  stage: build
-  script:
-    - ./gradlew clean jar
-  artifacts:
-    paths:
-      - build/libs/mongoose-*.jar
-
+#build:
+#  stage: build
+#  script:
+#    - ./gradlew clean jar
+#  artifacts:
+#    paths:
+#      - build/libs/mongoose-*.jar
+#
 #test_unit:
 #  stage: test
 #  script:
@@ -70,14 +70,14 @@ build:
 #      - build/reports/tests/integrationTest/*
 #    when: on_failure
 #
-build_docker_image:
-  stage: build_docker_image
-  script:
-    - docker build -f ci/docker/Dockerfile -t ${IMAGE_NAME}:${CI_COMMIT_SHA} .
-    - docker save ${IMAGE_NAME}:${CI_COMMIT_SHA} > ${IMAGE_FILE_NAME}
-  artifacts:
-    paths:
-      - ${IMAGE_FILE_NAME}
+#build_docker_image:
+#  stage: build_docker_image
+#  script:
+#    - docker build -f ci/docker/Dockerfile -t ${IMAGE_NAME}:${CI_COMMIT_SHA} .
+#    - docker save ${IMAGE_NAME}:${CI_COMMIT_SHA} > ${IMAGE_FILE_NAME}
+#  artifacts:
+#    paths:
+#      - ${IMAGE_FILE_NAME}
 #
 #.test_robot:
 #  stage: test_functional
@@ -128,22 +128,24 @@ release_to_maven_repo:
   script:
     - if [ ! -z "$GPG_SECRET_KEYS" ]; then echo $GPG_SECRET_KEYS | base64 -d | gpg --import --batch; fi
     - if [ ! -z "$GPG_OWNERTRUST" ]; then echo $GPG_OWNERTRUST | base64 -d | gpg --import-ownertrust --batch; fi
-    - ./gradlew -Psigning.keyId=${SIGNING_KEY_ID} -Psigning.password=${SIGNING_PASSWORD} -PossrhUsername=${OSSRH_USERNAME} -PossrhPassword=${OSSRH_PASSWORD} publishToNexus closeAndReleaseRepository
+    - if [ ! -z "$GPG_SECRING" ]; then echo $GPG_SECRING | base64 -d | tee /tmp/.gnupg/secring.gpg; fi
+    - gpg --list-secret-keys
+    - ./gradlew -Psigning.keyId=${SIGNING_KEY_ID} -Psigning.password=${SIGNING_PASSWORD} -Psigning.secretKeyRingFile=/tmp/.gnupg/secring.gpg -PossrhUsername=${OSSRH_USERNAME} -PossrhPassword=${OSSRH_PASSWORD} publishToNexus closeAndReleaseRepository
   only:
     - latest
   except:
     - branches
 
-release_to_docker_hub:
-  stage: deploy
-  script:
-    - docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
-    - docker load < ${IMAGE_FILE_NAME}
-    - docker tag ${IMAGE_NAME}:${CI_COMMIT_SHA} ${IMAGE_NAME}:${CI_COMMIT_TAG}
-    - docker push ${IMAGE_NAME}:${CI_COMMIT_TAG}
-    - docker tag ${IMAGE_NAME}:${CI_COMMIT_SHA} ${IMAGE_NAME}:latest
-    - docker push ${IMAGE_NAME}:latest
-  only:
-    - latest
-  except:
-    - branches
+#release_to_docker_hub:
+#  stage: deploy
+#  script:
+#    - docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
+#    - docker load < ${IMAGE_FILE_NAME}
+#    - docker tag ${IMAGE_NAME}:${CI_COMMIT_SHA} ${IMAGE_NAME}:${CI_COMMIT_TAG}
+#    - docker push ${IMAGE_NAME}:${CI_COMMIT_TAG}
+#    - docker tag ${IMAGE_NAME}:${CI_COMMIT_SHA} ${IMAGE_NAME}:latest
+#    - docker push ${IMAGE_NAME}:latest
+#  only:
+#    - latest
+#  except:
+#    - branches
