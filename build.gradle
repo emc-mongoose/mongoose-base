@@ -484,7 +484,7 @@ task jre(dependsOn: dedupModulesDeps) {
 import com.bmuschko.gradle.docker.tasks.image.*
 import com.bmuschko.gradle.docker.tasks.container.*
 
-task dockerBuildImage(type: DockerBuildImage, dependsOn: jar) {
+task dockerBuildImage(type: DockerBuildImage) {
 	inputDir = project.projectDir
 	dockerFile = project.file("ci${File.separator}docker${File.separator}Dockerfile")
 	imageId = "emcmongoose/${project.name}".toString()

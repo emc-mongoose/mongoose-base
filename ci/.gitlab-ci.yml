@@ -4,7 +4,7 @@ variables:
   DOCKER_HOST: tcp://docker:2375
   DOCKER_DRIVER: overlay2
   IMAGE_NAME: emcmongoose/mongoose-base
-  IMAGE_FILE_NAME: build/mongoose.tar
+  IMAGE_FILE_NAME: build/mongoose-base.tar
   JAVA_HOME: /opt/jdk-11.0.2+9
   ROBOTEST_CONTAINER_WORKING_DIR: /root/mongoose
   SERVICE_HOST: docker # should be used instead of the "localhost"/"127.0.0.1" in GL CI
@@ -139,10 +139,11 @@ release_to_maven_repo:
 release_to_docker_hub:
   stage: deploy
   script:
+    - export MONGOOSE_VERSION=$(cat src/main/resources/config/defaults.yaml | grep version | sed -n 's/.*\([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/p')
     - docker login -u ${DOCKER_USER} -p ${DOCKER_PASS}
     - docker load < ${IMAGE_FILE_NAME}
-    - docker tag ${IMAGE_NAME}:${CI_COMMIT_SHA} ${IMAGE_NAME}:${CI_COMMIT_TAG}
-    - docker push ${IMAGE_NAME}:${CI_COMMIT_TAG}
+    - docker tag ${IMAGE_NAME}:${CI_COMMIT_SHA} ${IMAGE_NAME}:${MONGOOSE_VERSION}
+    - docker push ${IMAGE_NAME}:${MONGOOSE_VERSION}
     - docker tag ${IMAGE_NAME}:${CI_COMMIT_SHA} ${IMAGE_NAME}:latest
     - docker push ${IMAGE_NAME}:latest
   only:
