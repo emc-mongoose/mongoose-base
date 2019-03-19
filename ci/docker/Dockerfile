@@ -1,11 +1,10 @@
-FROM adoptopenjdk/openjdk11:alpine AS build
+FROM adoptopenjdk/openjdk11:alpine
 
 ADD src ./src/
 ADD gradle ./gradle/
 ADD build.gradle ./build.gradle
 ADD gradlew ./gradlew
 ADD settings.gradle ./settings.gradle
-
 RUN ./gradlew clean jre
 
 FROM alpine:3.8
@@ -34,9 +33,8 @@ RUN apk --update add --no-cache ca-certificates curl openssl binutils xz \
     && apk del binutils \
     && rm -rf /tmp/${GLIBC_VER}.apk /tmp/gcc /tmp/gcc-libs.tar.xz /tmp/libz /tmp/libz.tar.xz /var/cache/apk/*
 
-COPY --from=build /build/jre /opt/mongoose
-
-ADD build/libs/mongoose-*.jar /opt/mongoose/
+COPY --from=0 /build/jre /opt/mongoose
+COPY --from=0 /build/libs/mongoose-*.jar /opt/mongoose/
 ADD ci/docker/entrypoint.sh /opt/mongoose/entrypoint.sh
 
 RUN ln -s /opt/mongoose/mongoose-*.jar /opt/mongoose/mongoose.jar; \
