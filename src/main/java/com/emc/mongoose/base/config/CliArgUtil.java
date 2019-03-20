@@ -4,9 +4,10 @@ import static java.lang.Boolean.TRUE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.stream.Collector;
 
 public interface CliArgUtil {
 
@@ -15,21 +16,39 @@ public interface CliArgUtil {
 	String ARG_VAL_SEP = "=";
 
 	static Map<String, String> parseArgs(final String... args) {
+		// https://stackoverflow.com/questions/40039649/why-does-collectors-tomap-report-value-instead-of-key-on-duplicate-key-error
+		final var eloquentCollector = Collector.<String[], Map<String, String>>of(
+			HashMap::new,
+			(map, argValPair) -> map.put(argValPair[0], argValPair[1]),
+			(m1, m2) -> {
+				m2.forEach(m1::put);
+				return m1;
+			}
+		);
 		return Arrays.stream(args)
-						.peek(
-										arg -> {
-											if (!arg.startsWith(ARG_PREFIX)) {
-												throw new IllegalArgumentNameException(arg);
-											}
-										})
+						.peek(CliArgUtil::checkArgPrefix)
 						.map(arg -> arg.substring(ARG_PREFIX.length()))
 						// split args to key/value pairs by the '=' symbol
 						.map(arg -> arg.split(ARG_VAL_SEP, 2))
-						// handle the shortcuts for boolean options (--smth-enabled -> --smth-enabled=true)
-						.map(
-										argValPair -> argValPair.length == 2 ? argValPair : new String[]{argValPair[0], TRUE.toString()
-										})
-						.collect(Collectors.toMap(argValPair -> argValPair[0], argValPair -> argValPair[1]));
+						.map(CliArgUtil::handleBooleanShortcuts)
+						.collect(eloquentCollector);
+	}
+
+	private static void checkArgPrefix(final String arg) {
+		if (!arg.startsWith(ARG_PREFIX)) {
+			throw new IllegalArgumentNameException(arg);
+		}
+	}
+
+	// handle the shortcuts for boolean options (--smth-enabled -> --smth-enabled=true)
+	private static String[] handleBooleanShortcuts(final String[] argValPair) {
+		return argValPair.length == 2 ? argValPair : new String[]{argValPair[0], TRUE.toString()};
+	}
+
+	private static <K,V> void putUnique(Map<K,V> map, K key, V v1){
+		final var v2 = map.putIfAbsent(key, v1);
+		if(v2 != null) throw new IllegalStateException(
+			String.format("Duplicate key '%s' (attempted merging incoming value '%s' with existing '%s')", key, v1, v2));
 	}
 
 	@SuppressWarnings("CollectionWithoutInitialCapacity")

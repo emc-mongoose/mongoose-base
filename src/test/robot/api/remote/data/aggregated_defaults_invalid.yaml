@@ -51,7 +51,7 @@ run:
   comment: ""
   port: 9999
   scenario: null
-  version: "4.2.0"
+  version: "4.2.1"
 storage:
   namespace: null
   driver:
