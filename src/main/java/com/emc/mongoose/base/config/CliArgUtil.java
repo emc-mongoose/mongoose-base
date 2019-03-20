@@ -17,14 +17,13 @@ public interface CliArgUtil {
 
 	static Map<String, String> parseArgs(final String... args) {
 		// https://stackoverflow.com/questions/40039649/why-does-collectors-tomap-report-value-instead-of-key-on-duplicate-key-error
-		final var eloquentCollector = Collector.<String[], Map<String, String>>of(
-			HashMap::new,
-			(map, argValPair) -> map.put(argValPair[0], argValPair[1]),
-			(m1, m2) -> {
-				m2.forEach(m1::put);
-				return m1;
-			}
-		);
+		final var eloquentCollector = Collector.<String[], Map<String, String>> of(
+						HashMap::new,
+						(map, argValPair) -> map.put(argValPair[0], argValPair[1]),
+						(m1, m2) -> {
+							m2.forEach(m1::put);
+							return m1;
+						});
 		return Arrays.stream(args)
 						.peek(CliArgUtil::checkArgPrefix)
 						.map(arg -> arg.substring(ARG_PREFIX.length()))
@@ -42,13 +41,15 @@ public interface CliArgUtil {
 
 	// handle the shortcuts for boolean options (--smth-enabled -> --smth-enabled=true)
 	private static String[] handleBooleanShortcuts(final String[] argValPair) {
-		return argValPair.length == 2 ? argValPair : new String[]{argValPair[0], TRUE.toString()};
+		return argValPair.length == 2 ? argValPair : new String[]{argValPair[0], TRUE.toString()
+		};
 	}
 
-	private static <K,V> void putUnique(Map<K,V> map, K key, V v1){
+	private static <K, V> void putUnique(Map<K, V> map, K key, V v1) {
 		final var v2 = map.putIfAbsent(key, v1);
-		if(v2 != null) throw new IllegalStateException(
-			String.format("Duplicate key '%s' (attempted merging incoming value '%s' with existing '%s')", key, v1, v2));
+		if (v2 != null)
+			throw new IllegalStateException(
+							String.format("Duplicate key '%s' (attempted merging incoming value '%s' with existing '%s')", key, v1, v2));
 	}
 
 	@SuppressWarnings("CollectionWithoutInitialCapacity")
