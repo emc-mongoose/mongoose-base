@@ -18,6 +18,7 @@ import org.apache.commons.lang.StringUtils;
 
 public final class CoreResourcesToInstall extends InstallableJarResources {
 
+	public static final String RESOURCE
 	private static final List<String> RES_INSTALL_FILES = Collections.unmodifiableList(
 					Arrays.asList(
 									// initial configuration/defaults file
@@ -101,6 +102,7 @@ public final class CoreResourcesToInstall extends InstallableJarResources {
 
 	@Override
 	protected final List<String> resourceFilesToInstall() {
+
 		return RES_INSTALL_FILES;
 	}
 }
