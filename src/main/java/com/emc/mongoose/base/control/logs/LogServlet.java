@@ -23,9 +23,9 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.text.html.Option;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator.Feature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.logging.log4j.Logger;
@@ -34,7 +34,6 @@ import org.apache.logging.log4j.core.async.AsyncLogger;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.InclusiveByteRange;
-import org.eclipse.jetty.server.Response;
 
 public final class LogServlet extends HttpServlet {
 
@@ -215,8 +214,13 @@ public final class LogServlet extends HttpServlet {
 	throws IOException {
 		final var jsonFactory = new JsonFactory();
 		final var mapper = new ObjectMapper(jsonFactory);
-		mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
-		mapper.writeValue(out, Loggers.DESCRIPTIONS_BY_NAME);
+		mapper
+			.configure(SerializationFeature.INDENT_OUTPUT, true)
+			.configure(Feature.AUTO_CLOSE_TARGET, false)
+			.configure(Feature.FLUSH_PASSED_TO_STREAM, false)
+			.writerWithDefaultPrettyPrinter()
+			.writeValue(out, Loggers.DESCRIPTIONS_BY_NAME);
 		out.write(System.lineSeparator().getBytes());
+		out.flush();
 	}
 }
