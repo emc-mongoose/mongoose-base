@@ -162,15 +162,15 @@ The log names may be also obtained using the request:
 ```bash
 curl -X GET http://localhost:9999/logs
 {
-  "com.emc.mongoose.base.logging.Cli" : "CLI args",
-  "com.emc.mongoose.base.logging.metrics.File" : "Metrics",
-  "com.emc.mongoose.base.logging.metrics.FileTotal" : "Metrics Total",
-  "com.emc.mongoose.base.logging.Config" : "Base config",
-  "com.emc.mongoose.base.logging.Errors" : "Errors",
-  "com.emc.mongoose.base.logging.Scenario" : "Scenario",
-  "com.emc.mongoose.base.logging.metrics.threshold.FileTotal" : "Threshold Metrics Total",
-  "com.emc.mongoose.base.logging.OpTraces" : "Operation Traces",
-  "com.emc.mongoose.base.logging.Messages" : "Messages"
+  "Cli" : "CLI args",
+  "metrics.File" : "Metrics",
+  "metrics.FileTotal" : "Metrics Total",
+  "Config" : "Base config",
+  "Errors" : "Errors",
+  "Scenario" : "Scenario",
+  "metrics.threshold.FileTotal" : "Threshold Metrics Total",
+  "OpTraces" : "Operation Traces",
+  "Messages" : "Messages"
 }
 ```
 
@@ -179,6 +179,7 @@ curl -X GET http://localhost:9999/logs
 ```bash
 curl http://localhost:9999/logs/123/Messages
 ```
+In this example: step id = "123", log name = "Messages"
 
 #### 4.2.3.3. Get The Specified Log File Part
 
