@@ -1,11 +1,11 @@
 {
-  "com.emc.mongoose.base.logging.Cli" : "CLI args",
-  "com.emc.mongoose.base.logging.metrics.File" : "Metrics",
-  "com.emc.mongoose.base.logging.metrics.FileTotal" : "Metrics Total",
-  "com.emc.mongoose.base.logging.Config" : "Base config",
-  "com.emc.mongoose.base.logging.Errors" : "Errors",
-  "com.emc.mongoose.base.logging.Scenario" : "Scenario",
-  "com.emc.mongoose.base.logging.metrics.threshold.FileTotal" : "Threshold Metrics Total",
-  "com.emc.mongoose.base.logging.OpTraces" : "Operation Traces",
-  "com.emc.mongoose.base.logging.Messages" : "Messages"
+  "Cli" : "CLI args",
+  "metrics.File" : "Metrics",
+  "metrics.FileTotal" : "Metrics Total",
+  "Config" : "Base config",
+  "Errors" : "Errors",
+  "Scenario" : "Scenario",
+  "metrics.threshold.FileTotal" : "Threshold Metrics Total",
+  "OpTraces" : "Operation Traces",
+  "Messages" : "Messages"
 }
