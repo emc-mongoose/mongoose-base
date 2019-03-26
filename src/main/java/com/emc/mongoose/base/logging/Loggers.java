@@ -27,15 +27,15 @@ public interface Loggers {
 
 	Map<String, String> DESCRIPTIONS_BY_NAME = new HashMap<>() {
 		{
-			put(CLI.getName(), "CLI args");
-			put(CONFIG.getName(), "Base config");
-			put(ERR.getName(), "Errors");
-			put(OP_TRACES.getName(), "Operation Traces");
-			put(METRICS_FILE.getName(), "Metrics");
-			put(METRICS_FILE_TOTAL.getName(), "Metrics Total");
-			put(METRICS_THRESHOLD_FILE_TOTAL.getName(), "Threshold Metrics Total");
-			put(MSG.getName(), "Messages");
-			put(SCENARIO.getName(), "Scenario");
+			put(CLI.getName().substring(BASE.length()), "CLI args");
+			put(CONFIG.getName().substring(BASE.length()), "Base config");
+			put(ERR.getName().substring(BASE.length()), "Errors");
+			put(OP_TRACES.getName().substring(BASE.length()), "Operation Traces");
+			put(METRICS_FILE.getName().substring(BASE.length()), "Metrics");
+			put(METRICS_FILE_TOTAL.getName().substring(BASE.length()), "Metrics Total");
+			put(METRICS_THRESHOLD_FILE_TOTAL.getName().substring(BASE.length()), "Threshold Metrics Total");
+			put(MSG.getName().substring(BASE.length()), "Messages");
+			put(SCENARIO.getName().substring(BASE.length()), "Scenario");
 		}
 	};
 }
