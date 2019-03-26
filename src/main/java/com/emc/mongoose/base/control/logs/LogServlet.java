@@ -1,6 +1,7 @@
 package com.emc.mongoose.base.control.logs;
 
 import static com.emc.mongoose.base.Constants.MIB;
+import static com.github.akurilov.commons.lang.Exceptions.throwUnchecked;
 import static org.eclipse.jetty.server.InclusiveByteRange.satisfiableRanges;
 
 import com.emc.mongoose.base.Constants;
@@ -15,18 +16,25 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.text.html.Option;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
 import org.apache.logging.log4j.core.async.AsyncLogger;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.server.InclusiveByteRange;
+import org.eclipse.jetty.server.Response;
 
 public final class LogServlet extends HttpServlet {
 
@@ -70,16 +78,32 @@ public final class LogServlet extends HttpServlet {
 	protected final void doGet(final HttpServletRequest req, final HttpServletResponse resp)
 					throws IOException {
 		try {
-			final Path logFilePath = logFilePath(req);
-			try {
-				respondFileContent(logFilePath, req, resp);
-				resp.setStatus(HttpStatus.OK_200);
-			} catch (final MultipleByteRangesException e) {
-				resp.sendError(HttpStatus.RANGE_NOT_SATISFIABLE_416, e.getMessage());
-			}
-		} catch (final NoLoggerException | InvalidUriPathException e) {
+			logFilePath(req)
+				.ifPresentOrElse(
+					path -> {
+						try {
+							try {
+								respondFileContent(path, req, resp);
+								resp.setStatus(HttpStatus.OK_200);
+							} catch(final MultipleByteRangesException e) {
+								resp.sendError(HttpStatus.RANGE_NOT_SATISFIABLE_416, e.getMessage());
+							}
+						} catch(final Exception e) {
+							throwUnchecked(e);
+						}
+					},
+					() -> {
+						try {
+							writeLogNamesJson(resp.getOutputStream());
+							resp.setStatus(HttpStatus.OK_200);
+						} catch(final IOException e) {
+							throwUnchecked(e);
+						}
+					}
+				);
+		} catch(final NoLoggerException | InvalidUriPathException e) {
 			resp.sendError(HttpStatus.BAD_REQUEST_400, e.getMessage());
-		} catch (final NoLogFileException e) {
+		} catch(final NoLogFileException e) {
 			resp.sendError(HttpStatus.NOT_FOUND_404, e.getMessage());
 		}
 	}
@@ -88,9 +112,27 @@ public final class LogServlet extends HttpServlet {
 	protected final void doDelete(final HttpServletRequest req, final HttpServletResponse resp)
 					throws IOException {
 		try {
-			final Path logFilePath = logFilePath(req);
-			Files.delete(logFilePath);
-			resp.setStatus(HttpStatus.OK_200);
+			logFilePath(req)
+				.ifPresentOrElse(
+					path -> {
+						try {
+							Files.delete(path);
+							resp.setStatus(HttpStatus.OK_200);
+						} catch(final IOException e) {
+							resp.setStatus(
+								HttpStatus.INTERNAL_SERVER_ERROR_500, "Failed to delete the log file"
+							);
+						}
+					},
+					() -> {
+						try {
+							resp.sendError(HttpStatus.BAD_REQUEST_400);
+						} catch(final IOException e) {
+							throwUnchecked(e);
+						}
+					}
+				);
+
 		} catch (final NoLoggerException | InvalidUriPathException e) {
 			resp.sendError(HttpStatus.BAD_REQUEST_400, e.getMessage());
 		} catch (final NoLogFileException e) {
@@ -98,7 +140,7 @@ public final class LogServlet extends HttpServlet {
 		}
 	}
 
-	private Path logFilePath(final HttpServletRequest req)
+	private Optional<Path> logFilePath(final HttpServletRequest req)
 					throws NoLoggerException, NoLogFileException, InvalidUriPathException {
 		final String reqUri = req.getRequestURI();
 		final Matcher matcher = PATTERN_URI_PATH.matcher(reqUri);
@@ -113,11 +155,10 @@ public final class LogServlet extends HttpServlet {
 								"Unable to determine the log file for the logger \"" + loggerName + "\"");
 			} else {
 				final String logFile = logFileNamePattern.replace(PATTERN_STEP_ID_SUBST, stepId);
-				return Paths.get(logFile);
+				return Optional.of(Paths.get(logFile));
 			}
 		} else {
-			throw new InvalidUriPathException(
-							"Unable to extract a step id/logger name from the URI path: \"" + reqUri + "\"");
+			return Optional.empty();
 		}
 	}
 
@@ -168,5 +209,13 @@ public final class LogServlet extends HttpServlet {
 				done += n;
 			}
 		}
+	}
+
+	private static void writeLogNamesJson(final OutputStream out)
+	throws IOException {
+		final var jsonFactory = new JsonFactory();
+		final var mapper = new ObjectMapper(jsonFactory);
+		mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+		mapper.writeValue(out, Loggers.DESCRIPTIONS_BY_NAME);
 	}
 }

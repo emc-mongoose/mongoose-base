@@ -13,6 +13,7 @@
 4.2.3.2. [Get the log file from the beginning](#4232-get-the-log-file-from-the-beginning)<br/>
 4.2.3.3. [Get the specified log file part](#4233-get-the-specified-log-file-part)<br/>
 4.2.3.4. [Delete the log file](#4234-delete-the-log-file)<br/>
+4.2.3.5. []
 4.2.4. [Metrics](#424-metrics)<br/>
 5. [Configuration](#5-configuration)<br/>
 6. [Output](#6-output)<br/>
@@ -155,6 +156,23 @@ curl -v -X DELETE -H "If-Match: 167514e6082" http://localhost:9999/run
 | metrics.threshold.FileTotal | Load step total threshold metrics log
 | Messages | Generic messages
 | Scenario | Scenario dump
+
+The log names may be also obtained using the request:
+
+```bash
+curl -X GET http://localhost:9999/logs
+{
+  "com.emc.mongoose.base.logging.Cli" : "CLI args",
+  "com.emc.mongoose.base.logging.metrics.File" : "Metrics",
+  "com.emc.mongoose.base.logging.metrics.FileTotal" : "Metrics Total",
+  "com.emc.mongoose.base.logging.Config" : "Base config",
+  "com.emc.mongoose.base.logging.Errors" : "Errors",
+  "com.emc.mongoose.base.logging.Scenario" : "Scenario",
+  "com.emc.mongoose.base.logging.metrics.threshold.FileTotal" : "Threshold Metrics Total",
+  "com.emc.mongoose.base.logging.OpTraces" : "Operation Traces",
+  "com.emc.mongoose.base.logging.Messages" : "Messages"
+}
+```
 
 #### 4.2.3.2. Get The Log File Page From The Beginning
 

@@ -3,6 +3,9 @@ package com.emc.mongoose.base.logging;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /** Created by kurila on 05.05.17. */
 public interface Loggers {
 
@@ -21,4 +24,18 @@ public interface Loggers {
 	Logger MULTIPART = LogManager.getLogger(BASE + "Multipart");
 	Logger SCENARIO = LogManager.getLogger(BASE + "Scenario");
 	Logger TEST = LogManager.getLogger(BASE + "Test");
+
+	Map<String, String> DESCRIPTIONS_BY_NAME = new HashMap<>() {
+		{
+			put(CLI.getName(), "CLI args");
+			put(CONFIG.getName(), "Base config");
+			put(ERR.getName(), "Errors");
+			put(OP_TRACES.getName(), "Operation Traces");
+			put(METRICS_FILE.getName(), "Metrics");
+			put(METRICS_FILE_TOTAL.getName(), "Metrics Total");
+			put(METRICS_THRESHOLD_FILE_TOTAL.getName(), "Threshold Metrics Total");
+			put(MSG.getName(), "Messages");
+			put(SCENARIO.getName(), "Scenario");
+		}
+	};
 }
