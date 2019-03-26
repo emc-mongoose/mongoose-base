@@ -6,6 +6,8 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import org.apache.logging.log4j.Level;
 
+import static com.github.akurilov.commons.lang.Exceptions.throwUnchecked;
+
 public final class RunImpl implements Run {
 
 	private final String comment;
@@ -35,6 +37,11 @@ public final class RunImpl implements Run {
 		Loggers.SCENARIO.log(Level.INFO, scenario);
 		try {
 			scriptEngine.eval(scenario);
+		} catch(final RuntimeException e) {
+			final var cause = e.getCause();
+			if(cause instanceof InterruptedException) {
+				throwUnchecked(cause);
+			}
 		} catch (final ScriptException e) {
 			LogUtil.trace(
 							Loggers.ERR,

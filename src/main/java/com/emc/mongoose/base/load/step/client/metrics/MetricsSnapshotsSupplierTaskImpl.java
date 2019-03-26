@@ -8,6 +8,8 @@ import com.github.akurilov.fiber4j.ExclusiveFiberBase;
 import com.github.akurilov.fiber4j.FibersExecutor;
 
 import java.util.List;
+import java.util.concurrent.locks.LockSupport;
+
 import org.apache.logging.log4j.Level;
 
 import static com.emc.mongoose.base.Exceptions.throwUncheckedIfInterrupted;
@@ -16,7 +18,7 @@ public final class MetricsSnapshotsSupplierTaskImpl extends ExclusiveFiberBase
 				implements MetricsSnapshotsSupplierTask {
 
 	private final LoadStep loadStep;
-	private volatile List<? extends AllMetricsSnapshot> snapshotsByOrigin;
+	private volatile List<? extends AllMetricsSnapshot> snapshotsByOrigin = null;
 	private volatile boolean failedBeforeFlag = false;
 
 	public MetricsSnapshotsSupplierTaskImpl(final LoadStep loadStep) {
@@ -47,6 +49,10 @@ public final class MetricsSnapshotsSupplierTaskImpl extends ExclusiveFiberBase
 
 	@Override
 	public final List<? extends AllMetricsSnapshot> get() {
+		// if running, wait for the 1st non-null snapshots
+		while(isStarted() && null == snapshotsByOrigin) {
+			LockSupport.parkNanos(1);
+		}
 		return snapshotsByOrigin;
 	}
 
