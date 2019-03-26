@@ -217,5 +217,6 @@ public final class LogServlet extends HttpServlet {
 		final var mapper = new ObjectMapper(jsonFactory);
 		mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 		mapper.writeValue(out, Loggers.DESCRIPTIONS_BY_NAME);
+		out.write(System.lineSeparator().getBytes());
 	}
 }
