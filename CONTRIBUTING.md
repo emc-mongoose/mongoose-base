@@ -259,11 +259,11 @@ SUITE=api.storage TEST=s3 ./gradlew clean robotest
 
 ## 5.1. Style
 
-[Google Java Style](https://google.github.io/styleguide/javaguide.html) is used as default.
+The code style is defined by the file `spotless.eclpiseformat.xml`.
 
 ### Autoformatting hook
 
-Git autoformatting hook reformats Java source code to comply with [Google Java Style](https://google.github.io/styleguide/javaguide.html). 
+Git autoformatting hook reformats Java source code to comply with the *defined code style*.
 
 The hook script is in the root of the repository named `pre-commit`.`pre-commit` **MUST be copied to the directory** `.git/hooks/` and you need to check that the script has the access permissions to execute:
 ```bash
@@ -281,6 +281,7 @@ This hook will work automatically with any commit and format the code in the sam
   * Abstract implementation should be named as `FooBase`
   * Default concrete implementation should be names as `FooImpl`
 * Any field/local variable should be *final* if possible
+* Use `var` (the type inference introduced in Java 10) where possible instead of explicit types
 
 ## 5.2. Exception Handling
 
