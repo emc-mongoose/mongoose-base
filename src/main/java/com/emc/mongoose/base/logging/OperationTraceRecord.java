@@ -38,7 +38,7 @@ public final class OperationTraceRecord<I extends Item, O extends Operation<I>> 
 		respLatency = t < duration && t > 0 ? t : -1;
 		if (opResult instanceof DataOperation) {
 			final DataOperation dataIoResult = (DataOperation) opResult;
-			t = opResult.reqTimeDone() - dataIoResult.respDataTimeStart();
+			t = dataIoResult.dataLatency();
 			dataLatency = t < duration && t > 0 ? t : -1;
 			transferSize = dataIoResult.countBytesDone();
 		} else {

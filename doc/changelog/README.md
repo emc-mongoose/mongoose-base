@@ -1,9 +1,7 @@
 # Contents
 
 ## 2019
-* [5.0.0](#500) TBD
-* [4.1.4](#414) TBD
-* ~~4.1.2~~
+* [4.2.3](#423) 2019-03-27
 * [4.1.1](#411) 2019-01-16
 
 ## 2018
@@ -62,7 +60,7 @@
 * [0.1.4](#014) 09/17/14
 * [0.1.3](#013) 08/15/14
 
-# 5.0.0
+# 4.2.3
 
 ## New Features and Enhancements
 
@@ -76,17 +74,35 @@ standard.
 
 ### Non-functional
 
-1. [Migration to Java 11](java11/) caused the significant performance improvement and allowed the developers to use the
+1. [Upgrade Java to v11](java11/) caused the significant performance improvement and allowed the developers to use the
 cutting edge language features.
 2. Use YAML instead of JSON in all configuration files. Issue [link](https://mongoose-issues.atlassian.net/browse/GOOSE-1327).
-3. Handle the unhappy cases more correctly. Issue [link](https://mongoose-issues.atlassian.net/browse/GOOSE-1319).
+3. Release automation (release is done by setting the *latest* tag on the source code revision).
+4. Mongoose source repo has been split into the modules: 
+    1. mongoose-base
+    2. mongoose-load-step-pipeline
+    3. mongoose-load-step-weighted
+    4. mongoose-storage-driver-coop
+    5. mongoose-storage-driver-preempt
+    6. mongoose-storage-driver-nio
+    7. mongoose-storage-driver-fs
+    8. mongoose-storage-driver-netty
+    9. mongoose-storage-driver-http
+    10. mongoose-storage-driver-atmos
+    11. mongoose-storage-driver-s3
+    12. mongoose-storage-driver-swift
+    
+    Each module has own versions since this split.
 
 ## Fixed Bugs
 
 | Id | Description |
 |----|-------------|
-| [GOOSE-1279](https://mongoose-issues.atlassian.net/browse/GOOSE-1279) | Negative actual concurrency reporting |
-| [GOOSE-1319](https://mongoose-issues.atlassian.net/browse/GOOSE-1316) | Swift storage driver: handle multi byte ranges read responses correctly |
+| [BASE-1279](https://mongoose-issues.atlassian.net/browse/BASE-1279) | Negative actual concurrency reporting |
+| [BASE-1319](https://mongoose-issues.atlassian.net/browse/BASE-1316) | Swift storage driver: handle multi byte ranges read responses correctly |
+| [BASE-1335](https://mongoose-issues.atlassian.net/browse/BASE-1335) | Prometheus parsing error on Mongoose metrics.
+| [BASE-1349](https://mongoose-issues.atlassian.net/browse/BASE-1349) | No data latency available in the traces output file |
+| [BASE-1350](https://mongoose-issues.atlassian.net/browse/BASE-1350) | Unable to fetch existing log types via REST API
 
 # 4.1.1
 
