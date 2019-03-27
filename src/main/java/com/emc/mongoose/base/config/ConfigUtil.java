@@ -19,14 +19,28 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.emc.mongoose.base.config.ConfigFormat.JSON;
+import static com.emc.mongoose.base.config.ConfigFormat.YAML;
+
 public interface ConfigUtil {
 
-	static ObjectMapper readConfigMapper(final Map<String, Object> schema)
+	static ObjectMapper readConfigMapper(final ConfigFormat format, final Map<String, Object> schema)
 					throws NoSuchMethodException {
-		return new YAMLMapper()
-						.enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
-						.enable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY)
-						.enable(SerializationFeature.INDENT_OUTPUT);
+		final ObjectMapper mapper;
+		switch(format) {
+			case JSON:
+				mapper = new ObjectMapper();
+				break;
+			case YAML:
+				mapper = new YAMLMapper();
+				break;
+			default:
+				throw new AssertionError();
+		}
+		return mapper
+			.enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+			.enable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY)
+			.enable(SerializationFeature.INDENT_OUTPUT);
 	}
 
 	static ObjectWriter writerWithPrettyPrinter(final ObjectMapper om) {
@@ -38,8 +52,18 @@ public interface ConfigUtil {
 		return om.writer(printer);
 	}
 
-	static ObjectWriter configWriter() {
-		final ObjectMapper mapper = new YAMLMapper();
+	static ObjectWriter configWriter(final ConfigFormat format) {
+		final ObjectMapper mapper;
+		switch(format) {
+			case JSON:
+				mapper = new ObjectMapper();
+				break;
+			case YAML:
+				mapper = new YAMLMapper();
+				break;
+			default:
+				throw new AssertionError();
+		}
 		return writerWithPrettyPrinter(mapper);
 	}
 
@@ -56,10 +80,10 @@ public interface ConfigUtil {
 		return configTree;
 	}
 
-	static String toString(final Config config) {
+	static String toString(final Config config, final ConfigFormat format) {
 		try {
 			final var configTree = configTree(config);
-			return configWriter().writeValueAsString(configTree);
+			return configWriter(format).writeValueAsString(configTree);
 		} catch (final JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
@@ -67,16 +91,22 @@ public interface ConfigUtil {
 
 	static Config loadConfig(final File file, final Map<String, Object> schema)
 					throws NoSuchMethodException, IOException {
-		final Map<String, Object> configTree = readConfigMapper(schema)
+		final ConfigFormat format;
+		if(file.getName().endsWith(".json")) {
+			format = JSON;
+		} else {
+			format = YAML;
+		}
+		final Map<String, Object> configTree = readConfigMapper(format, schema)
 						.readValue(file, new TypeReference<Map<String, Object>>() {
 							{}
 						});
 		return new BasicConfig("-", schema, configTree);
 	}
 
-	static Config loadConfig(final String content, final Map<String, Object> schema)
+	static Config loadConfig(final String content, final ConfigFormat format, final Map<String, Object> schema)
 					throws NoSuchMethodException, IOException {
-		final Map<String, Object> configTree = readConfigMapper(schema)
+		final Map<String, Object> configTree = readConfigMapper(format, schema)
 						.readValue(content, new TypeReference<Map<String, Object>>() {
 							{}
 						});

@@ -8,6 +8,7 @@ import static org.apache.logging.log4j.CloseableThreadContext.put;
 
 import com.emc.mongoose.base.concurrent.DaemonBase;
 import com.emc.mongoose.base.concurrent.ServiceTaskExecutor;
+import com.emc.mongoose.base.config.ConfigFormat;
 import com.emc.mongoose.base.config.ConfigUtil;
 import com.emc.mongoose.base.config.TimeUtil;
 import com.emc.mongoose.base.env.Extension;
@@ -47,7 +48,7 @@ public abstract class LoadStepBase extends DaemonBase implements LoadStep, Runna
 		this.extensions = extensions;
 		this.ctxConfigs = ctxConfigs;
 		this.metricsMgr = metricsMgr;
-		Loggers.CONFIG.info(ConfigUtil.toString(config));
+		Loggers.CONFIG.info(ConfigUtil.toString(config, ConfigFormat.YAML));
 	}
 
 	@Override

@@ -1,9 +1,14 @@
 package com.emc.mongoose.base.control.run;
 
+import static com.emc.mongoose.base.config.ConfigFormat.JSON;
+import static com.emc.mongoose.base.config.ConfigFormat.YAML;
+import static org.eclipse.jetty.http.MimeTypes.Type.APPLICATION_JSON;
 import static org.eclipse.jetty.http.MimeTypes.Type.MULTIPART_FORM_DATA;
+import static org.eclipse.jetty.http.MimeTypes.Type.TEXT_JSON;
 
 import com.emc.mongoose.base.concurrent.SingleTaskExecutor;
 import com.emc.mongoose.base.concurrent.SingleTaskExecutorImpl;
+import com.emc.mongoose.base.config.ConfigFormat;
 import com.emc.mongoose.base.config.ConfigUtil;
 import com.emc.mongoose.base.env.Extension;
 import com.emc.mongoose.base.load.step.ScenarioUtil;
@@ -211,7 +216,20 @@ public class RunServlet extends HttpServlet {
 		try (final var br = new BufferedReader(new InputStreamReader(defaultsPart.getInputStream()))) {
 			rawDefaultsData = br.lines().collect(Collectors.joining("\n"));
 		}
-		return ConfigUtil.loadConfig(rawDefaultsData, configSchema);
+		final var contentType = defaultsPart.getContentType();
+		final ConfigFormat format;
+		if(contentType != null) {
+			if(contentType.startsWith(APPLICATION_JSON.toString())) {
+				format = JSON;
+			} else if(contentType.startsWith(TEXT_JSON.toString())) {
+				format = JSON;
+			} else {
+				format = YAML;
+			}
+		} else {
+			format = YAML;
+		}
+		return ConfigUtil.loadConfig(rawDefaultsData, format, configSchema);
 	}
 
 	static String getIncomingScenarioOrDefault(final Part scenarioPart, final Path appHomePath)
