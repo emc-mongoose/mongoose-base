@@ -12,7 +12,7 @@ High-load tests may allocate up to 1-2 GB of the memory depending on the scenari
 # Jar
 
 Mongoose is distributed as a single jar file from:
-http://central.maven.org/maven2/com/github/emc-mongoose/mongoose/
+http://central.maven.org/maven2/com/github/emc-mongoose/mongoose-base/
 
 # Docker
 
@@ -20,9 +20,9 @@ Mongoose images are stored in the [Docker Hub](https://hub.docker.com/u/emcmongo
 
 ## Base
 
-**Note** that the base image contains the following storage driver implementations: fs, s3, atmos, swift
-
-See the [extensions](#extensions) section to use any additional functionality
+**Note**
+> The base image doesn't contain any additonal load step types neither additional storage drivers. Please use one of the
+> specific images either consider using the [backward compatibility bundle](https://github.com/emc-mongoose/mongoose)
 
 ### Standalone
 
@@ -42,7 +42,7 @@ First, it's necessary to start some node/peer services:
 ```bash
 docker run \
     --network host \
-    emcmongoose/mongoose \
+    emcmongoose/mongoose[-<TYPE>] \
     --run-node [\
     --load-step-node-port=<PORT>]
 ```
@@ -53,34 +53,10 @@ To invoke the run in the distributed mode it's necessary to specify the addition
 ```bash
 docker run \
     --network host \
-    emcmongoose/mongoose \
+    emcmongoose/mongoose[-<TYPE>] \
     --load-step-node-addrs=<ADDR1,ADDR2,...> [\
     <ARGS>]
 ```
-
-### Extensions
-
-#### Provided
-
-##### Load Step Implementations
-
-* Linear
-* Pipeline
-* Weighted
-
-##### Storage Drivers
-
-* s3: Amazon S3 generic storage
-* atmos: EMC Atmos cloud storage
-* swift: OpenStack Swift cloud storage
-* fs: Filesystem storage driver
-
-#### External
-
-| Image Name | Description |
-|------------|-------------|
-| [mongoose-storage-driver-hdfs](https://github.com/emc-mongoose/mongoose-storage-driver-hdfs) | Base image + HDFS storage driver implementation |
-| [mongoose-storage-driver-pravega](https://github.com/emc-mongoose/mongoose-storage-driver-pravega) | Base image + [Pravega](http://pravega.io) storage driver implementation (planned) |
 
 ## Additional Notes
 
