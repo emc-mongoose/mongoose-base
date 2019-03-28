@@ -13,7 +13,7 @@ public final class AddCorsHeadersRule extends Rule {
 	public static final String HEADER_NAME_ACA_METHODS = HEADER_NAME_PREFIX_ACA + "-Methods";
 	public static final String HEADER_VALUE_ACA_METHODS = "DELETE,GET,HEAD,POST,PUT";
 	public static final String HEADER_NAME_ACA_HEADERS = HEADER_NAME_PREFIX_ACA + "-Headers";
-	public static final String ACA_HEADERS = "Origin, X-Requested-With, Content-Type, Accept";
+	public static final String ACA_HEADERS = "Origin, X-Requested-With, Content-Type, Accept, ETag";
 
 	@Override
 	public final String matchAndApply(
