@@ -15,6 +15,7 @@ import com.emc.mongoose.base.load.step.ScenarioUtil;
 import com.emc.mongoose.base.logging.LogUtil;
 import com.emc.mongoose.base.logging.Loggers;
 import com.emc.mongoose.base.metrics.MetricsManager;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.github.akurilov.confuse.Config;
 import com.github.akurilov.confuse.exceptions.InvalidValuePathException;
 import com.github.akurilov.confuse.exceptions.InvalidValueTypeException;
@@ -230,19 +231,25 @@ public class RunServlet extends HttpServlet {
 			rawDefaultsData = br.lines().collect(Collectors.joining("\n"));
 		}
 		final var contentType = defaultsPart.getContentType();
-		final ConfigFormat format;
+		ConfigFormat format = YAML;
 		if(contentType != null) {
 			if(contentType.startsWith(APPLICATION_JSON.toString())) {
 				format = JSON;
 			} else if(contentType.startsWith(TEXT_JSON.toString())) {
 				format = JSON;
-			} else {
-				format = YAML;
 			}
-		} else {
-			format = YAML;
 		}
-		return ConfigUtil.loadConfig(rawDefaultsData, format, configSchema);
+		try {
+			return ConfigUtil.loadConfig(rawDefaultsData, format, configSchema);
+		} catch(final JsonParseException e) {
+			if(YAML.equals(format)) {
+				// was unable to detect format using content-type header (likely application/octet-stream),
+				// fallback is YAML, but it may JSON actually
+				return ConfigUtil.loadConfig(rawDefaultsData, JSON, configSchema);
+			} else {
+				throw e;
+			}
+		}
 	}
 
 	static String getIncomingScenarioOrDefault(final Part scenarioPart, final Path appHomePath)
