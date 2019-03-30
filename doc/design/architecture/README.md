@@ -8,11 +8,7 @@
 2.4. [Metrics Manager](#24-metrics-manager)<br/>
 3. [Concurrency](#3-concurrency)<br/>
 3.1. [Service Tasks](#31-service-tasks)<br/>
-3.2. [Load Operations](#32-load-operations)<br/>
-3.2.1. [NIO Storage Driver Derivatives](#321-nio-storage-driver-derivatives)<br/>
-3.2.2. [Netty-based Storage Drivers](322-netty-based-storage-drivers)<br/>
-3.2.3. [Preemptive Storage Driver Derivatives](#323-preemptive-storage-driver-derivatives)<br/>
-3.3. [Tuning](#32-tuning)<br/>
+3.2. [Tuning](#32-tuning)<br/>
 
 # 1. Basic Terms
 
@@ -129,25 +125,6 @@ pools for these types of tasks.
 Each Mongoose process shares the global service tasks executor (FibersExecutor instance). By default the count of
 the service tasks executor's threads is equal to the count of the available CPU cores. A user may set the different
 count of these threads using the configuration option load-service-threads.
-
-## 3.2. Load Operations
-
-### 3.2.1. NIO Storage Driver Derivatives
-
-The count of the concurrent load operations at is limited also by the `storage-driver-threads` configuration option
-which is CPU core count by default. This means that operations will occupy no more I/O worker threads than configured.
-However the operations are reentrant and the count of the active (started but not completed yet) operations may be much
-more(may be limited by `storage-driver-limit-concurrency` configuration option).
-
-### 3.2.2. Netty-based Storage Drivers
-
-Netty uses its own I/O worker thread pool. The count of these threads is controlled by the `storage-driver-threads`
-configuration option. However the connection pool allows to keep much more open connections at any moment of time. The
-count of the open connections may be limited by `storage-driver-limit-concurrency` configuration option.
-
-### 3.2.3. Preemptive Storage Driver Derivatives
-
-Uses non-reentrant (thread-per-task) execution approach.
 
 ## 3.2. Tuning
 

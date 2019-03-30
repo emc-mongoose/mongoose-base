@@ -69,8 +69,6 @@
 1. [Expression Language](../../src/main/java/com/emc/mongoose/config/el/README.md) is based on the JSR-341
 standard.
 2. Custom URI query for the HTTP requests.
-3. S3 V4 authentication.
-4. Swift V2 authentication support.
 
 ### Non-functional
 
