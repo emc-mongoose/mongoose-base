@@ -11,9 +11,13 @@ import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
+import java.nio.channels.AsynchronousByteChannel;
+import java.nio.channels.AsynchronousFileChannel;
+import java.nio.channels.CompletionHandler;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.BitSet;
+
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 
@@ -401,6 +405,32 @@ public class DataItemImpl extends ItemImpl implements DataItem {
 		n = chanDst.write(ringBuff);
 		position += n;
 		return n;
+	}
+
+	@Override
+	public final <A> void writeToAsyncByteChannel(
+		final AsynchronousByteChannel dstChan, final long maxCount, final A attach,
+		final CompletionHandler<Integer, ? super A> handler
+	) {
+		final MappedByteBuffer ringBuff = (MappedByteBuffer) dataInput.getLayer(layerNum).asReadOnlyBuffer();
+		int n = (int) ((offset + position) % dataInputSize);
+		ringBuff.position(n);
+		n = (int) Math.min(maxCount, ringBuff.remaining());
+		ringBuff.limit(ringBuff.position() + n);
+		dstChan.write(ringBuff, attach, handler);
+	}
+
+	@Override
+	public final <A> void writeToAsyncFileChannel(
+		final AsynchronousFileChannel dstChan, final long dstPos, final long maxCount, final A attach,
+		final CompletionHandler<Integer, ? super A> handler
+	) {
+		final MappedByteBuffer ringBuff = (MappedByteBuffer) dataInput.getLayer(layerNum).asReadOnlyBuffer();
+		int n = (int) ((offset + position) % dataInputSize);
+		ringBuff.position(n);
+		n = (int) Math.min(maxCount, ringBuff.remaining());
+		ringBuff.limit(ringBuff.position() + n);
+		dstChan.write(ringBuff, dstPos, attach, handler);
 	}
 
 	@Override
