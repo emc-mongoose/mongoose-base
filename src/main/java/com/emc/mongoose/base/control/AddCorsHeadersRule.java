@@ -8,7 +8,7 @@ public final class AddCorsHeadersRule extends Rule {
 
 	public static final String HEADER_NAME_PREFIX_AC = "Access-Control";
 	public static final String HEADER_NAME_PREFIX_ACA = HEADER_NAME_PREFIX_AC + "-Allow";
-	public static final String HEADER_VALUE_ACA_METHODS = "DELETE,GET,HEAD,POST,PUT, OPTIONS";
+	public static final String HEADER_VALUE_ACA_METHODS = "DELETE,GET,HEAD,POST,PUT,OPTIONS";
 
 	public static final String HEADER_NAME_ACA_ORIGIN = HEADER_NAME_PREFIX_ACA + "-Origin";
 	public static final String HEADER_VALUE_ACA_ORIGIN = "*";
