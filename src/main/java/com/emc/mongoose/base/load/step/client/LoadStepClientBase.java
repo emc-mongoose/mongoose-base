@@ -323,7 +323,7 @@ public abstract class LoadStepClientBase extends LoadStepBase implements LoadSte
 		// reference for
 		// further usage
 		final var metricsCtx = (DistributedMetricsContext) DistributedMetricsContextImpl.builder()
-						.id(id())
+						.loadStepId(id())
 						.opType(opType)
 						.nodeCountSupplier(this::sliceCount)
 						.concurrencyLimit(concurrencyLimit)
