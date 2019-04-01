@@ -125,7 +125,7 @@ public class RunServlet extends HttpServlet {
 	}
 
 	static void setRunTimestampHeader(final Run task, final HttpServletResponse resp) {
-		resp.setHeader(HttpHeader.ETAG.name(), Long.toString(task.timestamp(), 0x10));
+		resp.setHeader(HttpHeader.ETAG.name(), Long.toString(task.runId(), 0x10));
 	}
 
 	void applyForActiveRunIfAny(
@@ -147,19 +147,19 @@ public class RunServlet extends HttpServlet {
 					final HttpServletResponse resp,
 					final BiConsumer<Run, Long> runRespTimestampConsumer)
 					throws IOException {
-		final var reqTimestampRawValue = Collections.list(req.getHeaders(HttpHeader.IF_MATCH.toString())).stream()
+		final var runIdRawValue = Collections.list(req.getHeaders(HttpHeader.IF_MATCH.toString())).stream()
 						.findAny()
 						.orElse(null);
-		if (null == reqTimestampRawValue) {
+		if (null == runIdRawValue) {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing header: " + HttpHeader.IF_MATCH);
 		} else {
 			try {
-				final var reqTimestamp = Long.parseLong(reqTimestampRawValue, 0x10);
+				final var runId = Long.parseLong(runIdRawValue, 0x10);
 				applyForActiveRunIfAny(
-								resp, (run, resp_) -> runRespTimestampConsumer.accept(run, reqTimestamp));
+								resp, (run, resp_) -> runRespTimestampConsumer.accept(run, runId));
 			} catch (final NumberFormatException e) {
 				resp.sendError(
-								HttpServletResponse.SC_BAD_REQUEST, "Invalid start time: " + reqTimestampRawValue);
+								HttpServletResponse.SC_BAD_REQUEST, "Invalid start time: " + runIdRawValue);
 			}
 		}
 	}
@@ -170,8 +170,8 @@ public class RunServlet extends HttpServlet {
 	}
 
 	static void setRunMatchesResponse(
-					final Run run, final HttpServletResponse resp, final long reqTimestamp) {
-		if (run.timestamp() == reqTimestamp) {
+					final Run run, final HttpServletResponse resp, final long runId) {
+		if (run.runId() == runId) {
 			resp.setStatus(HttpServletResponse.SC_OK);
 		} else {
 			resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
@@ -181,9 +181,9 @@ public class RunServlet extends HttpServlet {
 	static void stopRunIfMatchesAndSetResponse(
 					final Run run,
 					final HttpServletResponse resp,
-					final long reqTimestamp,
+					final long runId,
 					final SingleTaskExecutor scenarioExecutor) {
-		if (run.timestamp() == reqTimestamp) {
+		if (run.runId() == runId) {
 			scenarioExecutor.stop(run);
 			if (null != scenarioExecutor.task()) {
 				throw new AssertionError("Run stopping failure");
