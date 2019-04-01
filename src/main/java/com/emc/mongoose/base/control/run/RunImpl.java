@@ -37,9 +37,9 @@ public final class RunImpl implements Run {
 		Loggers.SCENARIO.log(Level.INFO, scenario);
 		try {
 			scriptEngine.eval(scenario);
-		} catch(final RuntimeException e) {
+		} catch (final RuntimeException e) {
 			final var cause = e.getCause();
-			if(cause instanceof InterruptedException) {
+			if (cause instanceof InterruptedException) {
 				throwUnchecked(cause);
 			}
 		} catch (final ScriptException e) {

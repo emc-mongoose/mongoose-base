@@ -78,31 +78,30 @@ public final class LogServlet extends HttpServlet {
 					throws IOException {
 		try {
 			logFilePath(req)
-				.ifPresentOrElse(
-					path -> {
-						try {
-							try {
-								respondFileContent(path, req, resp);
-								resp.setStatus(HttpStatus.OK_200);
-							} catch(final MultipleByteRangesException e) {
-								resp.sendError(HttpStatus.RANGE_NOT_SATISFIABLE_416, e.getMessage());
-							}
-						} catch(final Exception e) {
-							throwUnchecked(e);
-						}
-					},
-					() -> {
-						try {
-							writeLogNamesJson(resp.getOutputStream());
-							resp.setStatus(HttpStatus.OK_200);
-						} catch(final IOException e) {
-							throwUnchecked(e);
-						}
-					}
-				);
-		} catch(final NoLoggerException | InvalidUriPathException e) {
+							.ifPresentOrElse(
+											path -> {
+												try {
+													try {
+														respondFileContent(path, req, resp);
+														resp.setStatus(HttpStatus.OK_200);
+													} catch (final MultipleByteRangesException e) {
+														resp.sendError(HttpStatus.RANGE_NOT_SATISFIABLE_416, e.getMessage());
+													}
+												} catch (final Exception e) {
+													throwUnchecked(e);
+												}
+											},
+											() -> {
+												try {
+													writeLogNamesJson(resp.getOutputStream());
+													resp.setStatus(HttpStatus.OK_200);
+												} catch (final IOException e) {
+													throwUnchecked(e);
+												}
+											});
+		} catch (final NoLoggerException | InvalidUriPathException e) {
 			resp.sendError(HttpStatus.BAD_REQUEST_400, e.getMessage());
-		} catch(final NoLogFileException e) {
+		} catch (final NoLogFileException e) {
 			resp.sendError(HttpStatus.NOT_FOUND_404, e.getMessage());
 		}
 	}
@@ -112,25 +111,23 @@ public final class LogServlet extends HttpServlet {
 					throws IOException {
 		try {
 			logFilePath(req)
-				.ifPresentOrElse(
-					path -> {
-						try {
-							Files.delete(path);
-							resp.setStatus(HttpStatus.OK_200);
-						} catch(final IOException e) {
-							resp.setStatus(
-								HttpStatus.INTERNAL_SERVER_ERROR_500, "Failed to delete the log file"
-							);
-						}
-					},
-					() -> {
-						try {
-							resp.sendError(HttpStatus.BAD_REQUEST_400);
-						} catch(final IOException e) {
-							throwUnchecked(e);
-						}
-					}
-				);
+							.ifPresentOrElse(
+											path -> {
+												try {
+													Files.delete(path);
+													resp.setStatus(HttpStatus.OK_200);
+												} catch (final IOException e) {
+													resp.setStatus(
+																	HttpStatus.INTERNAL_SERVER_ERROR_500, "Failed to delete the log file");
+												}
+											},
+											() -> {
+												try {
+													resp.sendError(HttpStatus.BAD_REQUEST_400);
+												} catch (final IOException e) {
+													throwUnchecked(e);
+												}
+											});
 
 		} catch (final NoLoggerException | InvalidUriPathException e) {
 			resp.sendError(HttpStatus.BAD_REQUEST_400, e.getMessage());
@@ -211,15 +208,15 @@ public final class LogServlet extends HttpServlet {
 	}
 
 	private static void writeLogNamesJson(final OutputStream out)
-	throws IOException {
+					throws IOException {
 		final var jsonFactory = new JsonFactory();
 		final var mapper = new ObjectMapper(jsonFactory);
 		mapper
-			.configure(SerializationFeature.INDENT_OUTPUT, true)
-			.configure(Feature.AUTO_CLOSE_TARGET, false)
-			.configure(Feature.FLUSH_PASSED_TO_STREAM, false)
-			.writerWithDefaultPrettyPrinter()
-			.writeValue(out, Loggers.DESCRIPTIONS_BY_NAME);
+						.configure(SerializationFeature.INDENT_OUTPUT, true)
+						.configure(Feature.AUTO_CLOSE_TARGET, false)
+						.configure(Feature.FLUSH_PASSED_TO_STREAM, false)
+						.writerWithDefaultPrettyPrinter()
+						.writeValue(out, Loggers.DESCRIPTIONS_BY_NAME);
 		out.write(System.lineSeparator().getBytes());
 		out.flush();
 	}

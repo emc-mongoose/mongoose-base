@@ -16,8 +16,8 @@ public interface MetricsConstants {
 	String META_DATA_LIMIT_CONC = "storage_driver_limit_concurrency";
 	String META_DATA_ITEM_DATA_SIZE = "item_data_size";
 	String META_DATA_START_TIME = "start_time";
-	String META_DATA_NODE_LIST= "node_list";
-	String META_DATA_COMMENT= "user_comment";
+	String META_DATA_NODE_LIST = "node_list";
+	String META_DATA_COMMENT = "user_comment";
 	String META_DATA_RUN_ID = "run_id";
 	//
 	String[] METRIC_LABELS = {

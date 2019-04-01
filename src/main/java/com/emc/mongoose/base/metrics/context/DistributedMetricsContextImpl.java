@@ -2,7 +2,6 @@ package com.emc.mongoose.base.metrics.context;
 
 import com.emc.mongoose.base.item.op.OpType;
 import com.emc.mongoose.base.metrics.DistributedMetricsListener;
-import com.emc.mongoose.base.metrics.MetricsConstants;
 import com.emc.mongoose.base.metrics.snapshot.AllMetricsSnapshot;
 import com.emc.mongoose.base.metrics.snapshot.ConcurrencyMetricSnapshot;
 import com.emc.mongoose.base.metrics.snapshot.ConcurrencyMetricSnapshotImpl;
@@ -52,8 +51,7 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 						metaData,
 						concurrencyThreshold,
 						stdOutColorFlag,
-						TimeUnit.SECONDS.toMillis(updateIntervalSec)
-		);
+						TimeUnit.SECONDS.toMillis(updateIntervalSec));
 		this.nodeCountSupplier = nodeCountSupplier;
 		this.snapshotsSupplier = snapshotsSupplier;
 		this.avgPersistFlag = avgPersistFlag;

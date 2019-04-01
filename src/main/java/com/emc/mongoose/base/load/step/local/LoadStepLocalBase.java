@@ -69,7 +69,7 @@ public abstract class LoadStepLocalBase extends LoadStepBase {
 						.outputPeriodSec(avgPeriod(metricsConfig))
 						.stdOutColorFlag(outputColorFlag)
 						.comment(config.stringVal("run-comment"))
-		                                         .runId("")
+						.runId("")
 						.build();
 		metricsContexts.add(metricsCtx);
 	}

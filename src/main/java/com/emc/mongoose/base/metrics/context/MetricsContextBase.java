@@ -1,12 +1,9 @@
 package com.emc.mongoose.base.metrics.context;
 
-import com.emc.mongoose.base.Constants;
 import com.emc.mongoose.base.item.op.OpType;
-import com.emc.mongoose.base.metrics.MetricsConstants;
 import com.emc.mongoose.base.metrics.snapshot.AllMetricsSnapshot;
 import com.github.akurilov.commons.system.SizeInBytes;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.emc.mongoose.base.metrics.MetricsConstants.*;
@@ -24,7 +21,6 @@ public abstract class MetricsContextBase<S extends AllMetricsSnapshot>
 	private volatile boolean thresholdStateExitedFlag = false;
 	protected volatile MetricsContextBase thresholdMetricsCtx = null;
 	protected volatile S lastSnapshot = null;
-
 
 	protected MetricsContextBase(
 					final Map metaData,
@@ -55,7 +51,7 @@ public abstract class MetricsContextBase<S extends AllMetricsSnapshot>
 	}
 
 	@Override
-	public final Map metaData(){
+	public final Map metaData() {
 		return metaData;
 	}
 
