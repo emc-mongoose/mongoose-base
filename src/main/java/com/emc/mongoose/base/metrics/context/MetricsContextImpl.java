@@ -15,11 +15,20 @@ import com.emc.mongoose.base.metrics.snapshot.RateMetricSnapshot;
 import com.emc.mongoose.base.metrics.util.ConcurrentSlidingWindowLongReservoir;
 import com.github.akurilov.commons.system.SizeInBytes;
 import java.time.Clock;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.IntSupplier;
+
+import static com.emc.mongoose.base.metrics.MetricsConstants.META_DATA_COMMENT;
+import static com.emc.mongoose.base.metrics.MetricsConstants.META_DATA_ITEM_DATA_SIZE;
+import static com.emc.mongoose.base.metrics.MetricsConstants.META_DATA_LIMIT_CONC;
+import static com.emc.mongoose.base.metrics.MetricsConstants.META_DATA_OP_TYPE;
+import static com.emc.mongoose.base.metrics.MetricsConstants.META_DATA_RUN_ID;
+import static com.emc.mongoose.base.metrics.MetricsConstants.META_DATA_STEP_ID;
 
 public class MetricsContextImpl<S extends AllMetricsSnapshotImpl> extends MetricsContextBase<S>
 				implements MetricsContext<S> {
@@ -36,25 +45,16 @@ public class MetricsContextImpl<S extends AllMetricsSnapshotImpl> extends Metric
 	private final Lock timingsUpdateLock = timingLock.writeLock();
 
 	public MetricsContextImpl(
-					final String id,
-					final OpType opType,
+					final Map metaData,
 					final IntSupplier actualConcurrencyGauge,
-					final int concurrencyLimit,
 					final int concurrencyThreshold,
-					final SizeInBytes itemDataSize,
 					final int updateIntervalSec,
-					final boolean stdOutColorFlag,
-					final String comment) {
+					final boolean stdOutColorFlag) {
 		super(
-						id,
-						opType,
-						concurrencyLimit,
-						1,
+						metaData,
 						concurrencyThreshold,
-						itemDataSize,
 						stdOutColorFlag,
-						TimeUnit.SECONDS.toMillis(updateIntervalSec),
-						comment);
+						TimeUnit.SECONDS.toMillis(updateIntervalSec));
 		//
 		respLatency = new TimingMeterImpl(
 						new HistogramImpl(new ConcurrentSlidingWindowLongReservoir(DEFAULT_RESERVOIR_SIZE)),
@@ -212,12 +212,12 @@ public class MetricsContextImpl<S extends AllMetricsSnapshotImpl> extends Metric
 	@Override
 	protected MetricsContextImpl<S> newThresholdMetricsContext() {
 		return new ContextBuilderImpl()
-						.id(id())
-						.opType(opType)
+						.loadStepId(loadStepId())
+						.opType(opType())
 						.actualConcurrencyGauge(actualConcurrencyGauge)
-						.concurrencyLimit(concurrencyLimit)
+						.concurrencyLimit(concurrencyLimit())
 						.concurrencyThreshold(0)
-						.itemDataSize(itemDataSize)
+						.itemDataSize(itemDataSize())
 						.outputPeriodSec((int) TimeUnit.MILLISECONDS.toSeconds(outputPeriodMillis))
 						.stdOutColorFlag(stdOutColorFlag)
 						.build();
@@ -240,11 +240,11 @@ public class MetricsContextImpl<S extends AllMetricsSnapshotImpl> extends Metric
 	public final String toString() {
 		return getClass().getSimpleName()
 						+ "("
-						+ opType.name()
+						+ opType().name()
 						+ '-'
-						+ concurrencyLimit
+						+ concurrencyLimit()
 						+ "x1@"
-						+ id
+						+ loadStepId()
 						+ ")";
 	}
 
@@ -261,69 +261,75 @@ public class MetricsContextImpl<S extends AllMetricsSnapshotImpl> extends Metric
 					implements ContextBuilder<ContextBuilder, MetricsContextImpl> {
 
 		private IntSupplier actualConcurrencyGauge;
-		private String id;
-		private OpType opType;
-		private int concurrencyLimit;
 		private int concurrencyThreshold;
-		private SizeInBytes itemDataSize;
 		private boolean stdOutColorFlag;
 		private int outputPeriodSec;
-		private String comment;
+		private Map metaData = new HashMap();
 
 		public MetricsContextImpl build() {
 			return new MetricsContextImpl(
-							id,
-							opType,
+							metaData,
 							actualConcurrencyGauge,
-							concurrencyLimit,
 							concurrencyThreshold,
-							itemDataSize,
 							outputPeriodSec,
-							stdOutColorFlag,
-							comment);
+							stdOutColorFlag);
 		}
 
-		public ContextBuilderImpl id(final String id) {
-			this.id = id;
+		@Override
+		public ContextBuilderImpl loadStepId(final String id) {
+			this.metaData.put(META_DATA_STEP_ID, id);
+			return this;
+		}
+
+		@Override
+		public ContextBuilderImpl runId(final String id){
+			this.metaData.put(META_DATA_RUN_ID, id);
 			return this;
 		}
 
 		@Override
 		public ContextBuilder comment(final String comment) {
-			this.comment = comment;
+			this.metaData.put(META_DATA_COMMENT, comment);
 			return this;
 		}
 
+		@Override
 		public ContextBuilderImpl opType(final OpType opType) {
-			this.opType = opType;
+			this.metaData.put(META_DATA_OP_TYPE, opType);
 			return this;
 		}
 
+		@Override
 		public ContextBuilderImpl concurrencyLimit(final int concurrencyLimit) {
-			this.concurrencyLimit = concurrencyLimit;
+			this.metaData.put(META_DATA_LIMIT_CONC, concurrencyLimit);
 			return this;
 		}
 
+		@Override
 		public ContextBuilderImpl concurrencyThreshold(final int concurrencyThreshold) {
 			this.concurrencyThreshold = concurrencyThreshold;
 			return this;
 		}
 
+		@Override
 		public ContextBuilderImpl itemDataSize(final SizeInBytes itemDataSize) {
-			this.itemDataSize = itemDataSize;
+			this.metaData.put(META_DATA_ITEM_DATA_SIZE, itemDataSize);
 			return this;
 		}
 
+		@Override
 		public ContextBuilderImpl stdOutColorFlag(final boolean stdOutColorFlag) {
 			this.stdOutColorFlag = stdOutColorFlag;
 			return this;
 		}
 
+		@Override
 		public ContextBuilderImpl outputPeriodSec(final int outputPeriodSec) {
 			this.outputPeriodSec = outputPeriodSec;
 			return this;
 		}
 
+		@Override
 		public ContextBuilderImpl actualConcurrencyGauge(final IntSupplier actualConcurrencyGauge) {
 			this.actualConcurrencyGauge = actualConcurrencyGauge;
 			return this;

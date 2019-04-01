@@ -4,6 +4,8 @@ import com.emc.mongoose.base.item.op.OpType;
 import com.emc.mongoose.base.metrics.snapshot.AllMetricsSnapshot;
 import com.github.akurilov.commons.system.SizeInBytes;
 
+import java.util.Map;
+
 /** Created by andrey on 14.07.16. */
 public interface MetricsContext<S extends AllMetricsSnapshot>
 				extends AutoCloseable, Comparable<MetricsContext<S>> {
@@ -12,7 +14,11 @@ public interface MetricsContext<S extends AllMetricsSnapshot>
 	int DEFAULT_RESERVOIR_SIZE = 1028;
 
 	// these are useful as labels/tags
-	String id();
+	Map metaData();
+
+	String loadStepId();
+
+	String runId();
 
 	OpType opType();
 

@@ -60,7 +60,7 @@ public abstract class LoadStepLocalBase extends LoadStepBase {
 					final boolean outputColorFlag) {
 		final var index = metricsContexts.size();
 		final var metricsCtx = MetricsContextImpl.builder()
-						.id(id())
+						.loadStepId(id())
 						.opType(opType)
 						.actualConcurrencyGauge(() -> stepContexts.get(index).activeOpCount())
 						.concurrencyLimit(concurrency)

@@ -1,51 +1,47 @@
 package com.emc.mongoose.base.metrics.context;
 
+import com.emc.mongoose.base.Constants;
 import com.emc.mongoose.base.item.op.OpType;
+import com.emc.mongoose.base.metrics.MetricsConstants;
 import com.emc.mongoose.base.metrics.snapshot.AllMetricsSnapshot;
 import com.github.akurilov.commons.system.SizeInBytes;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.emc.mongoose.base.metrics.MetricsConstants.*;
 
 public abstract class MetricsContextBase<S extends AllMetricsSnapshot>
 				implements MetricsContext<S> {
 
+	protected final Map metaData;
 	protected final long ts;
-	protected final String id;
-	protected final OpType opType;
-	protected final int concurrencyLimit;
 	protected final int concurrencyThreshold;
-	protected final SizeInBytes itemDataSize;
 	protected final boolean stdOutColorFlag;
 	protected final long outputPeriodMillis;
-	protected final String comment;
 	private volatile long tsStart = -1;
 	private volatile long lastOutputTs = 0;
 	private volatile boolean thresholdStateExitedFlag = false;
 	protected volatile MetricsContextBase thresholdMetricsCtx = null;
 	protected volatile S lastSnapshot = null;
 
+
 	protected MetricsContextBase(
-					final String id,
-					final OpType opType,
-					final int concurrencyLimit,
-					final int nodeCount,
+					final Map metaData,
 					final int concurrencyThreshold,
-					final SizeInBytes itemDataSize,
 					final boolean stdOutColorFlag,
-					final long outputPeriodMillis,
-					final String comment) {
+					final long outputPeriodMillis) {
 		ts = System.nanoTime();
-		this.id = id;
-		this.opType = opType;
-		this.concurrencyLimit = concurrencyLimit;
+		this.metaData = metaData;
 		this.concurrencyThreshold = concurrencyThreshold > 0 ? concurrencyThreshold : Integer.MAX_VALUE;
-		this.itemDataSize = itemDataSize;
 		this.stdOutColorFlag = stdOutColorFlag;
 		this.outputPeriodMillis = outputPeriodMillis;
-		this.comment = comment;
 	}
 
 	@Override
 	public void start() {
 		tsStart = System.currentTimeMillis();
+		metaData.put("start_time", tsStart);
 	}
 
 	@Override
@@ -59,18 +55,28 @@ public abstract class MetricsContextBase<S extends AllMetricsSnapshot>
 	}
 
 	@Override
-	public final String id() {
-		return id;
+	public final Map metaData(){
+		return metaData;
+	}
+
+	@Override
+	public final String loadStepId() {
+		return (String) metaData.get(META_DATA_STEP_ID);
+	}
+
+	@Override
+	public final String runId() {
+		return (String) metaData.get(META_DATA_RUN_ID);
 	}
 
 	@Override
 	public final OpType opType() {
-		return opType;
+		return (OpType) metaData.get(META_DATA_OP_TYPE);
 	}
 
 	@Override
 	public final int concurrencyLimit() {
-		return concurrencyLimit;
+		return (int) metaData.get(META_DATA_LIMIT_CONC);
 	}
 
 	@Override
@@ -80,7 +86,7 @@ public abstract class MetricsContextBase<S extends AllMetricsSnapshot>
 
 	@Override
 	public final SizeInBytes itemDataSize() {
-		return itemDataSize;
+		return (SizeInBytes) metaData.get(META_DATA_ITEM_DATA_SIZE);
 	}
 
 	@Override
@@ -181,6 +187,6 @@ public abstract class MetricsContextBase<S extends AllMetricsSnapshot>
 	}
 
 	public String comment() {
-		return this.comment;
+		return (String) this.metaData.get(META_DATA_COMMENT);
 	}
 }

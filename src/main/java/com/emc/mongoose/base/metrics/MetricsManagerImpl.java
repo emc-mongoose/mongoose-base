@@ -59,7 +59,7 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 		if (outputLock.tryLock()) {
 			try {
 				for (final MetricsContext metricsCtx : allMetrics) {
-					ThreadContext.put(KEY_STEP_ID, metricsCtx.id());
+					ThreadContext.put(KEY_STEP_ID, metricsCtx.loadStepId());
 					metricsCtx.refreshLastSnapshot();
 					final AllMetricsSnapshot snapshot = metricsCtx.lastSnapshot();
 					if (snapshot != null) {
@@ -125,7 +125,7 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 			if (metricsCtx instanceof DistributedMetricsContext) {
 				final var distributedMetricsCtx = (DistributedMetricsContext) metricsCtx;
 				final String[] labelValues = {
-						metricsCtx.id(),
+						metricsCtx.loadStepId(),
 						metricsCtx.opType().name(),
 						String.valueOf(metricsCtx.concurrencyLimit()),
 						metricsCtx.itemDataSize().toString(),
@@ -153,7 +153,7 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 
 	@Override
 	public void unregister(final MetricsContext metricsCtx) {
-		try (final Instance logCtx = put(KEY_STEP_ID, metricsCtx.id()).put(KEY_CLASS_NAME, getClass().getSimpleName())) {
+		try (final Instance logCtx = put(KEY_STEP_ID, metricsCtx.loadStepId()).put(KEY_CLASS_NAME, getClass().getSimpleName())) {
 			if (allMetrics.remove(metricsCtx)) {
 				try {
 					if (!outputLock.tryLock(Fiber.WARN_DURATION_LIMIT_NANOS, TimeUnit.NANOSECONDS)) {
@@ -184,7 +184,7 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 							Loggers.METRICS_STD_OUT.info(
 											new StepResultsMetricsLogMessage(
 															metricsCtx.opType(),
-															metricsCtx.id(),
+															metricsCtx.loadStepId(),
 															metricsCtx.concurrencyLimit(),
 															aggregSnapshot));
 						}

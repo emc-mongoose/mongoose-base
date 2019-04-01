@@ -104,9 +104,9 @@ aliasing:
 - name: "load-threads"
   deprecated: true
   target: "storage-driver-limit-concurrency"
-- name: "run-id"
+- name: "run-loadStepId"
   deprecated: true
-  target: "load-step-id"
+  target: "load-step-loadStepId"
 - name: "noop"
   target: "load-op-type=noop"
 - name: "create"
@@ -191,7 +191,7 @@ aliasing:
   target: "storage-driver-limit-concurrency"
 - name: "load-job-name"
   deprecated: true
-  target: "load-step-id"
+  target: "load-step-loadStepId"
 - name: "load-limit-count"
   deprecated: true
   target: "load-op-limit-count"
@@ -209,7 +209,7 @@ aliasing:
 - name: "load-metrics-threshold"
   deprecated: true
   target: "output-metrics-threshold"
-- name: "storage-auth-id"
+- name: "storage-auth-loadStepId"
   deprecated: true
   target: "storage-auth-uid"
 # v3.4.0
@@ -225,7 +225,7 @@ aliasing:
   target: "output-metrics-threshold"
 - name: "test-step-name"
   deprecated: true
-  target: "load-step-id"
+  target: "load-step-loadStepId"
 - name: "test-step-limit-rate"
   deprecated: true
   target: "load-op-limit-rate"
@@ -291,9 +291,9 @@ aliasing:
   target: "run-scenario"
 - name: "test-step-distributed"
   deprecated: true
-- name: "test-step-id"
+- name: "test-step-loadStepId"
   deprecated: true
-  target: "load-step-id"
+  target: "load-step-loadStepId"
 - name: "test-step-limit-count"
   deprecated: true
   target: "load-op-limit-count"

@@ -79,7 +79,7 @@ public class ExposedMetricsTest {
 		server.start();
 		//
 		metricsContext = MetricsContextImpl.builder()
-						.id(STEP_ID)
+						.loadStepId(STEP_ID)
 						.opType(OP_TYPE)
 						.actualConcurrencyGauge(() -> 1)
 						.concurrencyLimit(CONCURRENCY_LIMIT)
@@ -93,7 +93,7 @@ public class ExposedMetricsTest {
 		metricsContext.start();
 		//
 		distributedMetricsContext = DistributedMetricsContextImpl.builder()
-						.id(STEP_ID)
+						.loadStepId(STEP_ID)
 						.opType(OP_TYPE)
 						.nodeCountSupplier(nodeCountSupplier)
 						.concurrencyLimit(CONCURRENCY_LIMIT)
