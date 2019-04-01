@@ -220,6 +220,7 @@ public class MetricsContextImpl<S extends AllMetricsSnapshotImpl> extends Metric
 						.itemDataSize(itemDataSize())
 						.outputPeriodSec((int) TimeUnit.MILLISECONDS.toSeconds(outputPeriodMillis))
 						.stdOutColorFlag(stdOutColorFlag)
+						.runId("")
 						.build();
 	}
 

@@ -194,6 +194,7 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 						.snapshotsSupplier(snapshotsSupplier)
 						.quantileValues(quantileValues)
 						.nodeAddrs(nodeAddrs())
+						.runId(runId())
 						.build();
 	}
 

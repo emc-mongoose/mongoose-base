@@ -337,6 +337,7 @@ public abstract class LoadStepClientBase extends LoadStepBase implements LoadSte
 						.quantileValues(quantiles(metricsConfig))
 						.nodeAddrs(remoteNodeAddrs(config))
 						.comment(config.stringVal("run-comment"))
+		                                                                                .runId("")
 						.build();
 		metricsContexts.add(metricsCtx);
 	}
