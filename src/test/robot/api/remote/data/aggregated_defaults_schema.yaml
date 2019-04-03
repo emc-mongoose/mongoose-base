@@ -44,9 +44,9 @@ item:
     type: "string"
     prefix: "string"
 run:
-  id: "string"
   node: "boolean"
   comment: "string"
+  id: "string"
   port: "int"
   scenario: "string"
   version: "string"

@@ -47,9 +47,9 @@ item:
     type: "random"
     prefix: null
 run:
-  id: null
   node: true
   comment: ""
+  id: null
   port: 9999
   scenario: null
   version: "4.2.7"
