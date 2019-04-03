@@ -2,6 +2,7 @@ package com.emc.mongoose.base.item;
 
 import com.emc.mongoose.base.data.DataCorruptionException;
 import com.emc.mongoose.base.data.DataInput;
+import com.emc.mongoose.base.item.io.AsyncChannel;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -65,27 +66,14 @@ public interface DataItem extends Item, SeekableByteChannel {
 	/**
 	 Warning: the data item's position should be updated by the handler
 	 @param dstChan
-	 @param maxCount
-	 @param attach
-	 @param handler note that the handler should invoke {@link DataItem#position(long))} to set the new position for this
-	 @param <A>
-	 */
-	<A> void writeToAsyncByteChannel(
-		final AsynchronousByteChannel dstChan, final long maxCount, final A attach,
-		final CompletionHandler<Integer, ? super A> handler
-	);
-
-	/**
-	 Warning: the data item's position should be updated by the handler
-	 @param dstChan
 	 @param dstPos
 	 @param maxCount
 	 @param attach
 	 @param handler note that the handler should invoke {@link DataItem#position(long))} to set the new position for this
 	 @param <A>
 	 **/
-	<A> void writeToAsyncFileChannel(
-		final AsynchronousFileChannel dstChan, final long dstPos, final long maxCount, final A attach,
+	<A> void writeToAsyncChannel(
+		final AsyncChannel dstChan, final long dstPos, final long maxCount, final A attach,
 		final CompletionHandler<Integer, ? super A> handler
 	);
 
