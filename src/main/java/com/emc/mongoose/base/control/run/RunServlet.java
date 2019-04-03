@@ -85,7 +85,9 @@ public class RunServlet extends HttpServlet {
 		try {
 			final var config = mergeIncomingWithLocalConfig(defaultsPart, resp, aggregatedConfigWithArgs);
 			final var scenario = getIncomingScenarioOrDefault(scenarioPart, appHomePath);
-
+			if (config.stringVal("run-id") == null) {
+				config.val("run-id", LogUtil.getDateTimeStamp());
+			}
 			// expose the base configuration and the step types
 			ScenarioUtil.configure(scriptEngine, extensions, config, metricsMgr);
 			//
