@@ -60,11 +60,7 @@ public final class DataItemInputStream extends InputStream {
 
 	@Override
 	public final void mark(final int readLimit) {
-		try {
-			this.markPos = dataItem.position();
-		} catch (final IOException e) {
-			throw new RuntimeException(e);
-		}
+		this.markPos = dataItem.position();
 	}
 
 	@Override

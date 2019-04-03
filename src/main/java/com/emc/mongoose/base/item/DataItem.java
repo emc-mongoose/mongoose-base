@@ -2,11 +2,16 @@ package com.emc.mongoose.base.item;
 
 import com.emc.mongoose.base.data.DataCorruptionException;
 import com.emc.mongoose.base.data.DataInput;
+import com.emc.mongoose.base.item.io.AsyncChannel;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousByteChannel;
 import java.nio.channels.AsynchronousCloseException;
+import java.nio.channels.AsynchronousFileChannel;
 import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.ClosedChannelException;
+import java.nio.channels.CompletionHandler;
 import java.nio.channels.FileChannel;
 import java.nio.channels.NonWritableChannelException;
 import java.nio.channels.SeekableByteChannel;
@@ -34,6 +39,12 @@ public interface DataItem extends Item, SeekableByteChannel {
 
 	void offset(final long offset);
 
+	@Override
+	long position();
+
+	@Override
+	DataItem position(long position);
+
 	<D extends DataItem> D slice(final long from, final long size);
 
 	/**
@@ -51,6 +62,20 @@ public interface DataItem extends Item, SeekableByteChannel {
 					throws IOException;
 
 	long writeToFileChannel(final FileChannel chanDst, final long maxCount) throws IOException;
+
+	/**
+	 Warning: the data item's position should be updated by the handler
+	 @param dstChan
+	 @param dstPos
+	 @param maxCount
+	 @param attach
+	 @param handler note that the handler should invoke {@link DataItem#position(long))} to set the new position for this
+	 @param <A>
+	 **/
+	<A> void writeToAsyncChannel(
+		final AsyncChannel dstChan, final long dstPos, final long maxCount, final A attach,
+		final CompletionHandler<Integer, ? super A> handler
+	);
 
 	void verify(final ByteBuffer inBuff) throws DataCorruptionException;
 
