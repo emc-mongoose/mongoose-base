@@ -97,9 +97,6 @@ aliasing:
   - name: "load-threads"
     deprecated: true
     target: "storage-driver-limit-concurrency"
-  - name: "run-id"
-    deprecated: true
-    target: "load-step-id"
   - name: "noop"
     target: "load-op-type=noop"
   - name: "create"

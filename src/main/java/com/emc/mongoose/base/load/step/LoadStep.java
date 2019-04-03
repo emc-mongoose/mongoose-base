@@ -11,7 +11,9 @@ import java.util.concurrent.TimeUnit;
 public interface LoadStep extends Daemon {
 
 	/** @return the step id */
-	String id() throws RemoteException;
+	String loadStepId() throws RemoteException;
+
+	String runId() throws RemoteException;
 
 	String getTypeName() throws RemoteException;
 

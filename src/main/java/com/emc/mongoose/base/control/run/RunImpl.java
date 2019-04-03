@@ -13,17 +13,17 @@ public final class RunImpl implements Run {
 	private final String comment;
 	private final String scenario;
 	private final ScriptEngine scriptEngine;
-	private final long runId;
+	private final String runId;
 
-	public RunImpl(final String comment, final String scenario, final ScriptEngine scriptEngine) {
+	public RunImpl(final String comment, final String scenario, final ScriptEngine scriptEngine, final String runId) {
 		this.comment = comment;
 		this.scenario = scenario;
 		this.scriptEngine = scriptEngine;
-		this.runId = System.currentTimeMillis();
+		this.runId = runId;
 	}
 
 	@Override
-	public final long runId() {
+	public final String runId() {
 		return runId;
 	}
 

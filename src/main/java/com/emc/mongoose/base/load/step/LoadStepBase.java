@@ -52,8 +52,13 @@ public abstract class LoadStepBase extends DaemonBase implements LoadStep, Runna
 	}
 
 	@Override
-	public final String id() {
+	public final String loadStepId() {
 		return config.stringVal("load-step-id");
+	}
+
+	@Override
+	public final String runId() {
+		return config.stringVal("run-id");
 	}
 
 	@Override
@@ -104,7 +109,7 @@ public abstract class LoadStepBase extends DaemonBase implements LoadStep, Runna
 
 		init();
 
-		try (final var logCtx = put(KEY_STEP_ID, id()).put(KEY_CLASS_NAME, getClass().getSimpleName())) {
+		try (final var logCtx = put(KEY_STEP_ID, loadStepId()).put(KEY_CLASS_NAME, getClass().getSimpleName())) {
 
 			doStartWrapped();
 
@@ -125,7 +130,7 @@ public abstract class LoadStepBase extends DaemonBase implements LoadStep, Runna
 
 		} catch (final Throwable cause) {
 			throwUncheckedIfInterrupted(cause);
-			LogUtil.exception(Level.WARN, cause, "{} step failed to start", id());
+			LogUtil.exception(Level.WARN, cause, "{} step failed to start", loadStepId());
 		}
 
 		metricsContexts.stream().peek(MetricsContext::start).forEach(metricsMgr::register);

@@ -83,13 +83,13 @@ public class RunServlet extends HttpServlet {
 			scenarioPart = null;
 		}
 		try {
-			final var defaults = mergeIncomingWithLocalConfig(defaultsPart, resp, aggregatedConfigWithArgs);
+			final var config = mergeIncomingWithLocalConfig(defaultsPart, resp, aggregatedConfigWithArgs);
 			final var scenario = getIncomingScenarioOrDefault(scenarioPart, appHomePath);
 
 			// expose the base configuration and the step types
-			ScenarioUtil.configure(scriptEngine, extensions, defaults, metricsMgr);
+			ScenarioUtil.configure(scriptEngine, extensions, config, metricsMgr);
 			//
-			final var run = (Run) new RunImpl(defaults.stringVal("run-comment"), scenario, scriptEngine);
+			final var run = (Run) new RunImpl(config.stringVal("run-comment"), scenario, scriptEngine, config.stringVal("run-id"));
 			try {
 				scenarioExecutor.execute(run);
 				resp.setStatus(HttpServletResponse.SC_ACCEPTED);
@@ -125,7 +125,7 @@ public class RunServlet extends HttpServlet {
 	}
 
 	static void setRunTimestampHeader(final Run task, final HttpServletResponse resp) {
-		resp.setHeader(HttpHeader.ETAG.name(), Long.toString(task.runId(), 0x10));
+		resp.setHeader(HttpHeader.ETAG.name(), task.runId());
 	}
 
 	void applyForActiveRunIfAny(
@@ -145,21 +145,20 @@ public class RunServlet extends HttpServlet {
 	void extractRequestTimestampAndApply(
 					final HttpServletRequest req,
 					final HttpServletResponse resp,
-					final BiConsumer<Run, Long> runRespTimestampConsumer)
+					final BiConsumer<Run, String> runRespRunIdConsumer)
 					throws IOException {
-		final var runIdRawValue = Collections.list(req.getHeaders(HttpHeader.IF_MATCH.toString())).stream()
+		final var runId = Collections.list(req.getHeaders(HttpHeader.IF_MATCH.toString())).stream()
 						.findAny()
 						.orElse(null);
-		if (null == runIdRawValue) {
+		if (null == runId) {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing header: " + HttpHeader.IF_MATCH);
 		} else {
 			try {
-				final var runId = Long.parseLong(runIdRawValue, 0x10);
 				applyForActiveRunIfAny(
-								resp, (run, resp_) -> runRespTimestampConsumer.accept(run, runId));
+								resp, (run, resp_) -> runRespRunIdConsumer.accept(run, runId));
 			} catch (final NumberFormatException e) {
 				resp.sendError(
-								HttpServletResponse.SC_BAD_REQUEST, "Invalid start time: " + runIdRawValue);
+								HttpServletResponse.SC_BAD_REQUEST, "Invalid start time: " + runId);
 			}
 		}
 	}
@@ -170,8 +169,8 @@ public class RunServlet extends HttpServlet {
 	}
 
 	static void setRunMatchesResponse(
-					final Run run, final HttpServletResponse resp, final long runId) {
-		if (run.runId() == runId) {
+					final Run run, final HttpServletResponse resp, final String runId) {
+		if (run.runId().equals(runId)) {
 			resp.setStatus(HttpServletResponse.SC_OK);
 		} else {
 			resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
@@ -181,9 +180,9 @@ public class RunServlet extends HttpServlet {
 	static void stopRunIfMatchesAndSetResponse(
 					final Run run,
 					final HttpServletResponse resp,
-					final long runId,
+					final String runId,
 					final SingleTaskExecutor scenarioExecutor) {
-		if (run.runId() == runId) {
+		if (run.runId().equals(runId)) {
 			scenarioExecutor.stop(run);
 			if (null != scenarioExecutor.task()) {
 				throw new AssertionError("Run stopping failure");

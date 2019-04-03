@@ -46,7 +46,6 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 	private final Map<DistributedMetricsContext, PrometheusMetricsExporter> distributedMetrics = new ConcurrentHashMap<>();
 	private final Set<MetricsContext> selectedMetrics = new TreeSet<>();
 	private final Lock outputLock = new ReentrantLock();
-	private final String runId;
 
 	public MetricsManagerImpl(final FibersExecutor instance) {
 		super(instance);

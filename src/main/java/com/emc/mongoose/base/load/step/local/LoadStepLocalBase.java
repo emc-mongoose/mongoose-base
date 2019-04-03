@@ -45,7 +45,7 @@ public abstract class LoadStepLocalBase extends LoadStepBase {
 								stepCtx.start();
 							} catch (final RemoteException ignored) {} catch (final IllegalStateException e) {
 								LogUtil.exception(
-												Level.WARN, e, "{}: failed to start the load step context \"{}\"", id(), stepCtx);
+												Level.WARN, e, "{}: failed to start the load step context \"{}\"", loadStepId(), stepCtx);
 							}
 						});
 	}
@@ -60,7 +60,7 @@ public abstract class LoadStepLocalBase extends LoadStepBase {
 					final boolean outputColorFlag) {
 		final var index = metricsContexts.size();
 		final var metricsCtx = MetricsContextImpl.builder()
-						.loadStepId(id())
+						.loadStepId(loadStepId())
 						.opType(opType)
 						.actualConcurrencyGauge(() -> stepContexts.get(index).activeOpCount())
 						.concurrencyLimit(concurrency)
@@ -69,7 +69,7 @@ public abstract class LoadStepLocalBase extends LoadStepBase {
 						.outputPeriodSec(avgPeriod(metricsConfig))
 						.stdOutColorFlag(outputColorFlag)
 						.comment(config.stringVal("run-comment"))
-						.runId("")
+						.runId(runId())
 						.build();
 		metricsContexts.add(metricsCtx);
 	}
@@ -78,9 +78,9 @@ public abstract class LoadStepLocalBase extends LoadStepBase {
 	protected final void doShutdown() {
 		stepContexts.forEach(
 						stepCtx -> {
-							try (final Instance ctx = put(KEY_STEP_ID, id()).put(KEY_CLASS_NAME, getClass().getSimpleName())) {
+							try (final Instance ctx = put(KEY_STEP_ID, loadStepId()).put(KEY_CLASS_NAME, getClass().getSimpleName())) {
 								stepCtx.shutdown();
-								Loggers.MSG.debug("{}: load step context shutdown", id());
+								Loggers.MSG.debug("{}: load step context shutdown", loadStepId());
 							} catch (final RemoteException ignored) {}
 						});
 	}
