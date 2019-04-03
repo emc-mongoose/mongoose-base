@@ -36,7 +36,7 @@ public class LinearLoadStepClient
 			config.val("load-step-id", autoStepId);
 		}
 		if (config.stringVal("run-id").isEmpty()) {
-			config.val("run-id",  LogUtil.getDateTimeStamp());
+			config.val("run-id", LogUtil.getDateTimeStamp());
 		}
 		final OpType opType = OpType.valueOf(config.stringVal("load-op-type").toUpperCase());
 		final int concurrencyLimit = config.intVal("storage-driver-limit-concurrency");
