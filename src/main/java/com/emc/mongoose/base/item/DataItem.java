@@ -38,6 +38,12 @@ public interface DataItem extends Item, SeekableByteChannel {
 
 	void offset(final long offset);
 
+	@Override
+	long position();
+
+	@Override
+	DataItem position(long position);
+
 	<D extends DataItem> D slice(final long from, final long size);
 
 	/**
@@ -61,7 +67,7 @@ public interface DataItem extends Item, SeekableByteChannel {
 	 @param dstChan
 	 @param maxCount
 	 @param attach
-	 @param handler
+	 @param handler note that the handler should invoke {@link DataItem#position(long))} to set the new position for this
 	 @param <A>
 	 */
 	<A> void writeToAsyncByteChannel(
@@ -71,6 +77,12 @@ public interface DataItem extends Item, SeekableByteChannel {
 
 	/**
 	 Warning: the data item's position should be updated by the handler
+	 @param dstChan
+	 @param dstPos
+	 @param maxCount
+	 @param attach
+	 @param handler note that the handler should invoke {@link DataItem#position(long))} to set the new position for this
+	 @param <A>
 	 **/
 	<A> void writeToAsyncFileChannel(
 		final AsynchronousFileChannel dstChan, final long dstPos, final long maxCount, final A attach,
