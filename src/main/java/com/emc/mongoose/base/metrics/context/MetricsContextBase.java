@@ -57,22 +57,22 @@ public abstract class MetricsContextBase<S extends AllMetricsSnapshot>
 
 	@Override
 	public final String loadStepId() {
-		return (String) metaData.get(META_DATA_STEP_ID);
+		return (String) metadata.get(METADATA_STEP_ID);
 	}
 
 	@Override
 	public final String runId() {
-		return (String) metaData.get(META_DATA_RUN_ID);
+		return (String) metadata.get(METADATA_RUN_ID);
 	}
 
 	@Override
 	public final OpType opType() {
-		return (OpType) metaData.get(META_DATA_OP_TYPE);
+		return (OpType) metadata.get(METADATA_OP_TYPE);
 	}
 
 	@Override
 	public final int concurrencyLimit() {
-		return (int) metaData.get(META_DATA_LIMIT_CONC);
+		return (int) metadata.get(METADATA_LIMIT_CONC);
 	}
 
 	@Override
@@ -82,7 +82,7 @@ public abstract class MetricsContextBase<S extends AllMetricsSnapshot>
 
 	@Override
 	public final SizeInBytes itemDataSize() {
-		return (SizeInBytes) metaData.get(META_DATA_ITEM_DATA_SIZE);
+		return (SizeInBytes) metadata.get(METADATA_ITEM_DATA_SIZE);
 	}
 
 	@Override
@@ -183,6 +183,6 @@ public abstract class MetricsContextBase<S extends AllMetricsSnapshot>
 	}
 
 	public String comment() {
-		return (String) this.metaData.get(META_DATA_COMMENT);
+		return (String) this.metadata.get(METADATA_COMMENT);
 	}
 }
