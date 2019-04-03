@@ -149,18 +149,18 @@ public class RunServlet extends HttpServlet {
 					final HttpServletResponse resp,
 					final BiConsumer<Run, String> runRespRunIdConsumer)
 					throws IOException {
-		final var runId = Collections.list(req.getHeaders(HttpHeader.IF_MATCH.toString())).stream()
+		final var incomingRunId = Collections.list(req.getHeaders(HttpHeader.IF_MATCH.toString())).stream()
 						.findAny()
 						.orElse(null);
-		if (null == runId) {
+		if (null == incomingRunId) {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing header: " + HttpHeader.IF_MATCH);
 		} else {
 			try {
 				applyForActiveRunIfAny(
-								resp, (run, resp_) -> runRespRunIdConsumer.accept(run, runId));
+								resp, (run, resp_) -> runRespRunIdConsumer.accept(run, incomingRunId));
 			} catch (final NumberFormatException e) {
 				resp.sendError(
-								HttpServletResponse.SC_BAD_REQUEST, "Invalid start time: " + runId);
+								HttpServletResponse.SC_BAD_REQUEST, "Invalid start time: " + incomingRunId);
 			}
 		}
 	}
@@ -171,8 +171,8 @@ public class RunServlet extends HttpServlet {
 	}
 
 	static void setRunMatchesResponse(
-					final Run run, final HttpServletResponse resp, final String runId) {
-		if (run.runId().equals(runId)) {
+					final Run run, final HttpServletResponse resp, final String incomingRunId) {
+		if (run.runId().equals(incomingRunId)) {
 			resp.setStatus(HttpServletResponse.SC_OK);
 		} else {
 			resp.setStatus(HttpServletResponse.SC_NO_CONTENT);

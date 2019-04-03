@@ -19,13 +19,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 
-import static com.emc.mongoose.base.metrics.MetricsConstants.META_DATA_COMMENT;
-import static com.emc.mongoose.base.metrics.MetricsConstants.META_DATA_ITEM_DATA_SIZE;
-import static com.emc.mongoose.base.metrics.MetricsConstants.META_DATA_LIMIT_CONC;
-import static com.emc.mongoose.base.metrics.MetricsConstants.META_DATA_NODE_LIST;
-import static com.emc.mongoose.base.metrics.MetricsConstants.META_DATA_OP_TYPE;
-import static com.emc.mongoose.base.metrics.MetricsConstants.META_DATA_RUN_ID;
-import static com.emc.mongoose.base.metrics.MetricsConstants.META_DATA_STEP_ID;
+import static com.emc.mongoose.base.metrics.MetricsConstants.METADATA_COMMENT;
+import static com.emc.mongoose.base.metrics.MetricsConstants.METADATA_ITEM_DATA_SIZE;
+import static com.emc.mongoose.base.metrics.MetricsConstants.METADATA_LIMIT_CONC;
+import static com.emc.mongoose.base.metrics.MetricsConstants.METADATA_NODE_LIST;
+import static com.emc.mongoose.base.metrics.MetricsConstants.METADATA_OP_TYPE;
+import static com.emc.mongoose.base.metrics.MetricsConstants.METADATA_RUN_ID;
+import static com.emc.mongoose.base.metrics.MetricsConstants.METADATA_STEP_ID;
 
 public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapshotImpl>
 				extends MetricsContextBase<S> implements DistributedMetricsContext<S> {
@@ -84,7 +84,7 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 
 	@Override
 	public List<String> nodeAddrs() {
-		return (List<String>) metaData.get(META_DATA_NODE_LIST);
+		return (List<String>) metaData.get(METADATA_NODE_LIST);
 	}
 
 	@Override
@@ -259,31 +259,31 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 
 		@Override
 		public DistributedContextBuilder loadStepId(final String id) {
-			this.metaData.put(META_DATA_STEP_ID, id);
+			this.metaData.put(METADATA_STEP_ID, id);
 			return this;
 		}
 
 		@Override
 		public DistributedContextBuilder runId(final String id) {
-			this.metaData.put(META_DATA_RUN_ID, id);
+			this.metaData.put(METADATA_RUN_ID, id);
 			return this;
 		}
 
 		@Override
 		public DistributedContextBuilder comment(final String comment) {
-			this.metaData.put(META_DATA_COMMENT, comment);
+			this.metaData.put(METADATA_COMMENT, comment);
 			return this;
 		}
 
 		@Override
 		public DistributedContextBuilder opType(final OpType opType) {
-			this.metaData.put(META_DATA_OP_TYPE, opType);
+			this.metaData.put(METADATA_OP_TYPE, opType);
 			return this;
 		}
 
 		@Override
 		public DistributedContextBuilder concurrencyLimit(final int concurrencyLimit) {
-			this.metaData.put(META_DATA_LIMIT_CONC, concurrencyLimit);
+			this.metaData.put(METADATA_LIMIT_CONC, concurrencyLimit);
 			return this;
 		}
 
@@ -295,7 +295,7 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 
 		@Override
 		public DistributedContextBuilder itemDataSize(final SizeInBytes itemDataSize) {
-			this.metaData.put(META_DATA_ITEM_DATA_SIZE, itemDataSize);
+			this.metaData.put(METADATA_ITEM_DATA_SIZE, itemDataSize);
 			return this;
 		}
 
@@ -338,7 +338,7 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 
 		@Override
 		public DistributedContextBuilder nodeAddrs(final List<String> nodeAddrs) {
-			this.metaData.put(META_DATA_NODE_LIST, nodeAddrs);
+			this.metaData.put(METADATA_NODE_LIST, nodeAddrs);
 			return this;
 		}
 

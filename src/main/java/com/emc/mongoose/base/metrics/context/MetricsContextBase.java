@@ -11,7 +11,7 @@ import static com.emc.mongoose.base.metrics.MetricsConstants.*;
 public abstract class MetricsContextBase<S extends AllMetricsSnapshot>
 				implements MetricsContext<S> {
 
-	protected final Map metaData;
+	protected final Map<String, Object> metadata;
 	protected final long ts;
 	protected final int concurrencyThreshold;
 	protected final boolean stdOutColorFlag;
@@ -23,12 +23,12 @@ public abstract class MetricsContextBase<S extends AllMetricsSnapshot>
 	protected volatile S lastSnapshot = null;
 
 	protected MetricsContextBase(
-					final Map metaData,
+					final Map metadata,
 					final int concurrencyThreshold,
 					final boolean stdOutColorFlag,
 					final long outputPeriodMillis) {
 		ts = System.nanoTime();
-		this.metaData = metaData;
+		this.metadata = metadata;
 		this.concurrencyThreshold = concurrencyThreshold > 0 ? concurrencyThreshold : Integer.MAX_VALUE;
 		this.stdOutColorFlag = stdOutColorFlag;
 		this.outputPeriodMillis = outputPeriodMillis;
@@ -37,7 +37,7 @@ public abstract class MetricsContextBase<S extends AllMetricsSnapshot>
 	@Override
 	public void start() {
 		tsStart = System.currentTimeMillis();
-		metaData.put("start_time", tsStart);
+		metadata.put(METADATA_START_TIME, tsStart);
 	}
 
 	@Override
@@ -51,8 +51,8 @@ public abstract class MetricsContextBase<S extends AllMetricsSnapshot>
 	}
 
 	@Override
-	public final Map metaData() {
-		return metaData;
+	public final Map metadata() {
+		return metadata;
 	}
 
 	@Override

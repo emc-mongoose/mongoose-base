@@ -23,12 +23,12 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.IntSupplier;
 
-import static com.emc.mongoose.base.metrics.MetricsConstants.META_DATA_COMMENT;
-import static com.emc.mongoose.base.metrics.MetricsConstants.META_DATA_ITEM_DATA_SIZE;
-import static com.emc.mongoose.base.metrics.MetricsConstants.META_DATA_LIMIT_CONC;
-import static com.emc.mongoose.base.metrics.MetricsConstants.META_DATA_OP_TYPE;
-import static com.emc.mongoose.base.metrics.MetricsConstants.META_DATA_RUN_ID;
-import static com.emc.mongoose.base.metrics.MetricsConstants.META_DATA_STEP_ID;
+import static com.emc.mongoose.base.metrics.MetricsConstants.METADATA_COMMENT;
+import static com.emc.mongoose.base.metrics.MetricsConstants.METADATA_ITEM_DATA_SIZE;
+import static com.emc.mongoose.base.metrics.MetricsConstants.METADATA_LIMIT_CONC;
+import static com.emc.mongoose.base.metrics.MetricsConstants.METADATA_OP_TYPE;
+import static com.emc.mongoose.base.metrics.MetricsConstants.METADATA_RUN_ID;
+import static com.emc.mongoose.base.metrics.MetricsConstants.METADATA_STEP_ID;
 
 public class MetricsContextImpl<S extends AllMetricsSnapshotImpl> extends MetricsContextBase<S>
 				implements MetricsContext<S> {
@@ -45,13 +45,13 @@ public class MetricsContextImpl<S extends AllMetricsSnapshotImpl> extends Metric
 	private final Lock timingsUpdateLock = timingLock.writeLock();
 
 	public MetricsContextImpl(
-					final Map metaData,
+					final Map<String, Object> metadata,
 					final IntSupplier actualConcurrencyGauge,
 					final int concurrencyThreshold,
 					final int updateIntervalSec,
 					final boolean stdOutColorFlag) {
 		super(
-						metaData,
+						metadata,
 						concurrencyThreshold,
 						stdOutColorFlag,
 						TimeUnit.SECONDS.toMillis(updateIntervalSec));
@@ -265,11 +265,11 @@ public class MetricsContextImpl<S extends AllMetricsSnapshotImpl> extends Metric
 		private int concurrencyThreshold;
 		private boolean stdOutColorFlag;
 		private int outputPeriodSec;
-		private Map metaData = new HashMap();
+		private Map<String, Object> metadata = new HashMap();
 
 		public MetricsContextImpl build() {
 			return new MetricsContextImpl(
-							metaData,
+							metadata,
 							actualConcurrencyGauge,
 							concurrencyThreshold,
 							outputPeriodSec,
@@ -278,31 +278,31 @@ public class MetricsContextImpl<S extends AllMetricsSnapshotImpl> extends Metric
 
 		@Override
 		public ContextBuilderImpl loadStepId(final String id) {
-			this.metaData.put(META_DATA_STEP_ID, id);
+			this.metadata.put(METADATA_STEP_ID, id);
 			return this;
 		}
 
 		@Override
 		public ContextBuilderImpl runId(final String id) {
-			this.metaData.put(META_DATA_RUN_ID, id);
+			this.metadata.put(METADATA_RUN_ID, id);
 			return this;
 		}
 
 		@Override
 		public ContextBuilder comment(final String comment) {
-			this.metaData.put(META_DATA_COMMENT, comment);
+			this.metadata.put(METADATA_COMMENT, comment);
 			return this;
 		}
 
 		@Override
 		public ContextBuilderImpl opType(final OpType opType) {
-			this.metaData.put(META_DATA_OP_TYPE, opType);
+			this.metadata.put(METADATA_OP_TYPE, opType);
 			return this;
 		}
 
 		@Override
 		public ContextBuilderImpl concurrencyLimit(final int concurrencyLimit) {
-			this.metaData.put(META_DATA_LIMIT_CONC, concurrencyLimit);
+			this.metadata.put(METADATA_LIMIT_CONC, concurrencyLimit);
 			return this;
 		}
 
@@ -314,7 +314,7 @@ public class MetricsContextImpl<S extends AllMetricsSnapshotImpl> extends Metric
 
 		@Override
 		public ContextBuilderImpl itemDataSize(final SizeInBytes itemDataSize) {
-			this.metaData.put(META_DATA_ITEM_DATA_SIZE, itemDataSize);
+			this.metadata.put(METADATA_ITEM_DATA_SIZE, itemDataSize);
 			return this;
 		}
 
