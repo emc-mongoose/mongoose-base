@@ -84,7 +84,7 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 
 	@Override
 	public List<String> nodeAddrs() {
-		return (List<String>) metaData.get(METADATA_NODE_LIST);
+		return (List<String>) metadata.get(METADATA_NODE_LIST);
 	}
 
 	@Override

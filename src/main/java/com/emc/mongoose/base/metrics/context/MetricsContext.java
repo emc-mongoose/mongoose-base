@@ -14,7 +14,7 @@ public interface MetricsContext<S extends AllMetricsSnapshot>
 	int DEFAULT_RESERVOIR_SIZE = 1028;
 
 	// these are useful as labels/tags
-	Map metaData();
+	Map metadata();
 
 	String loadStepId();
 
