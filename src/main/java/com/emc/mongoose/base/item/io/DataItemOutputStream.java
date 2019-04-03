@@ -42,11 +42,7 @@ public final class DataItemOutputStream extends ByteCountOutputStream {
 		}
 		buffWrapper.position(offset).limit(offset + length);
 		dataItem.verify(buffWrapper);
-		try {
-			dataItem.position(dataItem.position() + length);
-		} catch (final IOException e) {
-			throwUnchecked(e);
-		}
+		dataItem.position(dataItem.position() + length);
 		byteCount.add(length);
 	}
 
@@ -57,11 +53,7 @@ public final class DataItemOutputStream extends ByteCountOutputStream {
 			buffWrapper = ByteBuffer.wrap(buff);
 		}
 		dataItem.verify(buffWrapper);
-		try {
-			dataItem.position(dataItem.position() + buff.length);
-		} catch (final IOException e) {
-			throwUnchecked(e);
-		}
+		dataItem.position(dataItem.position() + buff.length);
 		byteCount.add(buff.length);
 	}
 
