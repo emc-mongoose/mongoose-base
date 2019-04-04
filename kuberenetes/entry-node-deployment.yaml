@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongoose-controller
+  namespace: mongoose
+spec:
+  selector:
+    matchLabels:
+      name: mongoose-controller
+  template:
+    metadata:
+      labels:
+        name: mongoose-controller
+    spec:
+      containers:
+        - image: emcmongoose/mongoose
+          name: mongoose-controller
+          command: ["/bin/sh"]
+          args:
+            - "-c"
+            - /opt/mongoose/entrypoint.sh
+              --load-step-limit-time=1m
+              --storage-driver-type=dummy-mock
