@@ -132,7 +132,7 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 						"" + metricsCtx.startTimeStamp(),
 						((DistributedMetricsContext) metricsCtx).nodeAddrs().toString(),
 						metricsCtx.comment(),
-						metricsCtx.runId()
+						String.valueOf(metricsCtx.runId())
 				};
 				distributedMetrics.put(
 								distributedMetricsCtx,

@@ -46,7 +46,7 @@ item:
 run:
   node: "boolean"
   comment: "string"
-  id: "string"
+  id: "int"
   port: "int"
   scenario: "string"
   version: "string"

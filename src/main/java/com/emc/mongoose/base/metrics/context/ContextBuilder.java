@@ -27,5 +27,5 @@ public interface ContextBuilder<B extends ContextBuilder, C extends MetricsConte
 
 	B actualConcurrencyGauge(final IntSupplier actualConcurrencyGauge);
 
-	B runId(final String id);
+	B runId(final long id);
 }

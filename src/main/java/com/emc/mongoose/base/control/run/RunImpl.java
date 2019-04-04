@@ -13,9 +13,9 @@ public final class RunImpl implements Run {
 	private final String comment;
 	private final String scenario;
 	private final ScriptEngine scriptEngine;
-	private final String runId;
+	private final long runId;
 
-	public RunImpl(final String comment, final String scenario, final ScriptEngine scriptEngine, final String runId) {
+	public RunImpl(final String comment, final String scenario, final ScriptEngine scriptEngine, final long runId) {
 		this.comment = comment;
 		this.scenario = scenario;
 		this.scriptEngine = scriptEngine;
@@ -23,7 +23,7 @@ public final class RunImpl implements Run {
 	}
 
 	@Override
-	public final String runId() {
+	public final long runId() {
 		return runId;
 	}
 

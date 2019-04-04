@@ -18,7 +18,7 @@ public interface MetricsContext<S extends AllMetricsSnapshot>
 
 	String loadStepId();
 
-	String runId();
+	long runId();
 
 	OpType opType();
 

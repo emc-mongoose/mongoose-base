@@ -61,8 +61,8 @@ public abstract class MetricsContextBase<S extends AllMetricsSnapshot>
 	}
 
 	@Override
-	public final String runId() {
-		return (String) metadata.get(METADATA_RUN_ID);
+	public final long runId() {
+		return (long) metadata.get(METADATA_RUN_ID);
 	}
 
 	@Override

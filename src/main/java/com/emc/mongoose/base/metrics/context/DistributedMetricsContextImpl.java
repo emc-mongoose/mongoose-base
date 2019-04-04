@@ -264,7 +264,7 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 		}
 
 		@Override
-		public DistributedContextBuilder runId(final String id) {
+		public DistributedContextBuilder runId(final long id) {
 			this.metaData.put(METADATA_RUN_ID, id);
 			return this;
 		}

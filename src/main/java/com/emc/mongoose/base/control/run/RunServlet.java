@@ -91,7 +91,7 @@ public class RunServlet extends HttpServlet {
 			// expose the base configuration and the step types
 			ScenarioUtil.configure(scriptEngine, extensions, config, metricsMgr);
 			//
-			final var run = (Run) new RunImpl(config.stringVal("run-comment"), scenario, scriptEngine, config.stringVal("run-id"));
+			final var run = (Run) new RunImpl(config.stringVal("run-comment"), scenario, scriptEngine, config.longVal("run-id"));
 			try {
 				scenarioExecutor.execute(run);
 				resp.setStatus(HttpServletResponse.SC_ACCEPTED);
@@ -114,7 +114,7 @@ public class RunServlet extends HttpServlet {
 	protected final void doGet(final HttpServletRequest req, final HttpServletResponse resp)
 					throws IOException {
 		extractRequestTimestampAndApply(
-						req, resp, (run, timestamp) -> setRunMatchesResponse(run, resp, timestamp));
+						req, resp, (run, runId) -> setRunMatchesResponse(run, resp, runId));
 	}
 
 	@Override
@@ -123,11 +123,11 @@ public class RunServlet extends HttpServlet {
 		extractRequestTimestampAndApply(
 						req,
 						resp,
-						(run, timestamp) -> stopRunIfMatchesAndSetResponse(run, resp, timestamp, scenarioExecutor));
+						(run, runId) -> stopRunIfMatchesAndSetResponse(run, resp, runId, scenarioExecutor));
 	}
 
 	static void setRunTimestampHeader(final Run task, final HttpServletResponse resp) {
-		resp.setHeader(HttpHeader.ETAG.name(), task.runId());
+		resp.setHeader(HttpHeader.ETAG.name(), String.valueOf(task.runId()));
 	}
 
 	void applyForActiveRunIfAny(
@@ -147,12 +147,13 @@ public class RunServlet extends HttpServlet {
 	void extractRequestTimestampAndApply(
 					final HttpServletRequest req,
 					final HttpServletResponse resp,
-					final BiConsumer<Run, String> runRespRunIdConsumer)
+					final BiConsumer<Run, Long> runRespRunIdConsumer)
 					throws IOException {
-		final var incomingRunId = Collections.list(req.getHeaders(HttpHeader.IF_MATCH.toString())).stream()
+		final var rawIncomingRunId = Collections.list(req.getHeaders(HttpHeader.IF_MATCH.toString())).stream()
 						.findAny()
 						.orElse(null);
-		if (null == incomingRunId) {
+		final var incomingRunId = Long.parseLong(rawIncomingRunId);
+		if (rawIncomingRunId == null) {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing header: " + HttpHeader.IF_MATCH);
 		} else {
 			try {
@@ -171,8 +172,8 @@ public class RunServlet extends HttpServlet {
 	}
 
 	static void setRunMatchesResponse(
-					final Run run, final HttpServletResponse resp, final String incomingRunId) {
-		if (run.runId().equals(incomingRunId)) {
+					final Run run, final HttpServletResponse resp, final long incomingRunId) {
+		if (run.runId() == incomingRunId) {
 			resp.setStatus(HttpServletResponse.SC_OK);
 		} else {
 			resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
@@ -182,9 +183,9 @@ public class RunServlet extends HttpServlet {
 	static void stopRunIfMatchesAndSetResponse(
 					final Run run,
 					final HttpServletResponse resp,
-					final String runId,
+					final long runId,
 					final SingleTaskExecutor scenarioExecutor) {
-		if (run.runId().equals(runId)) {
+		if (run.runId() == runId) {
 			scenarioExecutor.stop(run);
 			if (null != scenarioExecutor.task()) {
 				throw new AssertionError("Run stopping failure");

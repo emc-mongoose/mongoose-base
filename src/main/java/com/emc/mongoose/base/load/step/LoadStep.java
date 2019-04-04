@@ -13,7 +13,7 @@ public interface LoadStep extends Daemon {
 	/** @return the step id */
 	String loadStepId() throws RemoteException;
 
-	String runId() throws RemoteException;
+	long runId() throws RemoteException;
 
 	String getTypeName() throws RemoteException;
 

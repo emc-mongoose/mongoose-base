@@ -78,7 +78,7 @@ public final class LoadStepServiceImpl extends ServiceBase implements LoadStepSe
 	}
 
 	@Override
-	public String runId()
+	public long runId()
 					throws RemoteException {
 		return localLoadStep.runId();
 	}

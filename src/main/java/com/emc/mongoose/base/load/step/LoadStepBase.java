@@ -57,8 +57,8 @@ public abstract class LoadStepBase extends DaemonBase implements LoadStep, Runna
 	}
 
 	@Override
-	public final String runId() {
-		return config.stringVal("run-id");
+	public final long runId() {
+		return config.longVal("run-id");
 	}
 
 	@Override

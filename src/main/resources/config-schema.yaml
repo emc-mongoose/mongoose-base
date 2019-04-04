@@ -71,7 +71,7 @@ output:
     threshold: double
     quantiles: list
 run:
-  id: string
+  id: int
   comment: string
   node: boolean
   port: int

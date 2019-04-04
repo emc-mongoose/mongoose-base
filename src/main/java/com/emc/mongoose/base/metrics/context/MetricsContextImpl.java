@@ -283,7 +283,7 @@ public class MetricsContextImpl<S extends AllMetricsSnapshotImpl> extends Metric
 		}
 
 		@Override
-		public ContextBuilderImpl runId(final String id) {
+		public ContextBuilderImpl runId(final long id) {
 			this.metadata.put(METADATA_RUN_ID, id);
 			return this;
 		}
