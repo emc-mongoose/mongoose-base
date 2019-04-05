@@ -8,11 +8,11 @@ metadata:
   namespace: mongoose
 
 spec:
-  clusterIP: "None"
+  type: LoadBalancer
   ports:
-    - name: data
-      port: 1099
-      targetPort: 1099
+  - name: http
+    port: 9999
+    targetPort: 9999
 
   selector:
     name: mongoose-node
@@ -54,4 +54,4 @@ spec:
           args: ["--run-node"]
 
           ports:
-            - containerPort: 1099
+            - containerPort: 9999
