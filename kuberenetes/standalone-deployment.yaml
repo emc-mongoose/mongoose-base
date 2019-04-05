@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongoose-controller
+  name: mongoose
   namespace: mongoose
 spec:
   selector:
     matchLabels:
-      name: mongoose-controller
+      name: mongoose
   template:
     metadata:
       labels:
-        name: mongoose-controller
+        name: mongoose
     spec:
       containers:
         - image: emcmongoose/mongoose

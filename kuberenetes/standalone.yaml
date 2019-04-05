@@ -4,7 +4,6 @@ metadata:
   name: mongoose
   namespace: mongoose
 spec:
-  #  parallelism: 2
   containers:
     - image: emcmongoose/mongoose
       name: mongoose
@@ -15,5 +14,3 @@ spec:
           --load-step-limit-time=1m
           --storage-driver-type=dummy-mock
   restartPolicy: OnFailure
-#  nodeSelector:
-#    kubernetes.io/hostname:
