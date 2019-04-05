@@ -86,3 +86,56 @@ docker run \
     emcmongoose/<IMAGE> \
     [<ARGS>]
 ```
+
+
+# Kubernetes
+
+Mongoose can be deployed on a [kubernetes](https://kubernetes.io/) cluster. Examples of yaml files are in the directory `/kubernetes`. The following describes a more detailed use of scripts:
+
+> The examples use the mongoose image with the `latest` tag. To use specifically the version you need to specify ` - image: emcmongoose/mongoose:<x.y.z>`
+
+> All of the following configurations use `mongoose` namespace. Therefore, it is necessary to first create a namespace:
+```bash
+kubectl create namespace mongoose
+```
+
+### Standalone
+
+Run Mongoose in standalone mode:
+```bash
+kubectl apply -f kuberenetes/standalone.yaml 
+```
+CLI args can be added in following lines:
+```yaml
+...
+args:
+        - "-c"
+        - /opt/mongoose/entrypoint.sh
+          --load-step-limit-time=1m
+          --storage-driver-type=dummy-mock
+          <others CLI args>
+```
+
+#### Deployment & Pod
+
+There are 2 options to start the mongoose: as `Pod` and as `Deployment`. In the first case, when the scenario completes, pod goes into status `Completed` before it is deleted. In the second case, after the completion deployment will be restarted infinitely many times.
+
+### Distributed Mode
+
+#### Additional node
+
+TODO
+```bash
+
+```
+
+#### Entry node
+
+TODO
+```bash
+
+```
+
+### REST API
+
+TODO
