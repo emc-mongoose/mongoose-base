@@ -9,7 +9,7 @@ public interface ContextBuilder<B extends ContextBuilder, C extends MetricsConte
 
 	C build();
 
-	B id(final String id);
+	B loadStepId(final String id);
 
 	B comment(final String comment);
 
@@ -26,4 +26,6 @@ public interface ContextBuilder<B extends ContextBuilder, C extends MetricsConte
 	B outputPeriodSec(final int outputPeriodSec);
 
 	B actualConcurrencyGauge(final IntSupplier actualConcurrencyGauge);
+
+	B runId(final long id);
 }

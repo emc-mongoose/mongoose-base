@@ -27,20 +27,20 @@ public interface ConfigUtil {
 	static ObjectMapper readConfigMapper(final ConfigFormat format, final Map<String, Object> schema)
 					throws NoSuchMethodException {
 		final ObjectMapper mapper;
-		switch(format) {
-			case JSON:
-				mapper = new ObjectMapper();
-				break;
-			case YAML:
-				mapper = new YAMLMapper();
-				break;
-			default:
-				throw new AssertionError();
+		switch (format) {
+		case JSON:
+			mapper = new ObjectMapper();
+			break;
+		case YAML:
+			mapper = new YAMLMapper();
+			break;
+		default:
+			throw new AssertionError();
 		}
 		return mapper
-			.enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
-			.enable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY)
-			.enable(SerializationFeature.INDENT_OUTPUT);
+						.enable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+						.enable(DeserializationFeature.FAIL_ON_READING_DUP_TREE_KEY)
+						.enable(SerializationFeature.INDENT_OUTPUT);
 	}
 
 	static ObjectWriter writerWithPrettyPrinter(final ObjectMapper om) {
@@ -54,15 +54,15 @@ public interface ConfigUtil {
 
 	static ObjectWriter configWriter(final ConfigFormat format) {
 		final ObjectMapper mapper;
-		switch(format) {
-			case JSON:
-				mapper = new ObjectMapper();
-				break;
-			case YAML:
-				mapper = new YAMLMapper();
-				break;
-			default:
-				throw new AssertionError();
+		switch (format) {
+		case JSON:
+			mapper = new ObjectMapper();
+			break;
+		case YAML:
+			mapper = new YAMLMapper();
+			break;
+		default:
+			throw new AssertionError();
 		}
 		return writerWithPrettyPrinter(mapper);
 	}
@@ -92,7 +92,7 @@ public interface ConfigUtil {
 	static Config loadConfig(final File file, final Map<String, Object> schema)
 					throws NoSuchMethodException, IOException {
 		final ConfigFormat format;
-		if(file.getName().endsWith(".json")) {
+		if (file.getName().endsWith(".json")) {
 			format = JSON;
 		} else {
 			format = YAML;

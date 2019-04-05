@@ -36,12 +36,12 @@ public class ConfigServlet extends HttpServlet {
 		final var contexts = req.getRequestURI().split(CONTEXT_SEP);
 		final var acceptHeader = req.getHeader(HttpHeader.ACCEPT.toString());
 		final ConfigFormat configFormat;
-		if(null == acceptHeader) {
+		if (null == acceptHeader) {
 			configFormat = YAML;
 		} else {
-			if(acceptHeader.startsWith(APPLICATION_JSON.toString())) {
+			if (acceptHeader.startsWith(APPLICATION_JSON.toString())) {
 				configFormat = JSON;
-			} else if(acceptHeader.startsWith(TEXT_JSON.toString())) {
+			} else if (acceptHeader.startsWith(TEXT_JSON.toString())) {
 				configFormat = JSON;
 			} else {
 				configFormat = YAML;
@@ -59,15 +59,15 @@ public class ConfigServlet extends HttpServlet {
 
 	private void getSchema(final HttpServletResponse resp, final ConfigFormat format) throws IOException {
 		final ObjectMapper mapper;
-		switch(format) {
-			case JSON:
-				mapper = new ObjectMapper();
-				break;
-			case YAML:
-				mapper = new YAMLMapper();
-				break;
-			default:
-				throw new AssertionError();
+		switch (format) {
+		case JSON:
+			mapper = new ObjectMapper();
+			break;
+		case YAML:
+			mapper = new YAMLMapper();
+			break;
+		default:
+			throw new AssertionError();
 		}
 		var schemaStr = writerWithPrettyPrinter(mapper).writeValueAsString(config.schema());
 		for (final var k : TypeNames.MAP.keySet()) {

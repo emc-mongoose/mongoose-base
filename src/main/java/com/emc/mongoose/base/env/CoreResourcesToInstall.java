@@ -46,12 +46,11 @@ public final class CoreResourcesToInstall extends InstallableJarResources {
 
 	@Override
 	protected final List<String> resourceFilesToInstall() {
-		try(
-			final var in = getClass().getResourceAsStream(RESOURCES_FILE_NAME);
-			final var reader = new BufferedReader(new InputStreamReader(in))
-		) {
+		try (
+						final var in = getClass().getResourceAsStream(RESOURCES_FILE_NAME);
+						final var reader = new BufferedReader(new InputStreamReader(in))) {
 			return reader.lines().collect(Collectors.toList());
-		} catch(final IOException e) {
+		} catch (final IOException e) {
 			throw new IllegalStateException("Failed to load the resources list");
 		}
 	}

@@ -70,7 +70,7 @@ public interface LoadStepSliceUtil {
 	}
 
 	static boolean await(final LoadStep stepSlice, final long timeout, final TimeUnit timeUnit) {
-		try (final var logCtx = put(KEY_STEP_ID, stepSlice.id())
+		try (final var logCtx = put(KEY_STEP_ID, stepSlice.loadStepId())
 						.put(KEY_CLASS_NAME, LoadStepClientBase.class.getSimpleName())) {
 			long commFailCount = 0;
 			while (true) {

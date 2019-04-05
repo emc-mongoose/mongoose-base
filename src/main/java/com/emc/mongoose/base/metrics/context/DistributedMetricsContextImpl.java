@@ -12,10 +12,20 @@ import com.emc.mongoose.base.metrics.snapshot.TimingMetricSnapshot;
 import com.emc.mongoose.base.metrics.snapshot.TimingMetricSnapshotImpl;
 import com.github.akurilov.commons.system.SizeInBytes;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
+
+import static com.emc.mongoose.base.metrics.MetricsConstants.METADATA_COMMENT;
+import static com.emc.mongoose.base.metrics.MetricsConstants.METADATA_ITEM_DATA_SIZE;
+import static com.emc.mongoose.base.metrics.MetricsConstants.METADATA_LIMIT_CONC;
+import static com.emc.mongoose.base.metrics.MetricsConstants.METADATA_NODE_LIST;
+import static com.emc.mongoose.base.metrics.MetricsConstants.METADATA_OP_TYPE;
+import static com.emc.mongoose.base.metrics.MetricsConstants.METADATA_RUN_ID;
+import static com.emc.mongoose.base.metrics.MetricsConstants.METADATA_STEP_ID;
 
 public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapshotImpl>
 				extends MetricsContextBase<S> implements DistributedMetricsContext<S> {
@@ -26,39 +36,27 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 	private final boolean sumPersistFlag;
 	private volatile DistributedMetricsListener metricsListener = null;
 	private final List<Double> quantileValues;
-	private final List<String> nodeAddrs;
 
 	public DistributedMetricsContextImpl(
-					final String id,
-					final OpType opType,
+					final Map metaData,
 					final IntSupplier nodeCountSupplier,
-					final int concurrencyLimit,
 					final int concurrencyThreshold,
-					final SizeInBytes itemDataSize,
 					final int updateIntervalSec,
 					final boolean stdOutColorFlag,
 					final boolean avgPersistFlag,
 					final boolean sumPersistFlag,
 					final Supplier<List<AllMetricsSnapshot>> snapshotsSupplier,
-					final List<Double> quantileValues,
-					final List<String> nodeAddrs,
-					final String comment) {
+					final List<Double> quantileValues) {
 		super(
-						id,
-						opType,
-						concurrencyLimit,
-						nodeCountSupplier.getAsInt(),
+						metaData,
 						concurrencyThreshold,
-						itemDataSize,
 						stdOutColorFlag,
-						TimeUnit.SECONDS.toMillis(updateIntervalSec),
-						comment);
+						TimeUnit.SECONDS.toMillis(updateIntervalSec));
 		this.nodeCountSupplier = nodeCountSupplier;
 		this.snapshotsSupplier = snapshotsSupplier;
 		this.avgPersistFlag = avgPersistFlag;
 		this.sumPersistFlag = sumPersistFlag;
 		this.quantileValues = quantileValues;
-		this.nodeAddrs = nodeAddrs;
 	}
 
 	@Override
@@ -86,7 +84,7 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 
 	@Override
 	public List<String> nodeAddrs() {
-		return nodeAddrs;
+		return (List<String>) metadata.get(METADATA_NODE_LIST);
 	}
 
 	@Override
@@ -181,19 +179,20 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 	@Override
 	protected DistributedMetricsContextImpl<S> newThresholdMetricsContext() {
 		return new DistributedContextBuilderImpl()
-						.id(id)
-						.opType(opType)
+						.loadStepId(loadStepId())
+						.opType(opType())
 						.nodeCountSupplier(nodeCountSupplier)
-						.concurrencyLimit(concurrencyLimit)
+						.concurrencyLimit(concurrencyLimit())
 						.concurrencyThreshold(concurrencyThreshold)
-						.itemDataSize(itemDataSize)
+						.itemDataSize(itemDataSize())
 						.outputPeriodSec((int) TimeUnit.MILLISECONDS.toSeconds(outputPeriodMillis))
 						.stdOutColorFlag(stdOutColorFlag)
 						.avgPersistFlag(avgPersistFlag)
 						.sumPersistFlag(sumPersistFlag)
 						.snapshotsSupplier(snapshotsSupplier)
 						.quantileValues(quantileValues)
-						.nodeAddrs(nodeAddrs)
+						.nodeAddrs(nodeAddrs())
+						.runId(runId())
 						.build();
 	}
 
@@ -213,13 +212,13 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 	public final String toString() {
 		return getClass().getSimpleName()
 						+ "("
-						+ opType.name()
+						+ opType().name()
 						+ '-'
-						+ concurrencyLimit
+						+ concurrencyLimit()
 						+ "x"
 						+ nodeCount()
 						+ "@"
-						+ id
+						+ loadStepId()
 						+ ")";
 	}
 
@@ -234,111 +233,122 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 
 	private static class DistributedContextBuilderImpl implements DistributedContextBuilder {
 
+		private Map metaData = new HashMap();
 		private IntSupplier nodeCountSupplier;
 		private Supplier<List<AllMetricsSnapshot>> snapshotsSupplier;
 		private boolean avgPersistFlag;
 		private boolean sumPersistFlag;
 		private List<Double> quantileValues;
-		private List<String> nodeAddrs;
-		private String id;
-		private OpType opType;
-		private int concurrencyLimit;
 		private int concurrencyThreshold;
-		private SizeInBytes itemDataSize;
 		private boolean stdOutColorFlag;
 		private int outputPeriodSec;
 		private IntSupplier actualConcurrencyGauge = () -> 1; // TODO: How to correctly define for distributed mode
-		private String comment;
 
 		public DistributedMetricsContextImpl build() {
 			return new DistributedMetricsContextImpl(
-							id,
-							opType,
+							metaData,
 							nodeCountSupplier,
-							concurrencyLimit,
 							concurrencyThreshold,
-							itemDataSize,
 							outputPeriodSec,
 							stdOutColorFlag,
 							avgPersistFlag,
 							sumPersistFlag,
 							snapshotsSupplier,
-							quantileValues,
-							nodeAddrs,
-							comment);
+							quantileValues);
 		}
 
-		public DistributedContextBuilder id(final String id) {
-			this.id = id;
+		@Override
+		public DistributedContextBuilder loadStepId(final String id) {
+			this.metaData.put(METADATA_STEP_ID, id);
 			return this;
 		}
 
+		@Override
+		public DistributedContextBuilder runId(final long id) {
+			this.metaData.put(METADATA_RUN_ID, id);
+			return this;
+		}
+
+		@Override
 		public DistributedContextBuilder comment(final String comment) {
-			this.comment = comment;
+			this.metaData.put(METADATA_COMMENT, comment);
 			return this;
 		}
 
+		@Override
 		public DistributedContextBuilder opType(final OpType opType) {
-			this.opType = opType;
+			this.metaData.put(METADATA_OP_TYPE, opType);
 			return this;
 		}
 
+		@Override
 		public DistributedContextBuilder concurrencyLimit(final int concurrencyLimit) {
-			this.concurrencyLimit = concurrencyLimit;
+			this.metaData.put(METADATA_LIMIT_CONC, concurrencyLimit);
 			return this;
 		}
 
+		@Override
 		public DistributedContextBuilder concurrencyThreshold(final int concurrencyThreshold) {
 			this.concurrencyThreshold = concurrencyThreshold;
 			return this;
 		}
 
+		@Override
 		public DistributedContextBuilder itemDataSize(final SizeInBytes itemDataSize) {
-			this.itemDataSize = itemDataSize;
+			this.metaData.put(METADATA_ITEM_DATA_SIZE, itemDataSize);
 			return this;
 		}
 
+		@Override
 		public DistributedContextBuilder stdOutColorFlag(final boolean stdOutColorFlag) {
 			this.stdOutColorFlag = stdOutColorFlag;
 			return this;
 		}
 
+		@Override
 		public DistributedContextBuilder outputPeriodSec(final int outputPeriodSec) {
 			this.outputPeriodSec = outputPeriodSec;
 			return this;
 		}
 
+		@Override
 		public DistributedContextBuilder actualConcurrencyGauge(
 						final IntSupplier actualConcurrencyGauge) {
 			this.actualConcurrencyGauge = actualConcurrencyGauge;
 			return this;
 		}
 
+		@Override
 		public DistributedContextBuilder avgPersistFlag(final boolean avgPersistFlag) {
 			this.avgPersistFlag = avgPersistFlag;
 			return this;
 		}
 
+		@Override
 		public DistributedContextBuilder sumPersistFlag(final boolean sumPersistFlag) {
 			this.sumPersistFlag = sumPersistFlag;
 			return this;
 		}
 
+		@Override
 		public DistributedContextBuilder quantileValues(final List<Double> quantileValues) {
 			this.quantileValues = quantileValues;
 			return this;
 		}
 
+		@Override
 		public DistributedContextBuilder nodeAddrs(final List<String> nodeAddrs) {
-			this.nodeAddrs = nodeAddrs;
+			this.metaData.put(METADATA_NODE_LIST, nodeAddrs);
 			return this;
 		}
 
+		@Override
 		public DistributedContextBuilder nodeCountSupplier(final IntSupplier nodeCountSupplier) {
 			this.nodeCountSupplier = nodeCountSupplier;
 			return this;
 		}
 
+		@Override
 		public DistributedContextBuilder snapshotsSupplier(
 						final Supplier<List<AllMetricsSnapshot>> snapshotsSupplier) {
 			this.snapshotsSupplier = snapshotsSupplier;
