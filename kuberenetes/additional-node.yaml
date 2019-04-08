@@ -49,7 +49,7 @@ spec:
 
       containers:
         - image: emcmongoose/mongoose
-          name: mongoose-driver
+          name: mongoose-node
           args: ["--run-node"]
 
           ports:
