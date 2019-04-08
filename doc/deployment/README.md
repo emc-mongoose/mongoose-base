@@ -175,6 +175,7 @@ With command `kubectl get -n mongoose pods` you can see information about runnin
 
 | NAME | READY | STATUS | RESTARTS | AGE |
 | --- | --- | --- | --- | --- |
+| mongoose          | 1/1     |Running   |0          |5s
 | mongoose-node-0   | 1/1     |Running   |0          |19m
 | mongoose-node-1   | 1/1     |Running   |0          |19m
 | mongoose-node-2   | 1/1     |Running   |0          |19m
@@ -196,3 +197,11 @@ We are interested in external ip **x.y.z.j** . We can send HTTP-requests to it [
 ```
 curl -v -X POST http://x.y.z.j:9999/run
 ```
+
+### Deleting kubernetes resources
+
+There are several ways to delete kubernetes resources:
+* delete by configuration `kubectl delete -f <filename>.yaml`
+* manual removal `kubectl delete -n mongoose pod NAME`
+* removal of all resources in namespace `kubectl delete -n mongoose pod --all`
+* removal of namespace (including resources) `kubectl delete namespace mongoose`
