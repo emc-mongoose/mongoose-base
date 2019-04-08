@@ -120,22 +120,65 @@ args:
 
 There are 2 options to start the mongoose: as `Pod` and as `Deployment`. In the first case, when the scenario completes, pod goes into status `Completed` before it is deleted. In the second case, after the completion deployment will be restarted infinitely many times.
 
+Run Mongoose in standalone mode as deployment:
+```bash
+kubectl apply -f kuberenetes/standalone-deployment.yaml 
+```
+
 ### Distributed Mode
 
-#### Additional node
-
-TODO
+Run Mongoose in distributed mode:
 ```bash
-
+kubectl apply -f kuberenetes/distributed.yaml 
 ```
 
-#### Entry node
+> `---` - separates configurations for different entities. Each entity can be launched separately as in the previous examples with command `kubectl apply ...`
 
-TODO
-```bash
+The number of replicas means the number of nodes on which `Service` Mongoose will be running.
+```
+...
+spec:
+  replicas: 4
+...
+```
+
+`Pod` plays the role of the entry node.
 
 ```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mongoose
+  namespace: mongoose
+...
+   --load-step-node-addrs=mongoose-node-0.mongoose-node,mongoose-node-1.mongoose-node,mongoose-node-2.mongoose-node,mongoose-node-3.mongoose-node
+...
+```
+
+With command `kubectl get -n mongoose pods` you can see information about running pods. In this example:
+
+| NAME | READY | STATUS | RESTARTS | AGE |
+| --- | --- | --- | --- | --- |
+| mongoose-node-0   | 1/1     |Running   |0          |19m
+| mongoose-node-1   | 1/1     |Running   |0          |19m
+| mongoose-node-2   | 1/1     |Running   |0          |19m
+| mongoose-node-3   | 1/1     |Running   |0          |19m
+
+
 
 ### REST API
 
-TODO
+Run Mongoose nodes:
+```bash
+kubectl apply -f kuberenetes/additional-node.yaml 
+```
+With command `kubectl get -n mongoose services` you can see inforamtion about running services. For this example:
+
+|NAME            |TYPE           |CLUSTER-IP      |EXTERNAL-IP                   |PORT(S)          |AGE
+| --- | --- | --- | --- | --- | ---
+|mongoose-node   |LoadBalancer   |a.b.c.d   |**x.y.z.j**  |9999:31687/TCP   |25m
+
+We are interested in external ip **x.y.z.j** . We can send HTTP-requests to it [(see Remote API)](doc/interfaces/api/remote). For example:
+```
+curl -v -X POST http://x.y.z.j:9999/run
+```
