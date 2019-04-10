@@ -10,15 +10,25 @@ public final class ItemNameInputImpl
 
 	private final long initialId;
 	private final Long2LongFunction idFunction;
+	private final boolean excludeOffsetFlag;
 	private volatile long lastId;
 	private final Input<String> prefixInput;
 	private final int radix;
 
 	public ItemNameInputImpl(
-					final Long2LongFunction idFunction, final long offset, final Input<String> prefixInput, final int radix) {
+		final Long2LongFunction idFunction, final long offset, final Input<String> prefixInput, final int radix
+	) {
+		this(idFunction, offset, false, prefixInput, radix);
+	}
+
+	public ItemNameInputImpl(
+		final Long2LongFunction idFunction, final long offset, final boolean excludeOffsetFlag,
+		final Input<String> prefixInput, final int radix
+	) {
 		this.initialId = offset;
 		this.lastId = initialId;
 		this.idFunction = idFunction;
+		this.excludeOffsetFlag = excludeOffsetFlag;
 		this.prefixInput = prefixInput;
 		this.radix = radix;
 	}
@@ -33,7 +43,11 @@ public final class ItemNameInputImpl
 	}
 
 	private String convert() {
-		return prefixInput.get() + Long.toString(lastId, radix);
+		if(excludeOffsetFlag) {
+			return prefixInput.get();
+		} else {
+			return prefixInput.get() + Long.toString(lastId, radix);
+		}
 	}
 
 	@Override

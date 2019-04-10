@@ -3,6 +3,7 @@ package com.emc.mongoose.base.item.naming;
 import com.emc.mongoose.base.config.ConstantValueInputImpl;
 import com.emc.mongoose.base.config.el.CompositeExpressionInputBuilder;
 import com.github.akurilov.commons.io.Input;
+import it.unimi.dsi.fastutil.longs.Long2LongFunction;
 
 import static com.emc.mongoose.base.item.naming.ItemNameInput.ItemNamingType;
 import static com.emc.mongoose.base.item.naming.ItemNameInput.ItemNamingType.RANDOM;
@@ -18,6 +19,7 @@ public final class ItemNameInputBuilder
 	private volatile String prefix = null;
 	private volatile int length = 12;
 	private volatile long seed = 0;
+	private volatile boolean ignoreSeedFlag = false;
 	private volatile int step = 1;
 
 	@Override
@@ -51,6 +53,12 @@ public final class ItemNameInputBuilder
 	}
 
 	@Override
+	public final ItemNameInputBuilder ignoreSeed(final boolean ignoreSeedFlag) {
+		this.ignoreSeedFlag = ignoreSeedFlag;
+		return this;
+	}
+
+	@Override
 	public final ItemNameInputBuilder step(final int step) {
 		this.step = step;
 		return this;
@@ -67,12 +75,15 @@ public final class ItemNameInputBuilder
 							.expression(prefix)
 							.build();
 		}
+		var idFunc = (Long2LongFunction) null;
 		switch (type) {
 		case RANDOM:
-			return (T) new ItemNameInputImpl((x) -> abs(xorShift(x) % maxId), seed, prefixInput, radix);
+			idFunc = (x) -> abs(xorShift(x) % maxId);
+			break;
 		case SERIAL:
-			return (T) new ItemNameInputImpl((x) -> abs((x + step) % maxId), seed, prefixInput, radix);
+			idFunc = (x) -> abs((x + step) % maxId);
+			break;
 		}
-		return null;
+		return (T) new ItemNameInputImpl(idFunc, seed, ignoreSeedFlag, prefixInput, radix);
 	}
 }

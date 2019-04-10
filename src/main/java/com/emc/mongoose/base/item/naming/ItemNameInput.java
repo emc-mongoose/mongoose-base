@@ -31,6 +31,8 @@ public interface ItemNameInput
 
 		<T extends Builder> T seed(final long offset);
 
+		<T extends Builder> T ignoreSeed(final boolean ignoreSeedFlag);
+
 		<T extends Builder> T step(final int step);
 
 		<T extends ItemNameInput> T build();
