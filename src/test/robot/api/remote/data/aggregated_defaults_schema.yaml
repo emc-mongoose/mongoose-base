@@ -57,9 +57,9 @@ storage:
         output: "int"
         input: "int"
       concurrency: "int"
-    precondition: "boolean"
     type: "string"
     threads: "int"
+    precondition: "boolean"
   namespace: "string"
   auth:
     uid: "string"

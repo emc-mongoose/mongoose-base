@@ -60,9 +60,9 @@ storage:
         output: 1000000
         input: 1000000
       concurrency: 1
-    precondition: true
     type: "dummy-mock"
     threads: 0
+    precondition: true
   namespace: null
   auth:
     uid: null
