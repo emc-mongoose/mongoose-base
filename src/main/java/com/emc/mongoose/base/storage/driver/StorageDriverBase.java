@@ -36,6 +36,7 @@ public abstract class StorageDriverBase<I extends Item, O extends Operation<I>> 
 	protected final String namespace;
 	protected final Credential credential;
 	protected final boolean verifyFlag;
+	protected final boolean checkPreconditionsFlag;
 
 	protected final ConcurrentMap<String, Credential> pathToCredMap = new ConcurrentHashMap<>(1);
 
@@ -69,6 +70,7 @@ public abstract class StorageDriverBase<I extends Item, O extends Operation<I>> 
 				this.authTokens.put(credential, authToken);
 			}
 		}
+		this.checkPreconditionsFlag = driverConfig.boolVal("precondition");
 		this.concurrencyLimit = limitConfig.intVal("concurrency");
 		this.verifyFlag = verifyFlag;
 
@@ -91,21 +93,23 @@ public abstract class StorageDriverBase<I extends Item, O extends Operation<I>> 
 		if (op instanceof DataOperation) {
 			((DataOperation) op).item().dataInput(itemDataInput);
 		}
-		final String dstPath = op.dstPath();
-		final Credential credential = op.credential();
-		if (credential != null) {
-			pathToCredMap.putIfAbsent(dstPath == null ? "" : dstPath, credential);
-			if (requestAuthTokenFunc != null) {
-				authTokens.computeIfAbsent(credential, requestAuthTokenFunc);
+		if(checkPreconditionsFlag) {
+			final String dstPath = op.dstPath();
+			final Credential credential = op.credential();
+			if (credential != null) {
+				pathToCredMap.putIfAbsent(dstPath == null ? "" : dstPath, credential);
+				if (requestAuthTokenFunc != null) {
+					authTokens.computeIfAbsent(credential, requestAuthTokenFunc);
+				}
 			}
-		}
-		if (requestNewPathFunc != null) {
-			// NOTE: in the distributed mode null dstPath becomes empty one
-			if (dstPath != null && !dstPath.isEmpty()) {
-				if (null == pathMap.computeIfAbsent(dstPath, requestNewPathFunc)) {
-					Loggers.ERR.debug("Failed to compute the destination path for the operation: {}", op);
-					op.status(Operation.Status.FAIL_UNKNOWN);
-					// return false;
+			if (requestNewPathFunc != null) {
+				// NOTE: in the distributed mode null dstPath becomes empty one
+				if (dstPath != null && !dstPath.isEmpty()) {
+					if (null == pathMap.computeIfAbsent(dstPath, requestNewPathFunc)) {
+						Loggers.ERR.debug("Failed to compute the destination path for the operation: {}", op);
+						op.status(Operation.Status.FAIL_UNKNOWN);
+						// return false;
+					}
 				}
 			}
 		}

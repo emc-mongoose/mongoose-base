@@ -61,6 +61,7 @@ storage:
         output: 1000000
         input: 1000000
       concurrency: 1
+    precondition: true
     type: "s3"
     threads: 0
   auth:

@@ -89,6 +89,7 @@ storage:
       queue:
         input: int
         output: int
+    precondition: boolean
     threads: int
     type: string
   namespace: string

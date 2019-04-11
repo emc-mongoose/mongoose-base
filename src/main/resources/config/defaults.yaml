@@ -96,6 +96,7 @@ storage:
       queue:
         input: 1000000
         output: 1000000
+    precondition: true
     threads: 0
     type: dummy-mock
   namespace: null

@@ -57,6 +57,7 @@ storage:
         output: "int"
         input: "int"
       concurrency: "int"
+    precondition: "boolean"
     type: "string"
     threads: "int"
   namespace: "string"
