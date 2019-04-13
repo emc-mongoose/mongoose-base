@@ -249,7 +249,7 @@ public class LoadGeneratorBuilderImpl<I extends Item, O extends Operation<I>, T 
 		}
 		// check for the copy mode
 		if (OpType.CREATE.equals(opType)
-						&& ItemType.DATA.equals(itemType) // FIXME: what is the purpose of this condition?
+						&& ItemType.DATA.equals(itemType)
 						&& !(itemInput instanceof NewItemInput)) {
 			// intercept the items input for the storage side concatenation support
 			final var itemDataRangesConcatConfig = rangesConfig.stringVal("concat");
@@ -431,25 +431,22 @@ public class LoadGeneratorBuilderImpl<I extends Item, O extends Operation<I>, T 
 		final var namingConfig = itemConfig.configVal("naming");
 		final var length = namingConfig.intVal("length");
 		final var seedRaw = namingConfig.val("seed");
-		final var ignoreSeedFlag = seedRaw == null || ((seedRaw instanceof String) && ((String) seedRaw).isEmpty());
 		long seed = 0;
-		if(!ignoreSeedFlag) {
-			try {
-				seed = TypeUtil.typeConvert(seedRaw, long.class);
-			} catch (final ClassCastException | NumberFormatException e) {
-				if (seedRaw instanceof String) {
-					try (
-									final var in = withLanguage(ExpressionInput.builder())
-													.expression((String) seedRaw)
-													.<ExpressionInput<Long>> build()) {
-						seed = in.get();
-					} catch (final Exception ee) {
-						LogUtil.exception(Level.WARN, e, "Item naming seed expression (\"{}\") failure", seedRaw);
-					}
-				} else {
-					throw new IllegalStateException(
-									"Item naming seed (" + seedRaw + ") should be an integer either an expression");
+		try {
+			seed = TypeUtil.typeConvert(seedRaw, long.class);
+		} catch (final ClassCastException | NumberFormatException e) {
+			if (seedRaw instanceof String) {
+				try (
+								final var in = withLanguage(ExpressionInput.builder())
+												.expression((String) seedRaw)
+												.<ExpressionInput<Long>> build()) {
+					seed = in.get();
+				} catch (final Exception ee) {
+					LogUtil.exception(Level.WARN, e, "Item naming seed expression (\"{}\") failure", seedRaw);
 				}
+			} else {
+				throw new IllegalStateException(
+								"Item naming seed (" + seedRaw + ") should be an integer either an expression");
 			}
 		}
 		final var prefix = namingConfig.stringVal("prefix");
@@ -459,7 +456,6 @@ public class LoadGeneratorBuilderImpl<I extends Item, O extends Operation<I>, T 
 		final var itemNameInput = ItemNameInput.Builder.newInstance()
 						.length(length)
 						.seed(seed)
-						.ignoreSeed(ignoreSeedFlag)
 						.prefix(prefix)
 						.radix(radix)
 						.step(step)
