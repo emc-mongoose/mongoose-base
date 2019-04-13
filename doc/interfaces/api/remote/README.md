@@ -278,7 +278,7 @@ There metrics being exposed:
 
 and 3 Primitive Types: Timing, Rate, Concurrency. Depends on the type of metric, which aggregation types are exported. The table below provides a description:
 
-<table>
+  <table>
     <thead>
         <tr>
             <th>Metric name</th>
@@ -320,17 +320,6 @@ and 3 Primitive Types: Timing, Rate, Concurrency. Depends on the type of metric,
 </table>
 
 ### 6.1.1. Custom Quantiles
-
-It's possible to export the custom quantile values for both operations durations and latencies via the remote API. The 
-default value makes mongoose report the same quantiles as the ones used historically to report in the stdandard output
-and the log files (0.25,0.5,0.75 - low quartile, median and high quartile). To specify the custom quantiles values use 
-the `output-metrics-quantiles` configuration option.
-
-CLI example:
-```bash
-java -jar mongoose-<VERSION>.jar ... --output-metrics-quantiles=0.5,0.95,0.999
-``` 
-
 To specify the value of the required quantiles, use the `--output-metrics-quantiles` parameter.
 By default `output-metrics-quantiles=[0.25,0.5,0.75]`.
 
