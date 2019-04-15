@@ -5,8 +5,6 @@ import sys
 import time
 from fabric import Connection
 from invoke import Responder
-
-
 # Variables:
 # host_login = 'kube'
 # host_password = '123'
@@ -20,14 +18,17 @@ from invoke import Responder
 # root_passwd_enter = Responder(pattern=r'Enter| new Unix password', response=root_password + '\n', )
 # root_passwd_retype = Responder(pattern=r'Retype| new Unix password', response=root_password + '\n', )
 
-URLS = ['etcd.tar.bz2',
-		'kube-apiserver.tar.bz2',
-		'kube-controller-manager.tar.bz2',
-		'kube-proxy.tar.bz2',
-		'kube-scheduler.tar.bz2',
-		'pause.tar.bz2',
-		'coredns.tar.bz2',
-		'flannel.tar.bz2']
+# URLS = ['etcd.tar.bz2',
+# 		'kube-apiserver.tar.bz2',
+# 		'kube-controller-manager.tar.bz2',
+# 		'kube-proxy.tar.bz2',
+# 		'kube-scheduler.tar.bz2',
+# 		'pause.tar.bz2',
+# 		'coredns.tar.bz2',
+# 		'flannel.tar.bz2']
+
+URLS = []
+
 
 class bcolors:
 	RED = '\033[31m'
@@ -105,45 +106,52 @@ def reconfigure_ssh_and_root_passwd(hosts_ip, credentials):
 def install_env(hosts_ip, credentials):
 	# Update and install default package
 	ssh_command = '''
-        echo "\
-        \ndeb http://us.archive.ubuntu.com/ubuntu/ xenial main restricted \
-        \ndeb http://us.archive.ubuntu.com/ubuntu/ xenial-updates main restricted \
-        \ndeb http://us.archive.ubuntu.com/ubuntu/ xenial universe \
-        \ndeb http://us.archive.ubuntu.com/ubuntu/ xenial-updates universe \
-        \ndeb http://us.archive.ubuntu.com/ubuntu/ xenial multiverse \
-        \ndeb http://us.archive.ubuntu.com/ubuntu/ xenial-updates multiverse \
-        \ndeb http://us.archive.ubuntu.com/ubuntu/ xenial-backports main restricted universe multiverse \
-        \ndeb http://security.ubuntu.com/ubuntu xenial-security main restricted \
-        \ndeb http://security.ubuntu.com/ubuntu xenial-security universe \
-        \ndeb http://security.ubuntu.com/ubuntu xenial-security multiverse" > /etc/apt/sources.list
-        apt update
-    '''
-	ssh_command += '\napt install -y numactl libaio1 openjdk-8-jre apt-transport-https curl binutils'
+		y | yum update
+		yum install -y docker curl unzip numactl libaio1 openjdk-8-jre apt-transport-https binutils
+	'''
+	# Restart docker
+	ssh_command += '''
+		systemctl enable docker
+		systemctl start docker
+		systemctl restart docker
+	'''
 	# Install linux headers
-	ssh_command += '\napt install -y linux-headers-4.4.0-140 linux-headers-4.4.0-140-generic'
+	ssh_command += '\nyum install -y linux-headers-4.4.0-140 linux-headers-4.4.0-140-generic'
 	# Disable swap on host
-	ssh_command += '\nswapoff -a'
-	# Add certificate
-	ssh_command += '\nwget -p http://lglaf020.lss.emc.com/ovf/git/EMCSSLDecryptionAuthorityv2.crt -O ' \
-				   '/usr/local/share/ca-certificates/EMCSSLDecryptionAuthorityv2.crt'
-	ssh_command += '\nwget -p http://lglaf020.lss.emc.com/ovf/git/EMC_SSL_ca.crt -O ' \
-				   '/usr/local/share/ca-certificates/EMC_SSL_ca.crt'
-	ssh_command += '\nwget -p http://lglaf020.lss.emc.com/ovf/git/EMC_root_ca.crt -O ' \
-				   '/usr/local/share/ca-certificates/EMC_root_ca.crt'
-	ssh_command += '\ncd /usr/local/share/ca-certificates/ && cat $(ls) >> ca-bundle.crt'
-	ssh_command += '\nupdate-ca-certificates'
-	# Install docker
-	ssh_command += '\napt install -y docker.io'
+	ssh_command += '''
+		swapoff -a'
+		sudo sed -i '/ swap / s/^/#/' /etc/fstab
+	'''
+	#Disable SELinux:
+	ssh_command += '''
+		setenforce 0
+		sed -i s/^SELINUX=.*$/SELINUX=disabled/ /etc/selinux/config
+	'''
+	# Add certificate if they exist in ./ca/
+	ssh.copy_file_to_host(hosts_ip, credentials, "./ca/*.pem", "/etc/pki/ca-trust/source/anchors/CA.pem")
+	ssh.copy_file_to_host(hosts_ip, credentials, "./ca/*.pem", "/")
+	ssh_command += '\nupdate-ca-trust'  # '\nupdate-ca-certificates'
 	# Install kubernetes
 	ssh_command += '''
-        curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-        echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list
-        apt update
-        apt install -y kubelet kubeadm kubectl
-        apt-mark hold kubelet kubeadm kubectl
+		cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+		[kubernetes]
+		name=Kubernetes
+		baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+		enabled=1
+		gpgcheck=1
+		repo_gpgcheck=1
+		gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+       		   https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+		EOF
+	'''
+	ssh_command += '''
+        yum install -y kubelet kubeadm kubectl
         echo 'Environment="KUBELET_EXTRA_ARGS=--fail-swap-on=false"' | tee -a /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
-        systemctl daemon-reload && systemctl restart kubelet
+        systemctl daemon-reload && systemctl enable kubelet && systemctl start kubelet
+        
+        yes | kubeadm reset
     '''
+	#### see above #### TODO
 	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
 
 
@@ -151,13 +159,9 @@ def download_and_load_images(hosts_ip, credentials):
 	print('Download images on host: ')
 	ssh_command = 'mkdir -p /tmp/kubernetes'
 	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
-	# for file_name in ['etcd.tar.bz2', 'kube-apiserver.tar.bz2', 'kube-controller-manager.tar.bz2',
-	# 				  'kube-proxy.tar.bz2', 'kube-scheduler.tar.bz2', 'pause.tar.bz2', 'coredns.tar.bz2',
-	# 				  'flannel.tar.bz2']:
 	for url in URLS:
-		print(bcolors.BLUE + 'Upload: ' + bcolors.ENDC + bcolors.GREEN + file_name + bcolors.ENDC)
-		ssh.download_file_on_host(hosts_ip,credentials,url);
-		ssh.copy_file_to_host(hosts_ip, credentials, 'k8s.gcr.io/' + file_name, '/tmp/kubernetes')
+		print(bcolors.BLUE + 'Upload: ' + bcolors.ENDC + bcolors.GREEN + url + bcolors.ENDC)
+		ssh.download_file_on_host(hosts_ip, credentials, url)
 	ssh_command = '''
         cd /tmp/kubernetes
         for image in $(ls); do bunzip2 ${image}; done;
@@ -166,22 +170,12 @@ def download_and_load_images(hosts_ip, credentials):
     '''
 	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
 
-
+# TODO:
 def master_kube_init(hosts_ip, credentials):
 	global token_id
 	host_ip = []
 	host_ip.append(hosts_ip[0])
 	# Init cluster for kubernetes
-	# ssh_command = '''
-	#     echo 'Start pull images for kubeadm:'
-	#     kubeadm init --apiserver-advertise-address=192.168.56.30 --kubernetes-version v1.14.0 --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors Swap
-	#     chmod 604 /etc/kubernetes/admin.conf
-	#     mkdir -p $HOME/.kube
-	#     cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-	#     chown $(id -u):$(id -g) $HOME/.kube/config
-	#     export KUBECONFIG=$HOME/.kube/config
-	#     kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
-	# '''
 	ssh_command = '''
         echo 'Start pull images for kubeadm:'
         kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors Swap --kubernetes-version v1.14.0
@@ -196,7 +190,7 @@ def master_kube_init(hosts_ip, credentials):
 	ssh.run_shell_command(host_ip, credentials, ssh_command)
 	token_id = ssh.run_shell_command(host_ip, credentials, token_command, stdout=True)
 
-
+# TODO:
 def add_slave_to_master(list_of_host_ip, credentials):
 	master_ip = list_of_host_ip[0]
 	hosts_ip = list_of_host_ip[1:]
@@ -240,5 +234,4 @@ if __name__ == "__main__":
 		ips = parse_ip(sys.argv[1:])
 		credentials = parse_credentials(sys.argv[1:])
 		main(ips, credentials)
-	# main(sys.argv[1:])
 	print(bcolors.ENDC)
