@@ -29,6 +29,8 @@ from invoke import Responder
 
 URLS = []
 
+PATH_TO_CA = "./ca/CA.pem"
+
 
 class bcolors:
 	RED = '\033[31m'
@@ -106,34 +108,41 @@ def reconfigure_ssh_and_root_passwd(hosts_ip, credentials):
 def install_env(hosts_ip, credentials):
 	# Update and install default package
 	ssh_command = '''
-		y | yum update
-		yum install -y docker curl unzip numactl libaio1 openjdk-8-jre apt-transport-https binutils
+		yum update -y
+		yum install -y docker curl unzip numactl binutils
 	'''
 	# Restart docker
 	ssh_command += '''
 		systemctl enable docker
-		systemctl start docker
 		systemctl restart docker
 	'''
 	# Install linux headers
-	ssh_command += '\nyum install -y linux-headers-4.4.0-140 linux-headers-4.4.0-140-generic'
+	# ssh_command += '\nyum install -y linux-headers-4.4.0-140 linux-headers-4.4.0-140-generic'
 	# Disable swap on host
 	ssh_command += '''
-		swapoff -a'
+		swapoff -a
 		sudo sed -i '/ swap / s/^/#/' /etc/fstab
 	'''
-	#Disable SELinux:
+	# Disable SELinux:
 	ssh_command += '''
 		setenforce 0
 		sed -i s/^SELINUX=.*$/SELINUX=disabled/ /etc/selinux/config
 	'''
+	#Disable Firewall
+	ssh_command += '''
+		systemctl disable firewalld
+		systemctl stop firewalld
+		iptables -L
+		echo 'net.bridge.bridge-nf-call-iptables = 1' > /etc/sysctl.d/87-sysctl.conf
+	'''
 	# Add certificate if they exist in ./ca/
-	ssh.copy_file_to_host(hosts_ip, credentials, "./ca/*.pem", "/etc/pki/ca-trust/source/anchors/CA.pem")
-	ssh.copy_file_to_host(hosts_ip, credentials, "./ca/*.pem", "/")
-	ssh_command += '\nupdate-ca-trust'  # '\nupdate-ca-certificates'
+	if os.path.isfile(PATH_TO_CA):
+		ssh.copy_file_to_host(hosts_ip, credentials, PATH_TO_CA, "/etc/pki/ca-trust/source/anchors/CA.pem")
+		ssh.copy_file_to_host(hosts_ip, credentials, PATH_TO_CA, "/")
+		ssh_command += '\nupdate-ca-trust'  # '\nupdate-ca-certificates'
 	# Install kubernetes
 	ssh_command += '''
-		cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+		cat <<EOF >/etc/yum.repos.d/kubernetes.repo
 		[kubernetes]
 		name=Kubernetes
 		baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
@@ -141,64 +150,91 @@ def install_env(hosts_ip, credentials):
 		gpgcheck=1
 		repo_gpgcheck=1
 		gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
-       		   https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+       		   https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg  
 		EOF
 	'''
-	ssh_command += '''
+	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
+	ssh_command = '''
         yum install -y kubelet kubeadm kubectl
         echo 'Environment="KUBELET_EXTRA_ARGS=--fail-swap-on=false"' | tee -a /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
         systemctl daemon-reload && systemctl enable kubelet && systemctl start kubelet
-        
+
         yes | kubeadm reset
     '''
 	#### see above #### TODO
 	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
 
 
-def download_and_load_images(hosts_ip, credentials):
-	print('Download images on host: ')
-	ssh_command = 'mkdir -p /tmp/kubernetes'
-	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
-	for url in URLS:
-		print(bcolors.BLUE + 'Upload: ' + bcolors.ENDC + bcolors.GREEN + url + bcolors.ENDC)
-		ssh.download_file_on_host(hosts_ip, credentials, url)
-	ssh_command = '''
-        cd /tmp/kubernetes
-        for image in $(ls); do bunzip2 ${image}; done;
-        for image in $(ls); do cat ${image} | docker load; done;
-        rm -rf /tmp/kubernetes
-    '''
-	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
+# def download_and_load_images(hosts_ip, credentials):
+# 	print('Download images on host: ')
+# 	ssh_command = 'mkdir -p /tmp/kubernetes'
+# 	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
+# 	for url in URLS:
+# 		print(bcolors.BLUE + 'Upload: ' + bcolors.ENDC + bcolors.GREEN + url + bcolors.ENDC)
+# 		ssh.download_file_on_host(hosts_ip, credentials, url)
+# 	ssh_command = '''
+#         cd /tmp/kubernetes
+#         for image in $(ls); do bunzip2 ${image}; done;
+#         for image in $(ls); do cat ${image} | docker load; done;
+#         rm -rf /tmp/kubernetes
+#     '''
+# 	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
 
-# TODO:
+
 def master_kube_init(hosts_ip, credentials):
 	global token_id
-	host_ip = []
-	host_ip.append(hosts_ip[0])
+	master_ip = []
+	master_ip.append(hosts_ip[0])
 	# Init cluster for kubernetes
 	ssh_command = '''
-        echo 'Start pull images for kubeadm:'
+        echo '\n\nStart pull images for kubeadm:\n'
         kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors Swap --kubernetes-version v1.14.0
         chmod 604 /etc/kubernetes/admin.conf
         mkdir -p $HOME/.kube
-        cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+        y | cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
         chown $(id -u):$(id -g) $HOME/.kube/config
         export KUBECONFIG=$HOME/.kube/config
         kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+    	kubectl taint nodes --all node-role.kubernetes.io/master-
     '''
 	token_command = "kubeadm token list | awk 'END {print $1}'"
-	ssh.run_shell_command(host_ip, credentials, ssh_command)
-	token_id = ssh.run_shell_command(host_ip, credentials, token_command, stdout=True)
+	ssh.run_shell_command(master_ip, credentials, ssh_command)
+	token_id = ssh.run_shell_command(master_ip, credentials, token_command, stdout=True)
 
-# TODO:
+
 def add_slave_to_master(list_of_host_ip, credentials):
 	master_ip = list_of_host_ip[0]
 	hosts_ip = list_of_host_ip[1:]
-	print(bcolors.BLUE + "Master ip: " + master_ip + bcolors.ENDC)
+	print(bcolors.BLUE + "\nMaster ip: " + master_ip + bcolors.ENDC)
 	print(bcolors.BLUE + "Token id: " + token_id + bcolors.ENDC)
 	# Add slave nodes to master
 	ssh_command = 'kubeadm join --token ' + token_id + ' ' + master_ip + ':6443 --ignore-preflight-errors=Swap ' \
 																		 '--discovery-token-unsafe-skip-ca-verification'
+	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
+	ssh_command = '''
+	export KUBECONFIG=/etc/kubernetes/kubelet.conf
+	cat > /etc/cni/net.d/10-flannel.conflist <<EOF
+	{
+		"name": "cbr0",
+		"plugins": [
+			{
+				"type": "flannel",
+				"delegate": {
+					"hairpinMode": true,
+					"isDefaultGateway": true
+				}
+			},
+			{
+				"type": "portmap",
+				"capabilities": {
+					"portMappings": true
+				}
+			}
+		]
+	}
+	
+	EOF
+	'''
 	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
 
 
@@ -216,9 +252,9 @@ def main(list_of_host_ip, credentials):
 	if status:
 		# reconfigure_ssh_and_root_passwd(list_of_host_ip)
 		install_env(list_of_host_ip, credentials)
-		download_and_load_images(list_of_host_ip, credentials)
-	# master_kube_init(list_of_host_ip)
-	# add_slave_to_master(list_of_host_ip)
+		# download_and_load_images(list_of_host_ip, credentials)
+		master_kube_init(list_of_host_ip, credentials)
+		add_slave_to_master(list_of_host_ip, credentials)
 	else:
 		print(bcolors.RED
 			  + '\nSome of the hosts are offline.\nPlease check the availability of the hosts and run the script again.')
