@@ -51,6 +51,9 @@ run:
   scenario: "string"
   version: "string"
 storage:
+  net:
+    node:
+      slice: "boolean"
   driver:
     limit:
       queue:

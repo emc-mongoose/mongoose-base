@@ -54,6 +54,9 @@ run:
   scenario: null
   version: "4.2.8"
 storage:
+  net:
+    node:
+      slice: false
   namespace: null
   driver:
     limit:

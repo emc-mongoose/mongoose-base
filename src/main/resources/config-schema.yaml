@@ -92,4 +92,7 @@ storage:
     threads: int
     type: string
   namespace: string
+  net:
+    node:
+      slice: boolean
 aliasing: list

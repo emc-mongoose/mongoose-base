@@ -82,7 +82,7 @@ run:
   node: false
   port: 9999
   scenario: null
-  version: 4.2.8
+  version: 4.2.9
 
 storage:
   auth:
@@ -99,6 +99,9 @@ storage:
     threads: 0
     type: dummy-mock
   namespace: null
+  net:
+    node:
+      slice: false
 
 aliasing:
 # v3.0.0

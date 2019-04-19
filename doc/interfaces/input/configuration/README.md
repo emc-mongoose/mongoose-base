@@ -75,12 +75,13 @@ reference.
 | storage-auth-uid                               | String | null | The authentication identifier
 | storage-auth-secret                            | String | null | The authentication secret
 | storage-auth-token                             | String | null | S3: no effect, Atmos: subtenant, Swift: token
-| storage-namespace                              | String | null | The storage namespace
 | storage-driver-limit-concurrency               | Integer >= 0 | 1 | The concurrency limit (per node in case of distributed mode). In case of filesystem this is the max number of open files at any moment. In case of HTTP this is the max number of the active connections at any moment.
 | storage-driver-limit-queue-input               | Integer > 0 | 1000000 | Storage drivers internal input operations queue size limit
 | storage-driver-limit-queue-output              | Integer > 0 | 1000000 | Storage drivers internal output operations queue size limit
 | storage-driver-threads                         | Integer >= 0 | 0 | The count of the shared/global I/O executor threads. 0 means automatic value (CPU cores/threads count)
 | storage-driver-type                            | String | s3 | The identifier pointing to the one of the registered storage driver implementations to use
+| storage-namespace                              | String | null | The storage namespace
+| storage-net-node-slice                         | Boolean | false | Try (or not) to distribute the storage endpoints between the Mongoose nodes using greatest common divisor
 
 #### 1.2. Specific Types
 

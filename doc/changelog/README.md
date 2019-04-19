@@ -1,6 +1,7 @@
 # Contents
 
 ## 2019
+* [4.2.9](#429) 2019-04-19
 * [4.2.8](#428) 2019-04-09
 * [4.2.6](#426) 2019-04-01
 * [4.1.1](#411) 2019-01-16
@@ -60,6 +61,15 @@
 * [0.1.5](#015) 09/22/14
 * [0.1.4](#014) 09/17/14
 * [0.1.3](#013) 08/15/14
+
+# 4.2.9
+
+## Fixed Bugs
+
+| Id | Description |
+|----|-------------|
+| [BASE-1364](https://mongoose-issues.atlassian.net/browse/BASE-1364) | The option "storage-net-node-slice" is not available in base
+
 
 # 4.2.8
 

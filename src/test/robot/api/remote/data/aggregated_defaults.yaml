@@ -62,6 +62,9 @@ storage:
       concurrency: 1
     type: "dummy-mock"
     threads: 0
+  net:
+    node:
+      slice: false
   namespace: null
   auth:
     uid: null
