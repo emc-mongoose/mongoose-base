@@ -54,9 +54,7 @@ run:
   scenario: null
   version: "4.2.9"
 storage:
-  net:
-    node:
-      slice: false
+  namespace: null
   driver:
     limit:
       queue:
@@ -65,7 +63,9 @@ storage:
       concurrency: 1
     type: "dummy-mock"
     threads: 0
-  namespace: null
+  net:
+    node:
+      slice: false
   auth:
     uid: null
     file: null

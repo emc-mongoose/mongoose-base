@@ -51,6 +51,7 @@ run:
   scenario: "string"
   version: "string"
 storage:
+  namespace: "string"
   driver:
     limit:
       queue:
@@ -59,7 +60,6 @@ storage:
       concurrency: "int"
     type: "string"
     threads: "int"
-  namespace: "string"
   net:
     node:
       slice: "boolean"

@@ -30,6 +30,7 @@ import com.github.akurilov.commons.net.NetUtil;
 import com.github.akurilov.commons.reflection.TypeUtil;
 import com.github.akurilov.commons.system.SizeInBytes;
 import com.github.akurilov.confuse.Config;
+import com.github.akurilov.confuse.exceptions.InvalidValueTypeException;
 import com.github.akurilov.confuse.impl.BasicConfig;
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -298,7 +299,12 @@ public abstract class LoadStepClientBase extends LoadStepBase implements LoadSte
 					final var storageNodeAddrs = storageNetNodeConfig.<String> listVal("addrs");
 					ConfigSliceUtil.sliceStorageNodeAddrs(configSlices, storageNodeAddrs);
 				}
-			} catch (final NoSuchElementException ignore) {}
+			} catch (final NoSuchElementException ignore) {
+			} catch (final InvalidValueTypeException e) {
+				if(null != e.actualType()) {
+					LogUtil.exception(Level.ERROR, e, "Failed to assign the storage endpoints to the nodes");
+				}
+			}
 			//
 			ConfigSliceUtil.sliceItemNaming(configSlices);
 		}
