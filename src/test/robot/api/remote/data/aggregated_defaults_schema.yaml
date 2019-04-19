@@ -51,9 +51,6 @@ run:
   scenario: "string"
   version: "string"
 storage:
-  net:
-    node:
-      slice: "boolean"
   driver:
     limit:
       queue:
@@ -63,6 +60,9 @@ storage:
     type: "string"
     threads: "int"
   namespace: "string"
+  net:
+    node:
+      slice: "boolean"
   auth:
     uid: "string"
     file: "string"
