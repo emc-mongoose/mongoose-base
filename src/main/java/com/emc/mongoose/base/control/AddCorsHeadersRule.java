@@ -13,14 +13,14 @@ public final class AddCorsHeadersRule extends Rule {
 	public static final String HEADER_NAME_ACA_ORIGIN = HEADER_NAME_PREFIX_ACA + "-Origin";
 	public static final String HEADER_VALUE_ACA_ORIGIN = "*";
 
-	public static final String HEADER_NAME_ACA_HEADERS = HEADER_NAME_PREFIX_ACA  + "-Headers";
+	public static final String HEADER_NAME_ACA_HEADERS = HEADER_NAME_PREFIX_ACA + "-Headers";
 	public static final String HEADER_NAME_ACA_METHODS = HEADER_NAME_PREFIX_ACA + "-Methods";
 	public static final String HEADER_NAME_AC_EXPOSE_HEADERS = HEADER_NAME_PREFIX_AC + "-Expose-Headers";
 	public static final String ACA_HEADERS = "Origin, X-Requested-With, Content-Type, Accept, ETag";
 
 	@Override
 	public final String matchAndApply(
-			final String target, final HttpServletRequest request, final HttpServletResponse response) {
+					final String target, final HttpServletRequest request, final HttpServletResponse response) {
 		// NOTE: In order to reply to CORS preflight request with the appropriate CORS headers, ...
 		// ... Access-Control-Allow-Headers should contain the same headers ...
 		// ... as Access-Control-Expose-Headers or more.

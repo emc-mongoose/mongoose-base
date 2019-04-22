@@ -60,7 +60,7 @@ public class MetricsAsciiTableLogMessage extends LogMessageBase {
 						strb.append(TABLE_HEADER);
 					}
 					ROW_OUTPUT_COUNTER++;
-					strb.appendFixedWidthPadLeft(metricsCtx.id(), 10, ' ')
+					strb.appendFixedWidthPadLeft(metricsCtx.loadStepId(), 10, ' ')
 									.append(TABLE_BORDER_VERTICAL)
 									.appendFixedWidthPadLeft(FMT_DATE_METRICS_TABLE.format(new Date()), 12, ' ')
 									.append(TABLE_BORDER_VERTICAL);

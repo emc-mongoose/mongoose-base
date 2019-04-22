@@ -4,18 +4,18 @@ import com.emc.mongoose.base.item.op.OpType;
 import com.emc.mongoose.base.metrics.snapshot.AllMetricsSnapshot;
 import com.github.akurilov.commons.system.SizeInBytes;
 
+import java.util.Map;
+
+import static com.emc.mongoose.base.metrics.MetricsConstants.*;
+
 public abstract class MetricsContextBase<S extends AllMetricsSnapshot>
 				implements MetricsContext<S> {
 
+	protected final Map<String, Object> metadata;
 	protected final long ts;
-	protected final String id;
-	protected final OpType opType;
-	protected final int concurrencyLimit;
 	protected final int concurrencyThreshold;
-	protected final SizeInBytes itemDataSize;
 	protected final boolean stdOutColorFlag;
 	protected final long outputPeriodMillis;
-	protected final String comment;
 	private volatile long tsStart = -1;
 	private volatile long lastOutputTs = 0;
 	private volatile boolean thresholdStateExitedFlag = false;
@@ -23,29 +23,21 @@ public abstract class MetricsContextBase<S extends AllMetricsSnapshot>
 	protected volatile S lastSnapshot = null;
 
 	protected MetricsContextBase(
-					final String id,
-					final OpType opType,
-					final int concurrencyLimit,
-					final int nodeCount,
+					final Map metadata,
 					final int concurrencyThreshold,
-					final SizeInBytes itemDataSize,
 					final boolean stdOutColorFlag,
-					final long outputPeriodMillis,
-					final String comment) {
+					final long outputPeriodMillis) {
 		ts = System.nanoTime();
-		this.id = id;
-		this.opType = opType;
-		this.concurrencyLimit = concurrencyLimit;
+		this.metadata = metadata;
 		this.concurrencyThreshold = concurrencyThreshold > 0 ? concurrencyThreshold : Integer.MAX_VALUE;
-		this.itemDataSize = itemDataSize;
 		this.stdOutColorFlag = stdOutColorFlag;
 		this.outputPeriodMillis = outputPeriodMillis;
-		this.comment = comment;
 	}
 
 	@Override
 	public void start() {
 		tsStart = System.currentTimeMillis();
+		metadata.put(METADATA_START_TIME, tsStart);
 	}
 
 	@Override
@@ -59,18 +51,28 @@ public abstract class MetricsContextBase<S extends AllMetricsSnapshot>
 	}
 
 	@Override
-	public final String id() {
-		return id;
+	public final Map metadata() {
+		return metadata;
+	}
+
+	@Override
+	public final String loadStepId() {
+		return (String) metadata.get(METADATA_STEP_ID);
+	}
+
+	@Override
+	public final long runId() {
+		return (long) metadata.get(METADATA_RUN_ID);
 	}
 
 	@Override
 	public final OpType opType() {
-		return opType;
+		return (OpType) metadata.get(METADATA_OP_TYPE);
 	}
 
 	@Override
 	public final int concurrencyLimit() {
-		return concurrencyLimit;
+		return (int) metadata.get(METADATA_LIMIT_CONC);
 	}
 
 	@Override
@@ -80,7 +82,7 @@ public abstract class MetricsContextBase<S extends AllMetricsSnapshot>
 
 	@Override
 	public final SizeInBytes itemDataSize() {
-		return itemDataSize;
+		return (SizeInBytes) metadata.get(METADATA_ITEM_DATA_SIZE);
 	}
 
 	@Override
@@ -181,6 +183,6 @@ public abstract class MetricsContextBase<S extends AllMetricsSnapshot>
 	}
 
 	public String comment() {
-		return this.comment;
+		return (String) this.metadata.get(METADATA_COMMENT);
 	}
 }

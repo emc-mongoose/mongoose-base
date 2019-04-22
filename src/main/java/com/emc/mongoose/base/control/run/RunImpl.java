@@ -13,18 +13,18 @@ public final class RunImpl implements Run {
 	private final String comment;
 	private final String scenario;
 	private final ScriptEngine scriptEngine;
-	private final long timestamp;
+	private final long runId;
 
-	public RunImpl(final String comment, final String scenario, final ScriptEngine scriptEngine) {
+	public RunImpl(final String comment, final String scenario, final ScriptEngine scriptEngine, final long runId) {
 		this.comment = comment;
 		this.scenario = scenario;
 		this.scriptEngine = scriptEngine;
-		this.timestamp = System.currentTimeMillis();
+		this.runId = runId;
 	}
 
 	@Override
-	public final long timestamp() {
-		return timestamp;
+	public final long runId() {
+		return runId;
 	}
 
 	@Override
@@ -37,9 +37,9 @@ public final class RunImpl implements Run {
 		Loggers.SCENARIO.log(Level.INFO, scenario);
 		try {
 			scriptEngine.eval(scenario);
-		} catch(final RuntimeException e) {
+		} catch (final RuntimeException e) {
 			final var cause = e.getCause();
-			if(cause instanceof InterruptedException) {
+			if (cause instanceof InterruptedException) {
 				throwUnchecked(cause);
 			}
 		} catch (final ScriptException e) {

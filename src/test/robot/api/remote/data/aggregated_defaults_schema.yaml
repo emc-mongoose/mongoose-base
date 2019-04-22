@@ -46,10 +46,12 @@ item:
 run:
   node: "boolean"
   comment: "string"
+  id: "long"
   port: "int"
   scenario: "string"
   version: "string"
 storage:
+  namespace: "string"
   driver:
     limit:
       queue:
@@ -58,7 +60,9 @@ storage:
       concurrency: "int"
     type: "string"
     threads: "int"
-  namespace: "string"
+  net:
+    node:
+      slice: "boolean"
   auth:
     uid: "string"
     file: "string"

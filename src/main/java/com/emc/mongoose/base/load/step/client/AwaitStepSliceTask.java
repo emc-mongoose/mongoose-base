@@ -22,7 +22,7 @@ public class AwaitStepSliceTask extends ExclusiveFiberBase {
 		super(ServiceTaskExecutor.INSTANCE);
 		this.stepSlice = stepSlice;
 		try {
-			this.loadStepId = stepSlice.id();
+			this.loadStepId = stepSlice.loadStepId();
 		} catch (final RemoteException e) {
 			LogUtil.exception(Level.ERROR, e, "Failed to connect the load step slice");
 			throw new IllegalStateException(e);

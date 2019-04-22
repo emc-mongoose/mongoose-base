@@ -44,26 +44,26 @@ public final class LoadStepServiceImpl extends ServiceBase implements LoadStepSe
 
 	@Override
 	protected final void doStart() {
-		try (final Instance logCtx = put(KEY_CLASS_NAME, getClass().getSimpleName()).put(KEY_STEP_ID, localLoadStep.id())) {
+		try (final Instance logCtx = put(KEY_CLASS_NAME, getClass().getSimpleName()).put(KEY_STEP_ID, localLoadStep.loadStepId())) {
 			localLoadStep.start();
-			Loggers.MSG.info("Step service for \"{}\" is started", localLoadStep.id());
+			Loggers.MSG.info("Step service for \"{}\" is started", localLoadStep.loadStepId());
 		} catch (final RemoteException ignored) {}
 	}
 
 	@Override
 	protected void doStop() {
-		try (final Instance logCtx = put(KEY_CLASS_NAME, getClass().getSimpleName()).put(KEY_STEP_ID, localLoadStep.id())) {
+		try (final Instance logCtx = put(KEY_CLASS_NAME, getClass().getSimpleName()).put(KEY_STEP_ID, localLoadStep.loadStepId())) {
 			localLoadStep.stop();
-			Loggers.MSG.info("Step service for \"{}\" is stopped", localLoadStep.id());
+			Loggers.MSG.info("Step service for \"{}\" is stopped", localLoadStep.loadStepId());
 		} catch (final RemoteException ignored) {}
 	}
 
 	@Override
 	protected final void doClose() throws IOException {
-		try (final Instance logCtx = put(KEY_CLASS_NAME, getClass().getSimpleName()).put(KEY_STEP_ID, localLoadStep.id())) {
+		try (final Instance logCtx = put(KEY_CLASS_NAME, getClass().getSimpleName()).put(KEY_STEP_ID, localLoadStep.loadStepId())) {
 			super.doStop();
 			localLoadStep.close();
-			Loggers.MSG.info("Step service for \"{}\" is closed", localLoadStep.id());
+			Loggers.MSG.info("Step service for \"{}\" is closed", localLoadStep.loadStepId());
 		}
 	}
 
@@ -73,8 +73,14 @@ public final class LoadStepServiceImpl extends ServiceBase implements LoadStepSe
 	}
 
 	@Override
-	public final String id() throws RemoteException {
-		return localLoadStep.id();
+	public final String loadStepId() throws RemoteException {
+		return localLoadStep.loadStepId();
+	}
+
+	@Override
+	public long runId()
+					throws RemoteException {
+		return localLoadStep.runId();
 	}
 
 	@Override
@@ -90,7 +96,7 @@ public final class LoadStepServiceImpl extends ServiceBase implements LoadStepSe
 	@Override
 	public final boolean await(final long timeout, final TimeUnit timeUnit)
 					throws IllegalStateException, InterruptedException {
-		try (final Instance logCtx = put(KEY_CLASS_NAME, getClass().getSimpleName()).put(KEY_STEP_ID, localLoadStep.id())) {
+		try (final Instance logCtx = put(KEY_CLASS_NAME, getClass().getSimpleName()).put(KEY_STEP_ID, localLoadStep.loadStepId())) {
 			return localLoadStep.await(timeout, timeUnit);
 		} catch (final RemoteException ignored) {}
 		return false;

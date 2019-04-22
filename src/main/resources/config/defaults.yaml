@@ -77,11 +77,12 @@ output:
     - 0.75
 
 run:
+  id: 0
   comment: ""
   node: false
   port: 9999
   scenario: null
-  version: 4.2.7
+  version: 4.2.9
 
 storage:
   auth:
@@ -98,15 +99,15 @@ storage:
     threads: 0
     type: dummy-mock
   namespace: null
+  net:
+    node:
+      slice: false
 
 aliasing:
 # v3.0.0
 - name: "load-threads"
   deprecated: true
   target: "storage-driver-limit-concurrency"
-- name: "run-id"
-  deprecated: true
-  target: "load-step-id"
 - name: "noop"
   target: "load-op-type=noop"
 - name: "create"

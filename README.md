@@ -216,28 +216,11 @@ scenario language, different load step kinds.
 
 ### 2.4.1. Load Steps
 
-A load step controls the load operations flow. Different load step implementations may do it in the different way. There
-are the available out-of-the-box:
-
-* [Linear](load/step/linear)
-  The most basic load step. All load operations have the same type.
-
-* [Pipeline](load/step/pipeline)
-  Executes a sequence of the different load operations for each item independently.
-
-* [Weighted](load/step/weighted)
-  Executes the load operations of different types sustaining the specified ratio (weights).
+See the list of the load step extensions here: https://github.com/emc-mongoose/mongoose
 
 ### 2.4.2. Storage Drivers
 
-The actual load is being executed by the storage drivers. Mongoose supports some storage types out-of-the-box:
-* [Amazon S3](storage/driver/coop/netty/http/s3)
-* [EMC Atmos](storage/driver/coop/netty/http/atmos)
-* [OpenStack Swift](storage/driver/coop/netty/http/swift)
-* [Filesystem](storage/driver/coop/nio/fs)
-
-The following additional storage driver implementations are available:
-* [HDFS](https://github.com/emc-mongoose/mongoose-storage-driver-hdfs)
+See the list of the storage driver extensions here: https://github.com/emc-mongoose/mongoose
 
 ### 2.4.3. Scenario Engine
 

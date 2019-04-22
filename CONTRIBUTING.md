@@ -252,8 +252,9 @@ SUITE=api.storage TEST=s3 ./gradlew clean robotest
    git tag -a latest -m <X>.<Y>.<Z>
    git push --tags --force
    ```
-5. Merge to the `release` branch
-8. Update the projects depending on the Mongoose's API (storage drivers, etc)
+5. Merge to the `release` branch (optional)
+6. Wait until the released artifacts appear on Central Maven repo (few tens of minutes usually) 
+7. Update the projects depending on the Mongoose's API (storage drivers, etc)
 
 # 5. Code
 

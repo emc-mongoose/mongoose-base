@@ -269,7 +269,7 @@ public final class Main {
 			// expose the loaded configuration and the step types
 			ScenarioUtil.configure(scriptEngine, extensions, config, metricsMgr);
 			// go
-			new RunImpl("", scenarioText, scriptEngine).run();
+			new RunImpl("", scenarioText, scriptEngine, config.longVal("run-id")).run();
 		}
 	}
 }

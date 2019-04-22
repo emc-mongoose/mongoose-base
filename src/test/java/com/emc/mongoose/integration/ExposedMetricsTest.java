@@ -79,7 +79,7 @@ public class ExposedMetricsTest {
 		server.start();
 		//
 		metricsContext = MetricsContextImpl.builder()
-						.id(STEP_ID)
+						.loadStepId(STEP_ID)
 						.opType(OP_TYPE)
 						.actualConcurrencyGauge(() -> 1)
 						.concurrencyLimit(CONCURRENCY_LIMIT)
@@ -88,12 +88,13 @@ public class ExposedMetricsTest {
 						.outputPeriodSec(UPDATE_INTERVAL_SEC)
 						.stdOutColorFlag(true)
 						.comment("")
+						.runId(123)
 						.build();
 		snapshotsSupplier = () -> Arrays.asList(metricsContext.lastSnapshot());
 		metricsContext.start();
 		//
 		distributedMetricsContext = DistributedMetricsContextImpl.builder()
-						.id(STEP_ID)
+						.loadStepId(STEP_ID)
 						.opType(OP_TYPE)
 						.nodeCountSupplier(nodeCountSupplier)
 						.concurrencyLimit(CONCURRENCY_LIMIT)
@@ -107,6 +108,7 @@ public class ExposedMetricsTest {
 						.quantileValues(Arrays.asList(QUANTILE_VALUES))
 						.nodeAddrs(nodeList)
 						.comment("")
+						.runId(123)
 						.build();
 		distributedMetricsContext.start();
 	}

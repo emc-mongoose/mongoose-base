@@ -71,6 +71,7 @@ output:
     threshold: double
     quantiles: list
 run:
+  id: long
   comment: string
   node: boolean
   port: int
@@ -91,4 +92,7 @@ storage:
     threads: int
     type: string
   namespace: string
+  net:
+    node:
+      slice: boolean
 aliasing: list

@@ -49,10 +49,14 @@ item:
 run:
   node: true
   comment: ""
+  id: 0
   port: 9999
   scenario: null
-  version: "4.2.7"
+  version: "4.2.9"
 storage:
+  net:
+    node:
+      slice: false
   namespace: null
   driver:
     limit:
@@ -97,9 +101,6 @@ aliasing:
   - name: "load-threads"
     deprecated: true
     target: "storage-driver-limit-concurrency"
-  - name: "run-id"
-    deprecated: true
-    target: "load-step-id"
   - name: "noop"
     target: "load-op-type=noop"
   - name: "create"
