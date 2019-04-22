@@ -6,17 +6,6 @@ import time
 from fabric import Connection
 from invoke import Responder
 # Variables:
-# host_login = 'kube'
-# host_password = '123'
-# host_login = 'emc'
-# host_password = 'emc'
-# host_login = 'user'
-# host_password = '1208'
-# root_login = 'root'
-# root_password = "abc123"
-# sudopass = Responder(pattern=r'\[sudo\] password for', response=host_password + '\n', )
-# root_passwd_enter = Responder(pattern=r'Enter| new Unix password', response=root_password + '\n', )
-# root_passwd_retype = Responder(pattern=r'Retype| new Unix password', response=root_password + '\n', )
 
 # URLS = ['etcd.tar.bz2',
 # 		'kube-apiserver.tar.bz2',
@@ -111,9 +100,15 @@ def install_env(hosts_ip, credentials):
 		yum update -y
 		yum install -y docker curl unzip numactl binutils
 	'''
+	# Add certificate if they exist in ./ca/
+	if os.path.isfile(PATH_TO_CA):
+		ssh.copy_file_to_host(hosts_ip, credentials, PATH_TO_CA, "/etc/pki/ca-trust/source/anchors/CA.pem")
+		ssh.copy_file_to_host(hosts_ip, credentials, PATH_TO_CA, "/")
+		ssh_command += '\nupdate-ca-trust'  # '\nupdate-ca-certificates'
 	# Restart docker
 	ssh_command += '''
 		systemctl enable docker
+		systemctl start docker
 		systemctl restart docker
 	'''
 	# Install linux headers
@@ -128,20 +123,16 @@ def install_env(hosts_ip, credentials):
 		setenforce 0
 		sed -i s/^SELINUX=.*$/SELINUX=disabled/ /etc/selinux/config
 	'''
-	#Disable Firewall
+	# Disable Firewall
 	ssh_command += '''
 		systemctl disable firewalld
 		systemctl stop firewalld
 		iptables -L
 		echo 'net.bridge.bridge-nf-call-iptables = 1' > /etc/sysctl.d/87-sysctl.conf
 	'''
-	# Add certificate if they exist in ./ca/
-	if os.path.isfile(PATH_TO_CA):
-		ssh.copy_file_to_host(hosts_ip, credentials, PATH_TO_CA, "/etc/pki/ca-trust/source/anchors/CA.pem")
-		ssh.copy_file_to_host(hosts_ip, credentials, PATH_TO_CA, "/")
-		ssh_command += '\nupdate-ca-trust'  # '\nupdate-ca-certificates'
 	# Install kubernetes
 	ssh_command += '''
+		rm /etc/yum.repos.d/kubernetes.repo
 		cat <<EOF >/etc/yum.repos.d/kubernetes.repo
 		[kubernetes]
 		name=Kubernetes
@@ -188,15 +179,38 @@ def master_kube_init(hosts_ip, credentials):
 	# Init cluster for kubernetes
 	ssh_command = '''
         echo '\n\nStart pull images for kubeadm:\n'
-        kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors Swap --kubernetes-version v1.14.0
+        kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors Swap
         chmod 604 /etc/kubernetes/admin.conf
+
         mkdir -p $HOME/.kube
-        y | cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-        chown $(id -u):$(id -g) $HOME/.kube/config
-        export KUBECONFIG=$HOME/.kube/config
+        chown $(id -u):$(id -g) /etc/kubernetes/admin.conf
+		cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+
         kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
     	kubectl taint nodes --all node-role.kubernetes.io/master-
     '''
+	# ssh_command = '''
+	# 	y | yum install -y kubelet kubeadm kubectl
+	# 	systemctl enable kubelet && systemctl start kubelet && systemctl status kubelet
+	#
+	# 	echo Environment="KUBELET_EXTRA_ARGS=--fail-swap-on=false" >> /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+	# 	systemctl daemon-reload && systemctl restart kubelet
+	# 	y | yum update
+	#
+	# 	yes | kubeadm reset
+	# 	kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors Swap | tee ./init_output
+	# 	cat ./init_output |  grep 'kubeadm join ' > join_command.sh
+	# 	chmod +x join_command.sh
+	#
+	# 	mkdir -p $HOME/.kube
+	# 	chown $(id -u):$(id -g) /etc/kubernetes/admin.conf
+	# 	yes | cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+	# 	#chown $(id -u):$(id -g) $HOME/.kube/config
+	# 	kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+	#
+	# 	kubectl taint nodes --all node-role.kubernetes.io/master-
+	#
+	# '''
 	token_command = "kubeadm token list | awk 'END {print $1}'"
 	ssh.run_shell_command(master_ip, credentials, ssh_command)
 	token_id = ssh.run_shell_command(master_ip, credentials, token_command, stdout=True)
@@ -208,34 +222,36 @@ def add_slave_to_master(list_of_host_ip, credentials):
 	print(bcolors.BLUE + "\nMaster ip: " + master_ip + bcolors.ENDC)
 	print(bcolors.BLUE + "Token id: " + token_id + bcolors.ENDC)
 	# Add slave nodes to master
+	# ssh_command = 'systemctl start docker.service'
 	ssh_command = 'kubeadm join --token ' + token_id + ' ' + master_ip + ':6443 --ignore-preflight-errors=Swap ' \
 																		 '--discovery-token-unsafe-skip-ca-verification'
 	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
-	ssh_command = '''
-	export KUBECONFIG=/etc/kubernetes/kubelet.conf
-	cat > /etc/cni/net.d/10-flannel.conflist <<EOF
-	{
-		"name": "cbr0",
-		"plugins": [
-			{
-				"type": "flannel",
-				"delegate": {
-					"hairpinMode": true,
-					"isDefaultGateway": true
-				}
-			},
-			{
-				"type": "portmap",
-				"capabilities": {
-					"portMappings": true
-				}
-			}
-		]
-	}
-	
-	EOF
-	'''
+	# ssh_command = '''
+	# export KUBECONFIG=/etc/kubernetes/kubelet.conf
+	# cat > /etc/cni/net.d/10-flannel.conflist <<EOF
+	# {
+	# 	"name": "cbr0",
+	# 	"plugins": [
+	# 		{
+	# 			"type": "flannel",
+	# 			"delegate": {
+	# 				"hairpinMode": true,
+	# 				"isDefaultGateway": true
+	# 			}
+	# 		},
+	# 		{
+	# 			"type": "portmap",
+	# 			"capabilities": {
+	# 				"portMappings": true
+	# 			}
+	# 		}
+	# 	]
+	# }
+	#
+	# EOF
+	# '''
 	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
+	# ssh.run_shell_command(master_ip, credentials, "kubectl get nodes")
 
 
 def parse_ip(list_of_hosts):
