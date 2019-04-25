@@ -142,6 +142,7 @@ def install_env(hosts_ip, credentials):
 		ssh_command += '\nupdate-ca-trust'  # '\nupdate-ca-certificates'
 	# Install kubernetes
 	ssh_command += '''
+		rm /etc/yum.repos.d/kubernetes.repo
 		cat <<EOF >/etc/yum.repos.d/kubernetes.repo
 		[kubernetes]
 		name=Kubernetes
@@ -150,7 +151,7 @@ def install_env(hosts_ip, credentials):
 		gpgcheck=1
 		repo_gpgcheck=1
 		gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
-       		   https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg  
+       	https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg  
 		EOF
 	'''
 	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
