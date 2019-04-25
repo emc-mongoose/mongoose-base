@@ -64,7 +64,7 @@ reference.
 | output-metrics-average-table-header-period     | Integer > 0 | 20 | Output the metrics table header every N rows
 | output-metrics-quantiles                       | List |[0.25,0.5,0.75]| Output quantiles for metrics (only for [Monitoring API](doc/interfaces/api/monitoring#monitoring-api))
 | output-metrics-summary-persist                 | Flag | true | Persist the load step's summary (total) metrics if true
-| output-metrics-trace-persist                   | Flag | true | Persist the information about each load operation if true
+| output-metrics-trace-persist                   | Flag | false | Persist the information about each load operation if true
 | output-metrics-threshold                       | 0 <= Float <= 1 | 0 | The concurrency threshold to enable intermediate statistics calculation, 0 means no threshold
 | run-comment                                    | String | "" | A user defined comment to run the scenario via the Control API
 | run-node                                       | Flag | false | Run in the slave node or not
