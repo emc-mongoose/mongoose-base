@@ -86,7 +86,7 @@ class Operations:
         for host_ip, credentials in zip(hosts_ip, credentials):
             login = credentials[0]
             password = credentials[1]
-            self.connect(host_ip, login, password).put(file_name, remote=path_on_host).close()
+            self.connect(host_ip, login, password).put(file_name, remote=path_on_host)
 
     def download_file_on_host(self, hosts_ip, credentials, url):
         self.run_shell_command(hosts_ip, credentials, "wget -p " + url, stdout=True)
