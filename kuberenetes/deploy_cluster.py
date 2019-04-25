@@ -30,6 +30,7 @@ from invoke import Responder
 URLS = []
 
 PATH_TO_CA = "./ca/CA.pem"
+PATH_TO_KUBE_REPO = "./kubernetes.repo"
 
 
 class bcolors:
@@ -141,19 +142,7 @@ def install_env(hosts_ip, credentials):
 		ssh.copy_file_to_host(hosts_ip, credentials, PATH_TO_CA, "/")
 		ssh_command += '\nupdate-ca-trust'  # '\nupdate-ca-certificates'
 	# Install kubernetes
-	ssh_command += '''
-		rm /etc/yum.repos.d/kubernetes.repo
-		cat <<EOF >/etc/yum.repos.d/kubernetes.repo
-		[kubernetes]
-		name=Kubernetes
-		baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-		enabled=1
-		gpgcheck=1
-		repo_gpgcheck=1
-		gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
-       	https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg  
-		EOF
-	'''
+	ssh.copy_file_to_host(hosts_ip, credentials, PATH_TO_KUBE_REPO, "/etc/yum.repos.d/kubernetes.repo")
 	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
 	ssh_command = '''
         yum install -y kubelet kubeadm kubectl
