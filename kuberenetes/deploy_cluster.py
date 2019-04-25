@@ -250,7 +250,7 @@ def main(list_of_host_ip, credentials):
         # reconfigure_ssh_and_root_passwd(list_of_host_ip)
         install_env(list_of_host_ip, credentials)
         # download_and_load_images(list_of_host_ip, credentials)
-        # master_kube_init(list_of_host_ip, credentials)
+        master_kube_init(list_of_host_ip, credentials)
         # add_slave_to_master(list_of_host_ip, credentials)
         # close all connections
         # ssh.close(list_of_host_ip, credentials)
