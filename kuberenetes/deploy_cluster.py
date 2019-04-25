@@ -253,7 +253,7 @@ def main(list_of_host_ip, credentials):
         # master_kube_init(list_of_host_ip, credentials)
         # add_slave_to_master(list_of_host_ip, credentials)
         # close all connections
-        ssh.close(list_of_host_ip, credentials)
+        # ssh.close(list_of_host_ip, credentials)
     else:
         print(bcolors.RED
               + '\nSome of the hosts are offline.\nPlease check the availability of the hosts and run the script again.')
