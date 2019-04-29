@@ -30,6 +30,7 @@ from invoke import Responder
 URLS = []
 
 PATH_TO_CA = "./ca/CA.pem"
+PATH_TO_KUBE_REPO = "./kubernetes.repo"
 
 
 class bcolors:
@@ -128,7 +129,7 @@ def install_env(hosts_ip, credentials):
 		setenforce 0
 		sed -i s/^SELINUX=.*$/SELINUX=disabled/ /etc/selinux/config
 	'''
-	#Disable Firewall
+	# Disable Firewall
 	ssh_command += '''
 		systemctl disable firewalld
 		systemctl stop firewalld
@@ -142,6 +143,7 @@ def install_env(hosts_ip, credentials):
 		ssh_command += '\nupdate-ca-trust'  # '\nupdate-ca-certificates'
 	# Install kubernetes
 	ssh_command += '''
+		rm /etc/yum.repos.d/kubernetes.repo
 		cat <<EOF >/etc/yum.repos.d/kubernetes.repo
 		[kubernetes]
 		name=Kubernetes
@@ -191,9 +193,9 @@ def master_kube_init(hosts_ip, credentials):
         kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors Swap --kubernetes-version v1.14.0
         chmod 604 /etc/kubernetes/admin.conf
         mkdir -p $HOME/.kube
-        y | cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-        chown $(id -u):$(id -g) $HOME/.kube/config
-        export KUBECONFIG=$HOME/.kube/config
+        chown $(id -u):$(id -g) /etc/kubernetes/admin.conf
+		cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+
         kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
     	kubectl taint nodes --all node-role.kubernetes.io/master-
     '''
@@ -208,6 +210,7 @@ def add_slave_to_master(list_of_host_ip, credentials):
 	print(bcolors.BLUE + "\nMaster ip: " + master_ip + bcolors.ENDC)
 	print(bcolors.BLUE + "Token id: " + token_id + bcolors.ENDC)
 	# Add slave nodes to master
+	# ssh_command = 'systemctl start docker.service'
 	ssh_command = 'kubeadm join --token ' + token_id + ' ' + master_ip + ':6443 --ignore-preflight-errors=Swap ' \
 																		 '--discovery-token-unsafe-skip-ca-verification'
 	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
@@ -253,8 +256,10 @@ def main(list_of_host_ip, credentials):
 		# reconfigure_ssh_and_root_passwd(list_of_host_ip)
 		install_env(list_of_host_ip, credentials)
 		# download_and_load_images(list_of_host_ip, credentials)
-		master_kube_init(list_of_host_ip, credentials)
-		add_slave_to_master(list_of_host_ip, credentials)
+		# master_kube_init(list_of_host_ip, credentials)
+		# add_slave_to_master(list_of_host_ip, credentials)
+		# close all connections
+		# ssh.close(list_of_host_ip, credentials)
 	else:
 		print(bcolors.RED
 			  + '\nSome of the hosts are offline.\nPlease check the availability of the hosts and run the script again.')
