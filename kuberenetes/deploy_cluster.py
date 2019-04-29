@@ -27,10 +27,19 @@ from invoke import Responder
 # 		'coredns.tar.bz2',
 # 		'flannel.tar.bz2']
 
-URLS = []
+IMAGES = [
+	'k8s.gcr.io/kube-apiserver:v1.13.5',
+	'k8s.gcr.io/kube-controller-manager:v1.13.5"',
+	'k8s.gcr.io/kube-scheduler:v1.13.5',
+	'k8s.gcr.io/kube-proxy:v1.13.5',
+	'k8s.gcr.io/pause:3.1',
+	'k8s.gcr.io/etcd:3.2.24',
+	'k8s.gcr.io/coredns:1.2.6'
+]
 
 PATH_TO_CA = "./ca/CA.pem"
 PATH_TO_KUBE_REPO = "./kubernetes.repo"
+PATH_TO_IMAGES = "./images/"
 
 
 class bcolors:
@@ -143,44 +152,39 @@ def install_env(hosts_ip, credentials):
 		ssh_command += '\nupdate-ca-trust'  # '\nupdate-ca-certificates'
 	# Install kubernetes
 	ssh_command += '''
-		rm /etc/yum.repos.d/kubernetes.repo
-		cat <<EOF >/etc/yum.repos.d/kubernetes.repo
-		[kubernetes]
-		name=Kubernetes
-		baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
-		enabled=1
-		gpgcheck=1
-		repo_gpgcheck=1
-		gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
-       		   https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg  
-		EOF
+		rm -rf /etc/yum.repos.d/kubernetes.repo
 	'''
 	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
+	ssh.copy_file_to_host(hosts_ip, credentials, PATH_TO_KUBE_REPO, "/etc/yum.repos.d/kubernetes.repo")
 	ssh_command = '''
         yum install -y kubelet kubeadm kubectl
+        export KUBECONFIG=/etc/kubernetes/kubelet.conf
         echo 'Environment="KUBELET_EXTRA_ARGS=--fail-swap-on=false"' | tee -a /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
         systemctl daemon-reload && systemctl enable kubelet && systemctl start kubelet
-
+		rm -rf /var/lib/kubelet/pki /var/lib/etcd
         yes | kubeadm reset
     '''
 	#### see above #### TODO
 	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
 
 
-# def download_and_load_images(hosts_ip, credentials):
-# 	print('Download images on host: ')
-# 	ssh_command = 'mkdir -p /tmp/kubernetes'
-# 	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
-# 	for url in URLS:
-# 		print(bcolors.BLUE + 'Upload: ' + bcolors.ENDC + bcolors.GREEN + url + bcolors.ENDC)
-# 		ssh.download_file_on_host(hosts_ip, credentials, url)
-# 	ssh_command = '''
-#         cd /tmp/kubernetes
-#         for image in $(ls); do bunzip2 ${image}; done;
-#         for image in $(ls); do cat ${image} | docker load; done;
-#         rm -rf /tmp/kubernetes
-#     '''
-# 	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
+def copy_and_load_images(hosts_ip, credentials):
+	print('Download images on host: ')
+	path_on_host = '/tmp/kubernetes'
+	ssh_command = 'mkdir -p ' + path_on_host
+	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
+	files = os.listdir(PATH_TO_IMAGES)
+	for file in files:
+		print(bcolors.BLUE + 'Upload: ' + bcolors.ENDC + bcolors.GREEN + file + bcolors.ENDC)
+		path_to_file = PATH_TO_IMAGES + '/' + file
+		ssh.copy_file_to_host(hosts_ip, credentials, path_to_file, path_on_host)
+	#
+	ssh_command = '''
+        cd /tmp/kubernetes
+        for image in $(ls); do docker import ${image} ${image}; done;
+    	rm -rf /tmp/kubernetes
+    '''
+	ssh.run_shell_command(hosts_ip, credentials, ssh_command)
 
 
 def master_kube_init(hosts_ip, credentials):
@@ -190,7 +194,9 @@ def master_kube_init(hosts_ip, credentials):
 	# Init cluster for kubernetes
 	ssh_command = '''
         echo '\n\nStart pull images for kubeadm:\n'
-        kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors Swap --kubernetes-version v1.14.0
+        
+        kubeadm init --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors Swap
+        
         chmod 604 /etc/kubernetes/admin.conf
         mkdir -p $HOME/.kube
         chown $(id -u):$(id -g) /etc/kubernetes/admin.conf
@@ -255,11 +261,12 @@ def main(list_of_host_ip, credentials):
 	if status:
 		# reconfigure_ssh_and_root_passwd(list_of_host_ip)
 		install_env(list_of_host_ip, credentials)
-		# download_and_load_images(list_of_host_ip, credentials)
-		# master_kube_init(list_of_host_ip, credentials)
-		# add_slave_to_master(list_of_host_ip, credentials)
-		# close all connections
-		# ssh.close(list_of_host_ip, credentials)
+		# if there are problems with pooling images with https://storage.googleapis.com/
+		copy_and_load_images(list_of_host_ip, credentials)
+		master_kube_init(list_of_host_ip, credentials)
+	# add_slave_to_master(list_of_host_ip, credentials)
+	# close all connections
+	# ssh.close(list_of_host_ip, credentials)
 	else:
 		print(bcolors.RED
 			  + '\nSome of the hosts are offline.\nPlease check the availability of the hosts and run the script again.')
@@ -272,7 +279,19 @@ if __name__ == "__main__":
 		print(bcolors.RED + "Please enter the address of at least one host.")
 	# Start main function with list of input hosts
 	else:
+		# TODO : add MSG if except pass or login
 		ips = parse_ip(sys.argv[1:])
 		credentials = parse_credentials(sys.argv[1:])
 		main(ips, credentials)
 	print(bcolors.ENDC)
+
+
+
+'''
+docker pull k8s.gcr.io/kube-apiserver:v1.13.5
+docker pull k8s.gcr.io/kube-controller-manager:v1.13.5
+docker pull k8s.gcr.io/kube-scheduler:v1.13.5
+docker pull k8s.gcr.io/kube-proxy:v1.13.5
+docker pull k8s.gcr.io/pause:3.1
+docker pull k8s.gcr.io/etcd:3.2.24
+docker pull k8s.gcr.io/coredns:1.2.6'''
