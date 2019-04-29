@@ -22,7 +22,7 @@ public interface MetricsConstants {
 	String METADATA_RUN_ID = "run_id";
 	//
 	String[] METRIC_LABELS = {
-			METADATA_OP_TYPE,
+			METADATA_STEP_ID,
 			METADATA_OP_TYPE,
 			METADATA_LIMIT_CONC,
 			METADATA_ITEM_DATA_SIZE,

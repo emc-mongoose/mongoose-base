@@ -57,6 +57,7 @@ public class ExposedMetricsTest {
 	};
 	private static final List<String> nodeList = Arrays.asList("127.0.0.1:1099");
 	private final String STEP_ID = ExposedMetricsTest.class.getSimpleName();
+	private final int RUN_ID = 123;
 	private final OpType OP_TYPE = OpType.CREATE;
 	private final IntSupplier nodeCountSupplier = () -> 1;
 	private final int CONCURRENCY_LIMIT = 0;
@@ -108,7 +109,7 @@ public class ExposedMetricsTest {
 						.quantileValues(Arrays.asList(QUANTILE_VALUES))
 						.nodeAddrs(nodeList)
 						.comment("")
-						.runId(123)
+						.runId(RUN_ID)
 						.build();
 		distributedMetricsContext.start();
 	}
@@ -168,6 +169,8 @@ public class ExposedMetricsTest {
 	private void testLabels(final String result) {
 		testLabel(result, "node_list", nodeList.toString());
 		testLabel(result, "user_comment", "");
+		testLabel(result, "load_step_id", STEP_ID);
+		testLabel(result, "run_id", String.valueOf(RUN_ID));
 	}
 
 	private void testLabel(final String result, final String labelName, final String expectedValue) {
