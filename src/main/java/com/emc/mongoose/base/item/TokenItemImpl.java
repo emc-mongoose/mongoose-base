@@ -18,9 +18,9 @@ public final class TokenItemImpl extends ItemImpl implements TokenItem {
 			return false;
 		}
 		final TokenItemImpl other = (TokenItemImpl) o;
-		if (name == null) {
-			return other.name == null;
+		if (name() == null) {
+			return other.name() == null;
 		}
-		return name.equals(other.name);
+		return name().equals(other.name());
 	}
 }

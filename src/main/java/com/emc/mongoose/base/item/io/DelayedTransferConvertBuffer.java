@@ -56,12 +56,14 @@ public final class DelayedTransferConvertBuffer<I extends Item, O extends Operat
 			Loggers.MSG.debug("{}: poisoned", this);
 			return poisonedFlag = true;
 		}
+		int ioResultsBuffSize;
 		while (true) {
 			if (lock.tryLock()) {
 				try {
+					ioResultsBuffSize = this.ioResultsBuffSize;
 					if (ioResultsBuffSize < ioResultsBuffLimit) {
 						ioResultsBuff.add(ioResult);
-						ioResultsBuffSize++;
+						this.ioResultsBuffSize = ioResultsBuffSize + 1;
 						return true;
 					}
 				} finally {
@@ -140,15 +142,17 @@ public final class DelayedTransferConvertBuffer<I extends Item, O extends Operat
 
 		if (lock.tryLock()) {
 			try {
+				final var ioResultsBuffSize = this.ioResultsBuffSize;
 				if (ioResultsBuffSize == 0 && poisonedFlag) {
 					throwUnchecked(new EOFException());
 				}
 
 				O nextIoResult;
 				long nextFinishTime, currTime;
-				final ListIterator<O> ioResultsIter = ioResultsBuff.listIterator();
+				final var ioResultsIter = ioResultsBuff.listIterator();
 				while (ioResultsIter.hasNext()) {
 					nextIoResult = ioResultsIter.next();
+					final var markLimit = this.markLimit;
 					if (delayMicroseconds > 0) {
 						nextFinishTime = nextIoResult.respTimeDone();
 						currTime = Operation.START_OFFSET_MICROS + nanoTime() / 1000;
@@ -158,7 +162,7 @@ public final class DelayedTransferConvertBuffer<I extends Item, O extends Operat
 								markBuffer.add(nextIoResult);
 							}
 							ioResultsIter.remove();
-							ioResultsBuffSize--;
+							this.ioResultsBuffSize = ioResultsBuffSize + 1;
 							break;
 						}
 					} else {
@@ -167,7 +171,7 @@ public final class DelayedTransferConvertBuffer<I extends Item, O extends Operat
 							markBuffer.add(nextIoResult);
 						}
 						ioResultsIter.remove();
-						ioResultsBuffSize--;
+						this.ioResultsBuffSize = ioResultsBuffSize + 1;
 						break;
 					}
 				}
@@ -186,13 +190,15 @@ public final class DelayedTransferConvertBuffer<I extends Item, O extends Operat
 
 		if (lock.tryLock()) {
 			try {
+				final var ioResultsBuffSize = this.ioResultsBuffSize;
 				if (ioResultsBuffSize == 0 && poisonedFlag) {
 					throwUnchecked(new EOFException());
 				}
 
 				O nextIoResult;
 				long nextFinishTime, currTime;
-				final ListIterator<O> ioResultsIter = ioResultsBuff.listIterator();
+				final var ioResultsIter = ioResultsBuff.listIterator();
+				final var markLimit = this.markLimit;
 				if (delayMicroseconds > 0) {
 					while (ioResultsIter.hasNext() && n < limit) {
 						nextIoResult = ioResultsIter.next();
@@ -204,7 +210,7 @@ public final class DelayedTransferConvertBuffer<I extends Item, O extends Operat
 								markBuffer.add(nextIoResult);
 							}
 							ioResultsIter.remove();
-							ioResultsBuffSize--;
+							this.ioResultsBuffSize = ioResultsBuffSize + 1;
 							n++;
 						}
 					}
@@ -216,7 +222,7 @@ public final class DelayedTransferConvertBuffer<I extends Item, O extends Operat
 							markBuffer.add(nextIoResult);
 						}
 						ioResultsIter.remove();
-						ioResultsBuffSize--;
+						this.ioResultsBuffSize = ioResultsBuffSize + 1;
 						n++;
 					}
 				}

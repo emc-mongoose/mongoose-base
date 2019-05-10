@@ -252,7 +252,8 @@ public class DataItemImpl extends ItemImpl implements DataItem {
 		if (partSize < 1) {
 			throw new IllegalArgumentException();
 		}
-		final DataItemImpl dataItemSlice = new DataItemImpl(name, offset + from, partSize, layerNum);
+		final DataItemImpl dataItemSlice = new DataItemImpl(name(), offset + from, partSize, layerNum);
+		final var dataInput = this.dataInput;
 		if (dataInput != null) {
 			dataItemSlice.dataInput(dataInput);
 		}
