@@ -18,9 +18,9 @@ public final class PathItemImpl extends ItemImpl implements PathItem {
 			return false;
 		}
 		final PathItemImpl other = (PathItemImpl) o;
-		if (name == null) {
-			return other.name == null;
+		if (name() == null) {
+			return other.name() == null;
 		}
-		return name.equals(other.name);
+		return name().equals(other.name());
 	}
 }

@@ -284,20 +284,23 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 				if (recycleFlag) {
 					latestSuccOpResultByItem.put(opResult.item(), opResult);
 					generator.recycle(opResult);
-				} else if (opsResultsOutput != null) {
-					try {
-						if (!opsResultsOutput.put(opResult)) {
-							Loggers.ERR.warn("Failed to output the I/O result");
-						}
-					} catch (final Exception e) {
-						throwUncheckedIfInterrupted(e);
-						if (e instanceof EOFException) {
-							LogUtil.exception(Level.DEBUG, e, "Load operations results destination end of input");
-						} else if (e instanceof IOException) {
-							LogUtil.exception(
-											Level.WARN, e, "Failed to put the load operation to the destination");
-						} else {
-							throw e;
+				} else {
+					final var opsResultsOutput = this.opsResultsOutput;
+					if (opsResultsOutput != null) {
+						try {
+							if (!opsResultsOutput.put(opResult)) {
+								Loggers.ERR.warn("Failed to output the I/O result");
+							}
+						} catch (final Exception e) {
+							throwUncheckedIfInterrupted(e);
+							if (e instanceof EOFException) {
+								LogUtil.exception(Level.DEBUG, e, "Load operations results destination end of input");
+							} else if (e instanceof IOException) {
+								LogUtil.exception(
+									Level.WARN, e, "Failed to put the load operation to the destination");
+							} else {
+								throw e;
+							}
 						}
 					}
 				}
@@ -356,21 +359,24 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 					if (recycleFlag) {
 						latestSuccOpResultByItem.put(opResult.item(), opResult);
 						generator.recycle(opResult);
-					} else if (opsResultsOutput != null) {
-						try {
-							if (!opsResultsOutput.put(opResult)) {
-								Loggers.ERR.warn("Failed to output the op result");
-							}
-						} catch (final Exception e) {
-							throwUncheckedIfInterrupted(e);
-							if (e instanceof EOFException) {
-								LogUtil.exception(
-												Level.DEBUG, e, "Load operations results destination end of input");
-							} else if (e instanceof IOException) {
-								LogUtil.exception(
-												Level.WARN, e, "Failed to put the load operation result to the destination");
-							} else {
-								throw e;
+					} else {
+						final var opsResultsOutput = this.opsResultsOutput;
+						if (opsResultsOutput != null) {
+							try {
+								if (!opsResultsOutput.put(opResult)) {
+									Loggers.ERR.warn("Failed to output the op result");
+								}
+							} catch (final Exception e) {
+								throwUncheckedIfInterrupted(e);
+								if (e instanceof EOFException) {
+									LogUtil.exception(
+										Level.DEBUG, e, "Load operations results destination end of input");
+								} else if (e instanceof IOException) {
+									LogUtil.exception(
+										Level.WARN, e, "Failed to put the load operation result to the destination");
+								} else {
+									throw e;
+								}
 							}
 						}
 					}
