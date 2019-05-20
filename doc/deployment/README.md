@@ -108,12 +108,9 @@ kubectl apply -f kuberenetes/standalone.yaml
 CLI args can be added in following lines:
 ```yaml
 ...
-args:
-        - "-c"
-        - /opt/mongoose/entrypoint.sh
-          --load-step-limit-time=1m
+      args:
+        - --load-step-limit-time=1m
           --storage-driver-type=dummy-mock
-          <others CLI args>
 ```
 
 #### Deployment & Pod
