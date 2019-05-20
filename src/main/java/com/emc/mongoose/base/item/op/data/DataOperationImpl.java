@@ -3,7 +3,6 @@ package com.emc.mongoose.base.item.op.data;
 import static com.github.akurilov.commons.system.SizeInBytes.formatFixedSize;
 import static java.lang.System.nanoTime;
 
-import com.emc.mongoose.base.data.DataInput;
 import com.emc.mongoose.base.item.DataItem;
 import com.emc.mongoose.base.item.op.OpType;
 import com.emc.mongoose.base.item.op.Operation;
@@ -26,7 +25,6 @@ public class DataOperationImpl<T extends DataItem> extends OperationImpl<T>
 	private List<T> srcItemsToConcat = null;
 	protected long contentSize = 0;
 
-	protected volatile DataInput dataInput = null;
 	protected volatile long countBytesDone = 0;
 	protected volatile long respDataTimeStart = 0;
 	private volatile DataItem currRange = null;
@@ -50,7 +48,6 @@ public class DataOperationImpl<T extends DataItem> extends OperationImpl<T>
 		this.fixedRanges = fixedRanges;
 		this.randomRangesCount = randomRangesCount;
 		reset();
-		dataInput = item.dataInput();
 	}
 
 	public DataOperationImpl(
@@ -266,12 +263,14 @@ public class DataOperationImpl<T extends DataItem> extends OperationImpl<T>
 
 	@Override
 	public final DataItem currRange() {
+		var currRange = this.currRange;
+		final var currRangeIdx = this.currRangeIdx;
 		try {
 			if (currRange == null && currRangeIdx < DataItem.rangeCount(item.size())) {
 				final long currRangeSize = item.rangeSize(currRangeIdx);
 				final long currRangeOffset = DataItem.rangeOffset(currRangeIdx);
 				final int layerIdx = item.layer();
-				currRange = item.slice(currRangeOffset, currRangeSize);
+				this.currRange = currRange = item.slice(currRangeOffset, currRangeSize);
 				if (item.isRangeUpdated(currRangeIdx)) {
 					currRange.layer(layerIdx + 1);
 				}
@@ -284,6 +283,8 @@ public class DataOperationImpl<T extends DataItem> extends OperationImpl<T>
 
 	@Override
 	public final DataItem currRangeUpdate() {
+		var currRange = this.currRange;
+		final var currRangeIdx = this.currRangeIdx;
 		if (currRange == null) {
 			final int layerIdx = item.layer();
 			if (markedRangesMaskPair[0].get(currRangeIdx)) {
@@ -294,7 +295,7 @@ public class DataOperationImpl<T extends DataItem> extends OperationImpl<T>
 			} else if (markedRangesMaskPair[1].get(currRangeIdx)) {
 				final long currRangeSize = item.rangeSize(currRangeIdx);
 				final long currRangeOffset = DataItem.rangeOffset(currRangeIdx);
-				currRange = item.slice(currRangeOffset, currRangeSize);
+				this.currRange = currRange = item.slice(currRangeOffset, currRangeSize);
 				currRange.layer(layerIdx + 2);
 			} else {
 				currRange = null;

@@ -7,7 +7,7 @@ import java.io.ObjectOutput;
 /** Created by kurila on 27.10.15. */
 public class ItemImpl implements Item {
 
-	protected volatile String name = null;
+	private volatile String name = null;
 	private int hashCode; // needed for the distributed mode
 
 	public ItemImpl() {

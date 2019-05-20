@@ -1,7 +1,6 @@
 import os
 import re
 import subprocess
-import sys
 import time
 from fabric import Connection
 from invoke import Responder
@@ -286,13 +285,13 @@ if __name__ == "__main__":
 	print(bcolors.ENDC)
 
 
-
-'''
-docker pull k8s.gcr.io/kube-apiserver:v1.13.5
-docker pull k8s.gcr.io/kube-controller-manager:v1.13.5
-docker pull k8s.gcr.io/kube-scheduler:v1.13.5
-docker pull k8s.gcr.io/kube-proxy:v1.13.5
-docker pull k8s.gcr.io/pause:3.1
-docker pull k8s.gcr.io/etcd:3.2.24
-docker pull k8s.gcr.io/coredns:1.2.6
-'''
+# def download_and_save_images():
+# 	for image in IMAGES:
+# 		os.system("docker pull " + image)
+# 		os.system("docker save {image} > {dir}{name}.tar".format(image=image,
+# 															  dir=PATH_TO_IMAGES,
+# 															  name=re.split('/', image)[1]))
+#
+#
+# if __name__ == '__main__':
+# 	download_and_save_images()

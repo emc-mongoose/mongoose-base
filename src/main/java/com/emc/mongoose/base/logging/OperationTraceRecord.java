@@ -33,9 +33,9 @@ public final class OperationTraceRecord<I extends Item, O extends Operation<I>> 
 		opTypeCode = opResult.type().ordinal();
 		statusCode = opResult.status().ordinal();
 		reqTimeStart = opResult.reqTimeStart();
-		duration = opResult.respTimeDone() - reqTimeStart;
-		long t = opResult.respTimeStart() - opResult.reqTimeDone();
-		respLatency = t < duration && t > 0 ? t : -1;
+		duration = opResult.duration();
+		var t = opResult.latency();
+		respLatency = t <= duration ? t : -1;
 		if (opResult instanceof DataOperation) {
 			final DataOperation dataIoResult = (DataOperation) opResult;
 			t = dataIoResult.dataLatency();
