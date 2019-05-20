@@ -5,14 +5,12 @@ metadata:
   labels:
     app: mongoose-node
   namespace: mongoose
-
 spec:
   type: LoadBalancer
   ports:
   - name: http
     port: 9999
     targetPort: 9999
-
   selector:
     name: mongoose-node
 ---
@@ -21,16 +19,13 @@ kind: StatefulSet
 metadata:
   name: mongoose-node
   namespace: mongoose
-
 spec:
   replicas: 4
   selector:
     matchLabels:
       name: mongoose-node
-
   serviceName: mongoose-node
   podManagementPolicy: Parallel
-
   template:
     metadata:
       labels:
@@ -44,13 +39,10 @@ spec:
                   - key:      "app"
                     operator: In
                     values:   ["mongoose-node"]
-
               topologyKey:    "kubernetes.io/hostname"
-
       containers:
         - image: emcmongoose/mongoose
           name: mongoose-node
           args: ["--run-node"]
-
           ports:
             - containerPort: 9999

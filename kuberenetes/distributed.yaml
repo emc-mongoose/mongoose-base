@@ -65,11 +65,8 @@ spec:
   containers:
     - image: emcmongoose/mongoose
       name: mongoose
-      command: ["/bin/sh"]
       args:
-        - "-c"
-        - /opt/mongoose/entrypoint.sh
-          --load-step-limit-time=1m
+        - --load-step-limit-time=1m
           --storage-driver-type=dummy-mock
           --load-step-node-addrs=mongoose-node-0.mongoose-node,mongoose-node-1.mongoose-node,mongoose-node-2.mongoose-node,mongoose-node-3.mongoose-node
   restartPolicy: OnFailure
