@@ -16,7 +16,7 @@ public final class AddCorsHeadersRule extends Rule {
 	public static final String HEADER_NAME_ACA_HEADERS = HEADER_NAME_PREFIX_ACA + "-Headers";
 	public static final String HEADER_NAME_ACA_METHODS = HEADER_NAME_PREFIX_ACA + "-Methods";
 	public static final String HEADER_NAME_AC_EXPOSE_HEADERS = HEADER_NAME_PREFIX_AC + "-Expose-Headers";
-	public static final String ACA_HEADERS = "Origin, X-Requested-With, Content-Type, Accept, ETag";
+	public static final String ACA_HEADERS = "Origin, X-Requested-With, Content-Type, Accept, ETag, If-Match";
 
 	@Override
 	public final String matchAndApply(
