@@ -38,8 +38,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
+import com.github.akurilov.confuse.impl.BasicConfig;
 import org.apache.logging.log4j.Level;
-import org.apache.commons.lang.SerializationUtils;
 import org.eclipse.jetty.http.HttpHeader;
 
 /** @author veronika K. on 08.11.18 */
@@ -100,8 +100,10 @@ public class RunServlet extends HttpServlet {
 			} catch (final RejectedExecutionException e) {
 				resp.setStatus(HttpServletResponse.SC_CONFLICT);
 			}
+		} catch (final IllegalArgumentException illegalScenario) {
+			LogUtil.exception(Level.WARN, illegalScenario, "Failed to run a scenario. Details:", illegalScenario.getMessage());
 		} catch (final NoSuchMethodException | RuntimeException e) {
-			LogUtil.exception(Level.WARN, e, "Failed to run a scenario with the request {}", req);
+			LogUtil.exception(Level.ERROR, e, "Failed to run a scenario with the request {}", req);
 			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 		}
 	}
@@ -205,7 +207,8 @@ public class RunServlet extends HttpServlet {
 					InvalidValueTypeException {
 		final Config configResult;
 		if (defaultsPart == null) {
-			configResult = (Config) SerializationUtils.clone(aggregatedConfigWithArgs);
+			// NOTE: If custom config hasn't been specified in POST request, set the default one
+			configResult = new BasicConfig(aggregatedConfigWithArgs);
 		} else {
 			final var configIncoming = configFromPart(defaultsPart, resp, aggregatedConfigWithArgs.schema());
 			// the load step id was set manually if it is set to some non-null/non-empty value in the incoming config
@@ -255,13 +258,16 @@ public class RunServlet extends HttpServlet {
 	}
 
 	static String getIncomingScenarioOrDefault(final Part scenarioPart, final Path appHomePath)
-					throws IOException {
+					throws IOException, IllegalArgumentException {
 		final String scenarioResult;
 		if (scenarioPart == null) {
 			scenarioResult = ScenarioUtil.defaultScenario(appHomePath);
 		} else {
 			try (final var br = new BufferedReader(new InputStreamReader(scenarioPart.getInputStream()))) {
 				scenarioResult = br.lines().collect(Collectors.joining("\n"));
+			}
+			if (scenarioResult.trim().replace("\"", "").isEmpty()) {
+				throw new IllegalArgumentException("Empty scenario won't be executed.");
 			}
 		}
 		return scenarioResult;
