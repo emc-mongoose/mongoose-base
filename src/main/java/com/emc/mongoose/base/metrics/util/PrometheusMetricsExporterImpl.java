@@ -105,7 +105,7 @@ public class PrometheusMetricsExporterImpl extends Collector implements Promethe
 					final double timeMillis, final List<MetricFamilySamples> mfsList) {
 		mfsList.add(
 						new MetricFamilySamples(
-										String.format(METRIC_FORMAT, METRIC_NAME_TIME),
+										String.format(METRIC_FORMAT, METRIC_NAME_TIME + System.currentTimeMillis()),
 										Type.GAUGE,
 										help,
 										Collections.singletonList(
@@ -124,7 +124,7 @@ public class PrometheusMetricsExporterImpl extends Collector implements Promethe
 		} else {
 			Loggers.ERR.warn("Unexpected metric snapshot type: {}", snapshot.getClass());
 		}
-		final MetricFamilySamples mfs = new MetricFamilySamples(String.format(METRIC_FORMAT, snapshot.name()), Type.GAUGE, help, samples);
+		final MetricFamilySamples mfs = new MetricFamilySamples(String.format(METRIC_FORMAT, snapshot.name() + snapshot.hashCode()), Type.GAUGE, help, samples);
 		mfsList.add(mfs);
 	}
 
