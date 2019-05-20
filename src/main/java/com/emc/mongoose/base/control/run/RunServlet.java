@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
 import org.apache.logging.log4j.Level;
+import org.apache.commons.lang.SerializationUtils;
 import org.eclipse.jetty.http.HttpHeader;
 
 /** @author veronika K. on 08.11.18 */
@@ -204,7 +205,7 @@ public class RunServlet extends HttpServlet {
 					InvalidValueTypeException {
 		final Config configResult;
 		if (defaultsPart == null) {
-			configResult = aggregatedConfigWithArgs;
+			configResult = (Config) SerializationUtils.clone(aggregatedConfigWithArgs);
 		} else {
 			final var configIncoming = configFromPart(defaultsPart, resp, aggregatedConfigWithArgs.schema());
 			// the load step id was set manually if it is set to some non-null/non-empty value in the incoming config
