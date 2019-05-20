@@ -159,7 +159,7 @@ public class ExposedMetricsTest {
 		};
 		for (final String n : names) {
 			final var p = Pattern.compile(
-							String.format("# HELP %1$s[\\s]*# TYPE %1$s", String.format(METRIC_FORMAT, n)));
+							String.format("# HELP %1$s[0-9]*[\\s]*# TYPE %1$s[0-9]*", String.format(METRIC_FORMAT, n)));
 			final var m = p.matcher(result);
 			final var found = m.find();
 			Assert.assertTrue(found);
