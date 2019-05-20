@@ -20,6 +20,7 @@ MANIFEST.MF
 hs_err_pid*
 
 result*.xml
+${ctx:home_dir}
 
 # protect the gradle wrapper
 !gradle/wrapper/gradle-wrapper.jar
