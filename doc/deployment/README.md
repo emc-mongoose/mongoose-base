@@ -1,3 +1,8 @@
+[Environment Requirements](#environment-requirements)<br/>
+[Jar](#jar)<br/>
+[Docker](#docker)<br/>
+[Kubernetes](#kubernetes)<br/>
+
 # Environment Requirements
 
 * Java 11+ or Docker
@@ -92,7 +97,7 @@ docker run \
 
 Mongoose can be deployed on a [kubernetes](https://kubernetes.io/) cluster. Examples of yaml files are in the directory `/kubernetes`. The following describes a more detailed use of scripts:
 
-> * You can use a ready-made cluster or [deploy your own](../KUBE-CLUSTER.md).
+> * You can use a ready-made cluster or [deploy your own](../KUBE-CLUSTER.md). <- TODO
 > * The examples use the mongoose image with the `latest` tag. To use specifically the version you need to specify ` - image: emcmongoose/mongoose:<x.y.z>`
 > * All of the following configurations use `mongoose` namespace. Therefore, it is necessary to first create a namespace:
 > ```bash
@@ -108,12 +113,9 @@ kubectl apply -f kuberenetes/standalone.yaml
 CLI args can be added in following lines:
 ```yaml
 ...
-args:
-        - "-c"
-        - /opt/mongoose/entrypoint.sh
-          --load-step-limit-time=1m
+      args:
+        - --load-step-limit-time=1m
           --storage-driver-type=dummy-mock
-          <others CLI args>
 ```
 
 #### Deployment & Pod
@@ -124,6 +126,8 @@ Run Mongoose in standalone mode as deployment:
 ```bash
 kubectl apply -f kuberenetes/standalone-deployment.yaml 
 ```
+
+##### Logs
 
 With command `kubectl logs -n mongoose <resource name>` you can see logs into container. For example:
 
