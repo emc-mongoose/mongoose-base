@@ -1,3 +1,8 @@
+[Environment Requirements](#environment-requirements)<br/>
+[Jar](#jar)<br/>
+[Docker](#docker)<br/>
+[Kubernetes](#kubernetes)<br/>
+
 # Environment Requirements
 
 * Java 11+ or Docker
@@ -121,6 +126,8 @@ Run Mongoose in standalone mode as deployment:
 ```bash
 kubectl apply -f kuberenetes/standalone-deployment.yaml 
 ```
+
+##### Logs
 
 With command `kubectl logs -n mongoose <resource name>` you can see logs into container. For example:
 
