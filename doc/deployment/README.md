@@ -92,7 +92,7 @@ docker run \
 
 Mongoose can be deployed on a [kubernetes](https://kubernetes.io/) cluster. Examples of yaml files are in the directory `/kubernetes`. The following describes a more detailed use of scripts:
 
-> * You can use a ready-made cluster or [deploy your own](../KUBE-CLUSTER.md).
+> * You can use a ready-made cluster or [deploy your own](../KUBE-CLUSTER.md). <- TODO
 > * The examples use the mongoose image with the `latest` tag. To use specifically the version you need to specify ` - image: emcmongoose/mongoose:<x.y.z>`
 > * All of the following configurations use `mongoose` namespace. Therefore, it is necessary to first create a namespace:
 > ```bash
