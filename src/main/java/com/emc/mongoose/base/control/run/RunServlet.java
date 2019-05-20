@@ -100,10 +100,8 @@ public class RunServlet extends HttpServlet {
 			} catch (final RejectedExecutionException e) {
 				resp.setStatus(HttpServletResponse.SC_CONFLICT);
 			}
-		} catch (final IllegalArgumentException illegalScenario) {
-			LogUtil.exception(Level.WARN, illegalScenario, "Failed to run a scenario. Details:", illegalScenario.getMessage());
 		} catch (final NoSuchMethodException | RuntimeException e) {
-			LogUtil.exception(Level.ERROR, e, "Failed to run a scenario with the request {}", req);
+			LogUtil.exception(Level.WARN, e, "Failed to run a scenario with the request {}", req);
 			resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 		}
 	}
@@ -258,16 +256,13 @@ public class RunServlet extends HttpServlet {
 	}
 
 	static String getIncomingScenarioOrDefault(final Part scenarioPart, final Path appHomePath)
-					throws IOException, IllegalArgumentException {
+					throws IOException {
 		final String scenarioResult;
 		if (scenarioPart == null) {
 			scenarioResult = ScenarioUtil.defaultScenario(appHomePath);
 		} else {
 			try (final var br = new BufferedReader(new InputStreamReader(scenarioPart.getInputStream()))) {
 				scenarioResult = br.lines().collect(Collectors.joining("\n"));
-			}
-			if (scenarioResult.trim().replace("\"", "").isEmpty()) {
-				throw new IllegalArgumentException("Empty scenario won't be executed.");
 			}
 		}
 		return scenarioResult;
