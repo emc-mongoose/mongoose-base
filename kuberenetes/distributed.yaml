@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: mongoose-node
+  labels:
+    app: mongoose-node
+  namespace: mongoose
+
+spec:
+  clusterIP: "None"
+  ports:
+    - name: data
+      port: 1099
+      targetPort: 1099
+
+  selector:
+    name: mongoose-node
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongoose-node
+  namespace: mongoose
+
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      name: mongoose-node
+
+  serviceName: mongoose-node
+  podManagementPolicy: Parallel
+
+  template:
+    metadata:
+      labels:
+        name: mongoose-node
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchExpressions:
+                  - key:      "app"
+                    operator: In
+                    values:   ["mongoose-node"]
+
+              topologyKey:    "kubernetes.io/hostname"
+
+      containers:
+        - image: emcmongoose/mongoose
+          name: mongoose-node
+          args: ["--run-node"]
+
+          ports:
+            - containerPort: 1099
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mongoose
+  namespace: mongoose
+spec:
+  containers:
+    - image: emcmongoose/mongoose
+      name: mongoose
+      args:
+        - --load-step-limit-time=1m
+          --storage-driver-type=dummy-mock
+          --load-step-node-addrs=mongoose-node-0.mongoose-node,mongoose-node-1.mongoose-node,mongoose-node-2.mongoose-node,mongoose-node-3.mongoose-node
+  restartPolicy: OnFailure
