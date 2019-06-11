@@ -1,6 +1,7 @@
 # Contents
 
 ## 2019
+* [4.2.12](#4212) 2019-06-11
 * [4.2.11](#4211) 2019-05-05
 * [4.2.10](#4210) 2019-04-25
 * [4.2.9](#429) 2019-04-19
@@ -63,6 +64,11 @@
 * [0.1.5](#015) 09/22/14
 * [0.1.4](#014) 09/17/14
 * [0.1.3](#013) 08/15/14
+
+# 4.2.12
+
+Add "If-Match" header into CORS policy in order to make run status check via browser available. <br/>
+Fix issue with non-unique run IDs while starting a new run via HTTP.
 
 # 4.2.11
 
