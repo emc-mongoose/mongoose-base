@@ -1,6 +1,7 @@
 # Contents
 
 ## 2019
+* [4.2.12](#4212) 2019-06-11
 * [4.2.11](#4211) 2019-05-05
 * [4.2.10](#4210) 2019-04-25
 * [4.2.9](#429) 2019-04-19
@@ -63,6 +64,17 @@
 * [0.1.5](#015) 09/22/14
 * [0.1.4](#014) 09/17/14
 * [0.1.3](#013) 08/15/14
+
+# 4.2.12
+
+## Fixed Bugs
+
+| Id | Description |
+|----|-------------|
+| [BASE-1366](https://mongoose-issues.atlassian.net/browse/BASE-1366) | Run ID doesn't get exported to Prometheus | 
+| [BASE-1367](https://mongoose-issues.atlassian.net/browse/BASE-1367) | Logs unavailability from browser's HTTP requests |
+| [BASE-1368](https://mongoose-issues.atlassian.net/browse/BASE-1368) | Prometheus exporter failure |
+| [BASE-1369](https://mongoose-issues.atlassian.net/browse/BASE-1369) | Non-unique run ID is generated via starting with REST API |
 
 # 4.2.11
 
