@@ -71,7 +71,7 @@
 
 | Id | Description |
 |----|-------------|
-| [BASE-1366](https://mongoose-issues.atlassian.net/browse/BASE-1366) | Run ID doesn't get exported to Prometheus |
+| [BASE-1366](https://mongoose-issues.atlassian.net/browse/BASE-1366) | Run ID doesn't get exported to Prometheus | 
 | [BASE-1367](https://mongoose-issues.atlassian.net/browse/BASE-1367) | Logs unavailability from browser's HTTP requests |
 | [BASE-1368](https://mongoose-issues.atlassian.net/browse/BASE-1368) | Prometheus exporter failure |
 | [BASE-1369](https://mongoose-issues.atlassian.net/browse/BASE-1369) | Non-unique run ID is generated via starting with REST API |
