@@ -76,10 +76,6 @@
 | [BASE-1368](https://mongoose-issues.atlassian.net/browse/BASE-1368) | Prometheus exporter failure |
 | [BASE-1369](https://mongoose-issues.atlassian.net/browse/BASE-1369) | Non-unique run ID is generated via starting with REST API |
 
-
-Add "If-Match" header into CORS policy in order to make run status check via browser available. <br/>
-Fix issue with non-unique run IDs while starting a new run via HTTP.
-
 # 4.2.11
 
 Allow the operation latency be equal to the duration
