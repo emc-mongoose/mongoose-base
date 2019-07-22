@@ -10,18 +10,18 @@
 2. [Output](../interfaces/output)<br/>
 &nbsp;&nbsp;2.1. [General Output](../interfaces/output#1-general)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;2.1.1. [Logging](../interfaces/output#11-logging-subsystem)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1.1. [Logs Separation By Load Step Id](doc/interfaces/output#111-load-step-id)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1.2. [Console](doc/interfaces/output#112-console)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1.3. [Files](doc/interfaces/output#113-files)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1.4. [Configuration](doc/interfaces/output#114-log-configuration)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.1.2. [Output Categories](doc/interfaces/output#12-categories)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2.1. [CLI arguments log](doc/interfaces/output#121-cli-arguments)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2.2. [Configuration dump](doc/interfaces/output#122-configuration-dump)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2.3. [Scenario dump](doc/interfaces/output#123-scenario-dump)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2.4. [3rd Party Messages](doc/interfaces/output#124-3rd-party-log-messages)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2.5. [Error Messages](doc/interfaces/output#125-error-messages)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2.6. [General Messages](doc/interfaces/output#126-general-messages)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2.7. [Item List Files](doc/interfaces/output#127-item-list-files)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1.1. [Logs Separation By Load Step Id](../interfaces/output#111-load-step-id)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1.2. [Console](../interfaces/output#112-console)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1.3. [Files](../interfaces/output#113-files)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1.4. [Configuration](../interfaces/output#114-log-configuration)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;2.1.2. [Output Categories](../interfaces/output#12-categories)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2.1. [CLI arguments log](../interfaces/output#121-cli-arguments)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2.2. [Configuration dump](../interfaces/output#122-configuration-dump)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2.3. [Scenario dump](../interfaces/output#123-scenario-dump)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2.4. [3rd Party Messages](../interfaces/output#124-3rd-party-log-messages)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2.5. [Error Messages](../interfaces/output#125-error-messages)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2.6. [General Messages](../interfaces/output#126-general-messages)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2.7. [Item List Files](../interfaces/output#127-item-list-files)<br/>
 &nbsp;&nbsp;2.2. [Metrics Output](../interfaces/output#2-metrics)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;2.2.1. [Load Average](../interfaces/output#21-load-average)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;2.2.2. [Load Step Summary](../interfaces/output#22-load-step-summary)<br/>
