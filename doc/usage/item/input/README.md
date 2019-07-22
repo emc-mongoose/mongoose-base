@@ -59,7 +59,7 @@ The prefix option may be used to prepend some value for each new item.
 java mongoose-<VERSION>.jar --item-naming-prefix=item_prefix_ ...
 ```
 
-The prefix may be dynamic (see [expressions](../../../../src/java/com/emc/mongoose/base/config/el/README.md)).
+The prefix may be dynamic (see [expressions](../../../../src/main/java/com/emc/mongoose/base/config/el/README.md)).
 
 #### 3.1.3. Radix
 
