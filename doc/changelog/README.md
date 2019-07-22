@@ -92,7 +92,6 @@ TBD
 |----|-------------|
 | [BASE-1364](https://mongoose-issues.atlassian.net/browse/BASE-1364) | The option "storage-net-node-slice" is not available in base
 
-
 # 4.2.8
 
 ## Fixed Bugs

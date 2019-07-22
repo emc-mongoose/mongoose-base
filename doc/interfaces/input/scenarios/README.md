@@ -389,7 +389,7 @@ type so the call may be included into the call chain.
 
 #### 3.1.3. Weighted Load
 
-See also the [weighted load spec](../design/weighted_load.md)
+See also the [weighted load spec](https://github.com/emc-mongoose/mongoose-load-step-weighted)
 
 Example:
 
@@ -434,7 +434,7 @@ type so the call may be included into the call chain.
 
 #### 3.1.4. Pipeline Load
 
-See also the [pipeline load spec](../design/pipeline_load.md)
+See also the [pipeline load spec](https://github.com/emc-mongoose/mongoose-load-step-pipeline)
 
 Example:
 

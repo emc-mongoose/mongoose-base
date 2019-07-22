@@ -57,10 +57,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;3.7.3. [Installer](src/main/java/com/emc/mongoose/base/env)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;3.7.4. [Recycle Mode](doc/design/recycle_mode)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;3.7.5. [Data Reentrancy](doc/design/data_reentrancy)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.7.6. [Byte Range Operations](doc/design/byte_range_operations)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.7.7. [Copy Mode](doc/design/copy_mode)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.7.8. [Pipeline Load](load/step/pipeline)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.7.9. [Weighted Load](load/step/weighted)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;3.7.6. [Copy Mode](doc/design/copy_mode)<br/>
 &nbsp;&nbsp;3.8. [Contributing](CONTRIBUTING.md)<br/>
 &nbsp;&nbsp;3.9. [Changelog](doc/changelog)<br/>
 

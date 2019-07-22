@@ -55,7 +55,7 @@ To serve the Remote API the following libraries are used:
 
 ## 4.2. API
 
-> See the full documentation [here](https://app.swaggerhub.com/apis/veronikaKochugova/Mongoose/4.1.1)
+> See the full documentation [here](https://app.swaggerhub.com/apis/veronikaKochugova/Mongoose/4.2.3)
 
 ### 4.2.1. Config
 
@@ -290,7 +290,7 @@ and 3 Primitive Types: Timing, Rate, Concurrency. Depends on the type of metric,
         <tr>
             <td>Duration</td>
             <td rowspan=2>Timing</td>
-            <td rowspan=2> <ul><li>count<li>sum<li>mean<li>min<li>max<li>quntile_'value' (<a href="#quantiles">configured</a>)<ul> </td>
+            <td rowspan=2> <ul><li>count<li>sum<li>mean<li>min<li>max<li>quntile_'value' (<a href="#611-custom-quantiles">configured</a>)<ul> </td>
         </tr>
         <tr>
             <td>Latency</td>
@@ -340,7 +340,7 @@ Each metric contains also the following labels/tags:
 |Label name|Configured param|Type|
 |:---|:---|---|
 |`load_step_id`|load-step-id|string|
-|`load_op_type`|load-op-type|string, [takes one of these values](doc/usage/load/operations/types#load-operation-types)|
+|`load_op_type`|load-op-type|string, [takes one of these values](../../../usage/load/operations/types#load-operation-types)|
 |`storage_driver_limit_concurrency`|storage-driver-limit-concurrency|integer|
 |`node_count`|the count of the Mongoose nodes involved into the given load step|integer|
 |`item_data_size`|item-data-size|string with the unit suffix (KB, MB, ...)|

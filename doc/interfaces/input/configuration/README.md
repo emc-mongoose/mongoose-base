@@ -62,14 +62,14 @@ reference.
 | output-metrics-average-period                  | Time >= 0 | 0 | The time period for the load step's metrics console output. 0 means to not to output the metrics to the console
 | output-metrics-average-persist                 | Flag | true | Persist the average (periodic) metrics if true
 | output-metrics-average-table-header-period     | Integer > 0 | 20 | Output the metrics table header every N rows
-| output-metrics-quantiles                       | List |[0.25,0.5,0.75]| Output quantiles for metrics (only for [Monitoring API](doc/interfaces/api/monitoring#monitoring-api))
+| output-metrics-quantiles                       | List |0.25,0.5,0.75| Output quantiles for metrics (only for [Monitoring API](../../api/monitoring#monitoring-api))
 | output-metrics-summary-persist                 | Flag | true | Persist the load step's summary (total) metrics if true
 | output-metrics-trace-persist                   | Flag | false | Persist the information about each load operation if true
 | output-metrics-threshold                       | 0 <= Float <= 1 | 0 | The concurrency threshold to enable intermediate statistics calculation, 0 means no threshold
 | run-comment                                    | String | "" | A user defined comment to run the scenario via the Control API
 | run-node                                       | Flag | false | Run in the slave node or not
 | run-scenario                                   | Path | null | The default file scenario to run, null means invoking the default.js scenario bundled into the distribution
-| run-version                                    | String | 4.2.9 | The Mongoose version
+| run-version                                    | String | 4.2.12 | The Mongoose version
 | run-id                                         | long | 0 | The run identifier (see Runs API). If not specified, it takes the value of timestam
 | storage-auth-file                              | Path | null | The path to a credentials list file, containing the lines of comma-separated item path, user id and secret key
 | storage-auth-uid                               | String | null | The authentication identifier

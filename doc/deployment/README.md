@@ -2,6 +2,7 @@
 [Jar](#jar)<br/>
 [Docker](#docker)<br/>
 [Kubernetes](#kubernetes)<br/>
+[Helm](https://github.com/emc-mongoose/mongoose-helm-charts)<br/>
 
 # Environment Requirements
 
@@ -9,7 +10,7 @@
 * OS open files limit is at least a bit higher than specified concurrency level
 * Few gigabytes of free memory.
 
-High-load tests may allocate up to 1-2 GB of the memory depending on the scenario.
+High-load tests may allocate up to few GBs of the memory depending on the scenario.
 * (Remote Storage) Connectivity with the endpoint nodes via the ports used
 * (Distributed Mode) Connectivity with the additional/remote nodes via port #1099 (RMI)
 * (Remote Monitoring) Connectivity with the nodes via port #9010 (JMX)
@@ -92,10 +93,9 @@ docker run \
     [<ARGS>]
 ```
 
-
 # Kubernetes
 
-Mongoose can be deployed in a [kubernetes](https://kubernetes.io/) cluster. Examples of yaml files are in the directory `/kubernetes`. The following describes a more detailed use of scripts:
+Mongoose can be deployed in a [kubernetes](https://kubernetes.io/) cluster. Examples of yaml files are in the directory `ci/kubernetes`. The following describes a more detailed use of scripts:
 
 > * You can use a ready-made cluster or [deploy your own](../KUBE-CLUSTER.md). <- TODO
 > * The examples use the mongoose image with the `latest` tag. To use specifically the version you need to specify ` - image: emcmongoose/mongoose:<x.y.z>`
