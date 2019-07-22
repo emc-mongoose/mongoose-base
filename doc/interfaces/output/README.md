@@ -65,7 +65,7 @@ Use parameter `Dlog4j.configurationFile` for this:
 ```bash
 java -Dlog4j.configurationFile=/path/to/custom/config/log4j2.yaml -jar mongoose-<VERSION>.jar
 ```
-An example of a default configuration [here](src/main/resources/log4j2.yaml).
+An example of a default configuration [here](../../../src/main/resources/log4j2.yaml).
 
 ##### 1.1.4.1. Docker Custom Logging
 
@@ -80,7 +80,7 @@ export PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${JAVA_
 java -Dlog4j.configurationFile=/path/in/container/custom-log4j2.yaml -jar /opt/mongoose/mongoose.jar "$@"
 ```
 
-> default [entrypoint](docker/entrypoint.sh) 
+> default [entrypoint](../../../ci/docker/entrypoint.sh) 
 
 and run container with following command:
 
@@ -149,7 +149,7 @@ Each record contains comma-separated values which are:
 1. Full Item Path
 2. Data ring buffer offset (hexadecimal)
 3. Size (decimal)
-4. A pair of [layer/mask](../design/data_reentrancy.md) values separated with "/" character
+4. A pair of [layer/mask](../../design/data_reentrancy.md) values separated with "/" character
 
 # 2. Metrics
 
