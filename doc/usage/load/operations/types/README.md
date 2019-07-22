@@ -84,7 +84,7 @@ An load operation is reported with the [status code](../../../../interfaces/outp
 ## 3. Update
 
 By default the `update` operation rewrites the whole corresponding data item on the storage. The different
-[item data input]((../../../item/types/#12-payload)) may be used to rewrite the data item with different data sequence.
+[item data input](../../../item/types/#12-payload) may be used to rewrite the data item with different data sequence.
 
 **Note**:
 > * Update operations require the obviously configured [items input](../../../item/input).
