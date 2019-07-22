@@ -12,7 +12,7 @@ byte ranges.
 * Effective only if load type is set to **update** or **read**.
 
 * Random byte range count should not be more than maximum for the particular data item size used.
-  (For details please refer to [this section](data_reentrancy.md#random-range-update))
+  (For details please refer to [this section](../../../../design/data_reentrancy/#random-range-update))
 
 * It's not allowed to specify both random and fixed byte ranges simultaneously. The fixed byte ranges configuration will
   be used in this case only.
