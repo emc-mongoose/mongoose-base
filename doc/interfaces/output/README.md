@@ -149,7 +149,7 @@ Each record contains comma-separated values which are:
 1. Full Item Path
 2. Data ring buffer offset (hexadecimal)
 3. Size (decimal)
-4. A pair of [layer/mask](../../design/data_reentrancy.md) values separated with "/" character
+4. A pair of [layer/mask](../../design/data_reentrancy) values separated with "/" character
 
 # 2. Metrics
 
