@@ -52,7 +52,7 @@ run:
   id: 0
   port: 9999
   scenario: null
-  version: "4.2.11"
+  version: "4.2.12"
 storage:
   net:
     node:

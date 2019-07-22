@@ -1,3 +1,8 @@
+[Environment Requirements](#environment-requirements)<br/>
+[Jar](#jar)<br/>
+[Docker](#docker)<br/>
+[Kubernetes](#kubernetes)<br/>
+
 # Environment Requirements
 
 * Java 11+ or Docker
@@ -86,3 +91,121 @@ docker run \
     emcmongoose/<IMAGE> \
     [<ARGS>]
 ```
+
+
+# Kubernetes
+
+Mongoose can be deployed in a [kubernetes](https://kubernetes.io/) cluster. Examples of yaml files are in the directory `/kubernetes`. The following describes a more detailed use of scripts:
+
+> * You can use a ready-made cluster or [deploy your own](../KUBE-CLUSTER.md). <- TODO
+> * The examples use the mongoose image with the `latest` tag. To use specifically the version you need to specify ` - image: emcmongoose/mongoose:<x.y.z>`
+> * All of the following configurations use `mongoose` namespace. Therefore, it is necessary to first create a namespace:
+> ```bash
+> kubectl create namespace mongoose
+> ```
+
+### Standalone
+
+Run Mongoose in standalone mode:
+```bash
+kubectl apply -f kuberenetes/standalone.yaml 
+```
+CLI args can be added in following lines:
+```yaml
+...
+      args:
+        - --load-step-limit-time=1m
+          --storage-driver-type=dummy-mock
+```
+
+#### Deployment & Pod
+
+There are 2 options to start the mongoose: as `Pod` resource and as `Deployment` resource. In the first case, when the scenario completes, pod goes into status `Completed` before it is deleted. In the second case, after the completion deployment will be restarted infinitely many times.
+
+Run Mongoose in standalone mode as deployment:
+```bash
+kubectl apply -f kuberenetes/standalone-deployment.yaml 
+```
+
+##### Logs
+
+With command `kubectl logs -n mongoose <resource name>` you can see logs into container. For example:
+
+```bash
+$ kubectl logs -n mongoose mongoose
+################################################### mongoose v 4.2.7 ###################################################
+2019-04-08T09:41:52,777 I                                main                           Available/installed extensions:
+	Load --------------------------> com.emc.mongoose.base.load.step.linear.LinearLoadStepExtension
+	dummy-mock --------------------> com.emc.mongoose.base.storage.driver.mock.DummyStorageDriverMockExtension
+	http --------------------------> com.emc.mongoose.storage.driver.coop.netty.http.HttpStorageDriverExtension
+	s3 ----------------------------> com.emc.mongoose.storage.driver.coop.netty.http.s3.S3StorageDriverExtension
+	WeightedLoad ------------------> com.emc.mongoose.load.step.weighted.WeightedLoadStepExtension
+	PipelineLoad ------------------> com.emc.mongoose.load.step.pipeline.PipelineLoadStepExtension
+	atmos -------------------------> com.emc.mongoose.storage.driver.coop.netty.http.atmos.AtmosStorageDriverExtension
+...
+```
+
+### Distributed Mode
+
+Run Mongoose in distributed mode:
+```bash
+kubectl apply -f kuberenetes/distributed.yaml 
+```
+
+> `---` - separates configurations for different resources. Each resource can be launched separately as in the previous examples with command `kubectl apply ...`
+
+The number of replicas means the number of nodes on which `Service` Mongoose will be running.
+```
+...
+spec:
+  replicas: 4
+...
+```
+
+`Pod` plays the role of the entry node.
+
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mongoose
+  namespace: mongoose
+...
+   --load-step-node-addrs=mongoose-node-0.mongoose-node,mongoose-node-1.mongoose-node,mongoose-node-2.mongoose-node,mongoose-node-3.mongoose-node
+...
+```
+
+With command `kubectl get -n mongoose pods` you can see information about running pods. In this example:
+
+| NAME | READY | STATUS | RESTARTS | AGE |
+| --- | --- | --- | --- | --- |
+| mongoose          | 1/1     |Running   |0          |5s
+| mongoose-node-0   | 1/1     |Running   |0          |19m
+| mongoose-node-1   | 1/1     |Running   |0          |19m
+| mongoose-node-2   | 1/1     |Running   |0          |19m
+| mongoose-node-3   | 1/1     |Running   |0          |19m
+
+### REST API
+
+Run Mongoose nodes:
+```bash
+kubectl apply -f kuberenetes/additional-node.yaml 
+```
+With command `kubectl get -n mongoose services` you can see inforamtion about running services. For this example:
+
+|NAME            |TYPE           |CLUSTER-IP      |EXTERNAL-IP                   |PORT(S)          |AGE
+| --- | --- | --- | --- | --- | ---
+|mongoose-node   |LoadBalancer   |a.b.c.d   |**x.y.z.j**  |9999:31687/TCP   |25m
+
+We are interested in external ip **x.y.z.j** . We can send HTTP-requests to it [(see Remote API)](doc/interfaces/api/remote). For example:
+```
+curl -v -X POST http://x.y.z.j:9999/run
+```
+
+### Deleting kubernetes resources
+
+There are several ways to delete kubernetes resources:
+* delete by configuration `kubectl delete -f <filename>.yaml`
+* manual removal `kubectl delete -n mongoose pod NAME`
+* removal of all resources in namespace `kubectl delete -n mongoose pod --all`
+* removal of namespace (including resources) `kubectl delete namespace mongoose`
