@@ -25,7 +25,7 @@ java -jar mongoose-<VERSION>.jar --item-output-path=/storage/path/for/the/new/it
 
 ### 2.1. Variable
 
-The items output path also supports the [expression language](../../../../src/main/com/emc/mongoose/config/el/README.md).
+The items output path also supports the [expression language](../../../../src/main/java/com/emc/mongoose/config/el/README.md).
 Example: dynamic files output path defined by some particular "width" (16) and "depth" (2):
 ```bash
 java -jar mongoose-<VERSION>.jar \
