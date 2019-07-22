@@ -3,20 +3,13 @@
 1. Input<br/>
 &nbsp;&nbsp;1.1. [Defaults](defaults)<br/>
 &nbsp;&nbsp;1.2. [Configuration](../interfaces/input/configuration)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;1.2.1. [CLI](../interfaces/input/configuration#11-cli)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;1.2.2. [Configuration Reference Table](../interfaces/input/configuration#12-reference-table)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;1.2.3. [Parameterizing](../interfaces/input/configuration#2-parameterization)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;1.2.4. Storage Drivers<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.2.4.1. [Netty Based Storage Drivers](../../storage/driver/coop/netty)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.2.4.1.1. [HTTP Storage Drivers](../../storage/driver/coop/netty/http)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.2.4.1.1.1. [Atmos](../../storage/driver/coop/netty/http/atmos)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.2.4.1.1.2. [S3](../../storage/driver/coop/netty/http/s3)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.2.4.1.1.3. [Swift](../../storage/driver/coop/netty/http/swift)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.2.4.2. [Filesystem Storage Driver](../../storage/driver/coop/nio/fs)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;1.2.1. [CLI](../interfaces/input/cli)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;1.2.2. [Configuration Reference Table](../interfaces/input/configuration#11-reference-table)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;1.2.3. [Expressions](../interfaces/input/configuration#124-expression)<br/>
 &nbsp;&nbsp;1.3. [Scenarios](../interfaces/input/scenarios)<br/>
 2. [Output](../interfaces/output)<br/>
 &nbsp;&nbsp;2.1. [General Output](../interfaces/output#1-general)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.1.1. [Logging](doc/interfaces/output#11-logging-subsystem)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;2.1.1. [Logging](../interfaces/output#11-logging-subsystem)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1.1. [Logs Separation By Load Step Id](doc/interfaces/output#111-load-step-id)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1.2. [Console](doc/interfaces/output#112-console)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1.3. [Files](doc/interfaces/output#113-files)<br/>
