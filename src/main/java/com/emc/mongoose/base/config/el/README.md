@@ -15,8 +15,9 @@
 4.5. [Built-in Values](#45-built-in-values)<br/>
 4.5.1. [Self Reference](#451-self-reference)<br/>
 5. [Configuration](#5-configuration)<br/>
-5.1. [Variable Items Output Path](#51-variable-items-output-path)<br/>
-5.2. [HTTP request headers and queries](#52-http-request-headers-and-queries)<br/>
+5.1. [Item Naming](#51-item-naming)<br/>
+5.2. [Variable Items Output Path](#52-variable-items-output-path)<br/>
+5.3. [HTTP request headers and queries](#53-http-request-headers-and-queries)<br/>
 6. [Future Enhancements](#6-future-enhancements)
 
 # 1. Introduction
@@ -247,7 +248,7 @@ There are two options responsible for the new items naming which support the exp
 The `item-output-path` configuration option value may be an expression to generate the new path value for each new item
 operation.
 
-## 5.4. HTTP Request Headers And Queries
+## 5.3. HTTP Request Headers And Queries
 
 See the specific [HTTP storage driver documentation](storage/driver/coop/netty/http/README.md) for the details.
 
