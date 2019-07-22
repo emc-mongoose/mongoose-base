@@ -90,7 +90,7 @@ By default the `update` operation rewrites the whole corresponding data item on 
 > * Update operations require the obviously configured [items input](../../../item/input).
 > * Take care about the correct [item data input](../../../item/types/#12-payload) configuration if the updating items
 >   should be read with enabled verification further.
-> * Save the updated items list to the [item output file](.../../../item/output#1-file) to make it possible to read
+> * Save the updated items list to the [item output file](../../../item/output#1-file) to make it possible to read
 >   these items with enabled verification later.
 
 ```bash
