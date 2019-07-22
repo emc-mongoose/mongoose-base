@@ -250,7 +250,7 @@ operation.
 
 ## 5.3. HTTP Request Headers And Queries
 
-See the specific [HTTP storage driver documentation](storage/driver/coop/netty/http/README.md) for the details.
+See the specific [HTTP storage driver documentation](https://github.com/emc-mongoose/mongoose-storage-driver-http) for the details.
 
 # 6. Future Enhancements
 
