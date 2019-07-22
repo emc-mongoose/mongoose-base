@@ -136,7 +136,7 @@ setting.
 
 ##### 1.2.4. Expression
 
-The [expression language](src/main/java/com/emc/mongoose/config/el/README.md) allows to assign the dynamic values 
+The [expression language](../../../../src/main/java/com/emc/mongoose/base/config/el/README.md) allows to assign the dynamic values 
 to some configuration parameters.
 
 ## 2. Aliasing
