@@ -43,3 +43,8 @@ A load step is also limited by the load operations *EOI*. End of the load operat
 * Load operations recycling is enabled but all the load operations are failed (there's no successfull load operations to
   recycle)
 
+# 3. Type
+
+## 3.1. Linear
+
+*Linear* load step type is used by default and may be considered as a straightforward way to generate a load.

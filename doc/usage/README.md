@@ -84,9 +84,9 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2.3. [Transfer Size](load/steps#23-transfer-size)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2.4. [End Of Input](load/steps#24-end-of-input)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;3.3.3. Types<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3.1. [Linear Load](../../load/step/linear)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3.2. [Pipeline Load](../../load/step/pipeline)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3.3. [Weighted Load](../../load/step/weighted)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3.1. Linear Load<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3.2. [Pipeline Load](https://github.com/emc-mongoose/mongoose-load-step-pipeline)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3.3. [Weighted Load](https://github.com/emc-mongoose/mongoose-load-step-weighted)<br/>
 4. [Load Scaling](scaling)<br/>
 &nbsp;&nbsp;4.1. [Rate](scaling#1-rate)<br/>
 &nbsp;&nbsp;4.2. [Concurrency](scaling#2-concurrency)<br/>
