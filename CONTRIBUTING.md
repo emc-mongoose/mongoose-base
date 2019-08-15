@@ -250,6 +250,7 @@ SUITE=api.storage TEST=s3 ./gradlew clean robotest
    git tag -d latest
    git push origin :refs/tags/latest
    git tag -a latest -m <X>.<Y>.<Z>
+   git tag -a <X>.<Y>.<Z> -m <X>.<Y>.<Z>
    git push --tags --force
    ```
 5. Merge to the `release` branch (optional)
