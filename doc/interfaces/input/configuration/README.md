@@ -69,7 +69,7 @@ reference.
 | run-comment                                    | String | "" | A user defined comment to run the scenario via the Control API
 | run-node                                       | Flag | false | Run in the slave node or not
 | run-scenario                                   | Path | null | The default file scenario to run, null means invoking the default.js scenario bundled into the distribution
-| run-version                                    | String | 4.2.12 | The Mongoose version
+| run-version                                    | String | 4.2.13 | The Mongoose version
 | run-id                                         | long | 0 | The run identifier (see Runs API). If not specified, it takes the value of timestam
 | storage-auth-file                              | Path | null | The path to a credentials list file, containing the lines of comma-separated item path, user id and secret key
 | storage-auth-uid                               | String | null | The authentication identifier

@@ -9,7 +9,6 @@ import static com.github.akurilov.commons.lang.Exceptions.throwUnchecked;
 import static org.apache.logging.log4j.CloseableThreadContext.Instance;
 
 import com.emc.mongoose.base.concurrent.DaemonBase;
-import com.emc.mongoose.base.concurrent.ServiceTaskExecutor;
 import com.emc.mongoose.base.item.Item;
 import com.emc.mongoose.base.item.op.Operation;
 import com.emc.mongoose.base.item.op.Operation.Status;
@@ -29,8 +28,6 @@ import com.github.akurilov.commons.io.Output;
 import com.github.akurilov.commons.reflection.TypeUtil;
 import com.github.akurilov.commons.system.SizeInBytes;
 import com.github.akurilov.confuse.Config;
-import com.github.akurilov.fiber4j.Fiber;
-import com.github.akurilov.fiber4j.TransferFiber;
 import java.io.EOFException;
 import java.io.IOException;
 import java.rmi.RemoteException;
@@ -39,7 +36,6 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.LongAdder;
-import java.util.concurrent.locks.LockSupport;
 import org.apache.logging.log4j.CloseableThreadContext;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.ThreadContext;
@@ -58,7 +54,6 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 	private final ConcurrentMap<I, O> latestSuccOpResultByItem;
 	private final boolean recycleFlag;
 	private final boolean retryFlag;
-	private final Fiber resultsTransferTask;
 	private final MetricsContext metricsCtx;
 	private final LongAdder counterResults = new LongAdder();
 	private final boolean tracePersistFlag;
@@ -76,6 +71,7 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 		this.id = id;
 		this.generator = generator;
 		this.driver = driver;
+		this.driver.loadStepContext(this);
 		this.metricsCtx = metricsCtx;
 		this.tracePersistFlag = tracePersistFlag;
 		this.batchSize = loadConfig.intVal("batch-size");
@@ -89,7 +85,6 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 		} else {
 			latestSuccOpResultByItem = null;
 		}
-		resultsTransferTask = new TransferFiber<>(ServiceTaskExecutor.INSTANCE, driver, this, batchSize);
 		final long configCountLimit = opLimitConfig.longVal("count");
 		this.countLimit = configCountLimit > 0 ? configCountLimit : Long.MAX_VALUE;
 		final SizeInBytes configSizeLimit;
@@ -409,9 +404,6 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 	@Override
 	protected void doStart() throws IllegalStateException {
 		try {
-			resultsTransferTask.start();
-		} catch (final RemoteException ignored) {}
-		try {
 			driver.start();
 		} catch (final RemoteException ignored) {} catch (final IllegalStateException e) {
 			LogUtil.exception(Level.WARN, e, "{}: failed to start the storage driver \"{}\"", id, driver);
@@ -442,28 +434,6 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 	protected final void doStop() throws IllegalStateException {
 
 		driver.stop();
-		Loggers.MSG.debug(
-						"{}: the storage driver {} stopped, waiting to transfer the remaining results, if any",
-						id,
-						driver.toString());
-		while (driver.hasRemainingResults()) {
-			LockSupport.parkNanos(1);
-		}
-		Loggers.MSG.debug(
-						"{}: no more remaining results @ the storage driver {}", id, driver.toString());
-
-		try {
-			resultsTransferTask.shutdown();
-		} catch (final Exception e) {
-			LogUtil.exception(Level.WARN, e, "Failed to shutdown the results transfer task");
-		}
-		try {
-			resultsTransferTask.await();
-		} catch (final InterruptedException e) {
-			throwUnchecked(e);
-		} catch (final Exception e) {
-			LogUtil.exception(Level.WARN, e, "Failed to await the results transfer task to finish");
-		}
 
 		if (latestSuccOpResultByItem != null && opsResultsOutput != null) {
 			try {
@@ -534,12 +504,6 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 			} catch (final IOException e) {
 				LogUtil.exception(
 								Level.ERROR, e, "Failed to close the storage driver \"{}\"", driver.toString());
-			}
-			try {
-				resultsTransferTask.close();
-			} catch (final IOException e) {
-				LogUtil.exception(
-								Level.WARN, e, "{}: failed to stop the service coroutine {}", resultsTransferTask);
 			}
 			Loggers.MSG.debug("{}: closed the load step context", id);
 		}

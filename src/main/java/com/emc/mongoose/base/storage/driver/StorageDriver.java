@@ -11,9 +11,9 @@ import com.emc.mongoose.base.item.Item;
 import com.emc.mongoose.base.item.ItemFactory;
 import com.emc.mongoose.base.item.op.OpType;
 import com.emc.mongoose.base.item.op.Operation;
+import com.emc.mongoose.base.load.step.local.context.LoadStepContext;
 import com.emc.mongoose.base.logging.Loggers;
 import com.github.akurilov.commons.concurrent.AsyncRunnable;
-import com.github.akurilov.commons.io.Input;
 import com.github.akurilov.commons.io.Output;
 import com.github.akurilov.confuse.Config;
 import java.io.IOException;
@@ -24,10 +24,12 @@ import org.apache.logging.log4j.CloseableThreadContext;
 
 /** Created on 11.07.16. */
 public interface StorageDriver<I extends Item, O extends Operation<I>>
-				extends Daemon, Input<O>, Output<O> {
+				extends Daemon, Output<O> {
 
 	int BUFF_SIZE_MIN = 0x1_000;
 	int BUFF_SIZE_MAX = 0x1_000_000;
+
+	void loadStepContext(final LoadStepContext<I, O> loadStepCtx);
 
 	List<I> list(
 					final ItemFactory<I> itemFactory,
@@ -46,13 +48,6 @@ public interface StorageDriver<I extends Item, O extends Operation<I>>
 
 	@Override
 	int put(final List<O> ops);
-
-	boolean hasRemainingResults();
-
-	@Override
-	default void reset() {
-		throw new AssertionError("Shouldn't be invoked");
-	}
 
 	/** @return 0 if the concurrency is not limited */
 	int concurrencyLimit();

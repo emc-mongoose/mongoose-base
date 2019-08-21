@@ -9,6 +9,7 @@ import com.emc.mongoose.base.config.IllegalConfigurationException;
 import com.emc.mongoose.base.item.Item;
 import com.emc.mongoose.base.item.op.Operation;
 import com.emc.mongoose.base.item.op.data.DataOperation;
+import com.emc.mongoose.base.load.step.local.context.LoadStepContext;
 import com.emc.mongoose.base.logging.Loggers;
 import com.emc.mongoose.base.storage.Credential;
 import com.github.akurilov.commons.concurrent.ThreadUtil;
@@ -30,7 +31,7 @@ public abstract class StorageDriverBase<I extends Item, O extends Operation<I>> 
 
 	private final DataInput itemDataInput;
 	protected final String stepId;
-	private final BlockingQueue<O> opsResultsQueue;
+	private LoadStepContext<I, O> loadStepCtx = null;
 	protected final int concurrencyLimit;
 	protected final int ioWorkerCount;
 	protected final String namespace;
@@ -53,15 +54,13 @@ public abstract class StorageDriverBase<I extends Item, O extends Operation<I>> 
 					throws IllegalConfigurationException {
 
 		this.itemDataInput = itemDataInput;
-		final Config driverConfig = storageConfig.configVal("driver");
-		final Config limitConfig = driverConfig.configVal("limit");
-		final int outputQueueCapacity = limitConfig.intVal("queue-output");
-		this.opsResultsQueue = new ArrayBlockingQueue<>(outputQueueCapacity);
+		final var driverConfig = storageConfig.configVal("driver");
+		final var limitConfig = driverConfig.configVal("limit");
 		this.stepId = stepId;
 		this.namespace = storageConfig.stringVal("namespace");
-		final Config authConfig = storageConfig.configVal("auth");
+		final var authConfig = storageConfig.configVal("auth");
 		this.credential = Credential.getInstance(authConfig.stringVal("uid"), authConfig.stringVal("secret"));
-		final String authToken = authConfig.stringVal("token");
+		final var authToken = authConfig.stringVal("token");
 		if (authToken != null) {
 			if (this.credential == null) {
 				this.authTokens.put(Credential.NONE, authToken);
@@ -72,7 +71,7 @@ public abstract class StorageDriverBase<I extends Item, O extends Operation<I>> 
 		this.concurrencyLimit = limitConfig.intVal("concurrency");
 		this.verifyFlag = verifyFlag;
 
-		final int confWorkerCount = driverConfig.intVal("threads");
+		final var confWorkerCount = driverConfig.intVal("threads");
 		if (confWorkerCount > 0) {
 			ioWorkerCount = confWorkerCount;
 		} else if (concurrencyLimit > 0) {
@@ -80,6 +79,11 @@ public abstract class StorageDriverBase<I extends Item, O extends Operation<I>> 
 		} else {
 			ioWorkerCount = ThreadUtil.getHardwareThreadCount();
 		}
+	}
+
+	@Override
+	public final void loadStepContext(final LoadStepContext<I, O> loadStepCtx) {
+		this.loadStepCtx = loadStepCtx;
 	}
 
 	protected abstract String requestNewPath(final String path);
@@ -120,7 +124,7 @@ public abstract class StorageDriverBase<I extends Item, O extends Operation<I>> 
 				Loggers.MSG.trace("{}: Load operation completed", op);
 			}
 			final O opResult = op.result();
-			if (opsResultsQueue.offer(opResult)) {
+			if (loadStepCtx.put(opResult)) {
 				return true;
 			} else {
 				Loggers.ERR.error(
@@ -136,32 +140,8 @@ public abstract class StorageDriverBase<I extends Item, O extends Operation<I>> 
 	}
 
 	@Override
-	public final O get() {
-		return opsResultsQueue.poll();
-	}
-
-	@Override
-	public final int get(final List<O> buffer, final int limit) {
-		return opsResultsQueue.drainTo(buffer, limit);
-	}
-
-	@Override
-	public final long skip(final long count) {
-		int n = (int) Math.min(count, Integer.MAX_VALUE);
-		final List<O> tmpBuff = new ArrayList<>(n);
-		n = opsResultsQueue.drainTo(tmpBuff, n);
-		tmpBuff.clear();
-		return n;
-	}
-
-	@Override
-	public final boolean hasRemainingResults() {
-		return !opsResultsQueue.isEmpty();
-	}
-
-	@Override
 	public Input<O> getInput() {
-		return this;
+		throw new AssertionError("Shouldn't be invoked");
 	}
 
 	@Override
@@ -169,20 +149,13 @@ public abstract class StorageDriverBase<I extends Item, O extends Operation<I>> 
 		try (final CloseableThreadContext.Instance logCtx = CloseableThreadContext.put(KEY_STEP_ID, stepId)
 						.put(KEY_CLASS_NAME, StorageDriverBase.class.getSimpleName())) {
 			itemDataInput.close();
-			final int opResultsQueueSize = opsResultsQueue.size();
-			if (opResultsQueueSize > 0) {
-				Loggers.ERR.warn(
-								"{}: Load operations results queue contains {} unhandled elements",
-								toString(),
-								opResultsQueueSize);
-			}
-			opsResultsQueue.clear();
 			authTokens.clear();
 			pathToCredMap.clear();
 			pathMap.clear();
 			super.doClose();
 			Loggers.MSG.debug("{}: closed", toString());
 		}
+		loadStepCtx = null;
 	}
 
 	@Override
