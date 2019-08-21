@@ -68,7 +68,11 @@
 
 # 4.2.13
 
-TBD
+## Fixed Bugs
+
+| Id | Description |
+|----|-------------|
+| [BASE-1378](https://mongoose-issues.atlassian.net/browse/BASE-1378) | Legacy code impacting performance | 
 
 # 4.2.12
 
