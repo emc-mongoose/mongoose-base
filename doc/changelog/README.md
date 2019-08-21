@@ -421,7 +421,7 @@ Follow the link above for the details
 | N/A                             | storage-net-node-connAttemptsLimit
 | N/A                             | item-data-ranges-concat
 | load-circular                   | load-generator-recycle-enabled
-| load-queue-size                 | load-generator-recycle-limit, storage-driver-queue-input, storage-driver-queue-output
+| load-queue-size                 | load-generator-recycle-limit, storage-driver-queue-input
 | load-rate-limit                 | load-limit-rate
 | storage-driver-concurrency      | load-limit-concurrency
 | storage-driver-io-workers       | storage-driver-threads

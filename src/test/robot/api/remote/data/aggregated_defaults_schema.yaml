@@ -55,7 +55,6 @@ storage:
   driver:
     limit:
       queue:
-        output: "int"
         input: "int"
       concurrency: "int"
     type: "string"

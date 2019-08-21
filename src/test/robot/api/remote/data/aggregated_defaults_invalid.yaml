@@ -61,7 +61,6 @@ storage:
   driver:
     limit:
       queue:
-        output: 1000000
         input: 1000000
       concurrency: 1
     type: "s3"
@@ -272,9 +271,6 @@ aliasing:
   - name: "storage-driver-queue-input"
     deprecated: true
     target: "storage-driver-limit-queue-input"
-  - name: "storage-driver-queue-output"
-    deprecated: true
-    target: "storage-driver-limit-queue-output"
   - name: "test-scenario-file"
     deprecated: true
     target: "run-scenario"

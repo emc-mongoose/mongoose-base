@@ -95,7 +95,6 @@ storage:
       concurrency: 1
       queue:
         input: 1000000
-        output: 1000000
     threads: 0
     type: dummy-mock
   namespace: null
@@ -284,9 +283,6 @@ aliasing:
 - name: "storage-driver-queue-input"
   deprecated: true
   target: "storage-driver-limit-queue-input"
-- name: "storage-driver-queue-output"
-  deprecated: true
-  target: "storage-driver-limit-queue-output"
 - name: "test-scenario-file"
   deprecated: true
   target: "run-scenario"
