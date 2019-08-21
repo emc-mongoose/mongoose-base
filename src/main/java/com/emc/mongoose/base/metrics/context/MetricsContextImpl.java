@@ -40,9 +40,6 @@ public class MetricsContextImpl<S extends AllMetricsSnapshotImpl> extends Metric
 	private volatile ConcurrencyMetricSnapshot actualConcurrencySnapshot;
 	private volatile long lastSnapshotsUpdateTs = 0;
 	private final IntSupplier actualConcurrencyGauge;
-	private final ReadWriteLock timingLock = new ReentrantReadWriteLock();
-	private final Lock timingLockUpdate = timingLock.readLock();
-	private final Lock timingsUpdateLock = timingLock.writeLock();
 
 	public MetricsContextImpl(
 					final Map<String, Object> metadata,
@@ -141,13 +138,8 @@ public class MetricsContextImpl<S extends AllMetricsSnapshotImpl> extends Metric
 
 	private void updateTimings(final long latencyMicros, final long durationMicros) {
 		if (latencyMicros > 0 && durationMicros > latencyMicros) {
-			timingLockUpdate.lock();
-			try {
-				reqDuration.update(durationMicros);
-				respLatency.update(latencyMicros);
-			} finally {
-				timingLockUpdate.unlock();
-			}
+			reqDuration.update(durationMicros);
+			respLatency.update(latencyMicros);
 		}
 	}
 
@@ -183,7 +175,7 @@ public class MetricsContextImpl<S extends AllMetricsSnapshotImpl> extends Metric
 		final var currentTimeMillis = System.currentTimeMillis();
 		if (currentTimeMillis - lastSnapshotsUpdateTs > DEFAULT_SNAPSHOT_UPDATE_PERIOD_MILLIS) {
 			lastSnapshotsUpdateTs = currentTimeMillis;
-			updateTimings();
+			updateTimingSnapshots();
 			actualConcurrency.update(actualConcurrencyGauge.getAsInt());
 			actualConcurrencySnapshot = actualConcurrency.snapshot();
 		}
@@ -198,15 +190,9 @@ public class MetricsContextImpl<S extends AllMetricsSnapshotImpl> extends Metric
 		super.refreshLastSnapshot();
 	}
 
-	private void updateTimings() {
-		if (timingsUpdateLock.tryLock()) {
-			try {
-				reqDurSnapshot = reqDuration.snapshot();
-				respLatSnapshot = respLatency.snapshot();
-			} finally {
-				timingsUpdateLock.unlock();
-			}
-		}
+	private void updateTimingSnapshots() {
+		reqDurSnapshot = reqDuration.snapshot();
+		respLatSnapshot = respLatency.snapshot();
 	}
 
 	@Override
