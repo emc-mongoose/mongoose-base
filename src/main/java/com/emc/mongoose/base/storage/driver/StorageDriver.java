@@ -11,7 +11,6 @@ import com.emc.mongoose.base.item.Item;
 import com.emc.mongoose.base.item.ItemFactory;
 import com.emc.mongoose.base.item.op.OpType;
 import com.emc.mongoose.base.item.op.Operation;
-import com.emc.mongoose.base.load.step.local.context.LoadStepContext;
 import com.emc.mongoose.base.logging.Loggers;
 import com.github.akurilov.commons.concurrent.AsyncRunnable;
 import com.github.akurilov.commons.io.Output;
@@ -29,7 +28,7 @@ public interface StorageDriver<I extends Item, O extends Operation<I>>
 	int BUFF_SIZE_MIN = 0x1_000;
 	int BUFF_SIZE_MAX = 0x1_000_000;
 
-	void loadStepContext(final LoadStepContext<I, O> loadStepCtx);
+	void operationResultOutput(final Output<O> opResultOut);
 
 	List<I> list(
 					final ItemFactory<I> itemFactory,

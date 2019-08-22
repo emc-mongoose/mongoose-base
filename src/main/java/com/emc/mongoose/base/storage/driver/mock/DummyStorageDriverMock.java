@@ -8,20 +8,17 @@ import com.emc.mongoose.base.item.ItemFactory;
 import com.emc.mongoose.base.item.op.OpType;
 import com.emc.mongoose.base.item.op.Operation;
 import com.emc.mongoose.base.item.op.data.DataOperation;
-import com.emc.mongoose.base.load.step.local.context.LoadStepContext;
 import com.emc.mongoose.base.logging.Loggers;
 import com.emc.mongoose.base.storage.driver.StorageDriver;
 import com.github.akurilov.commons.collection.Range;
 import com.github.akurilov.commons.concurrent.AsyncRunnableBase;
 import com.github.akurilov.commons.io.Input;
+import com.github.akurilov.commons.io.Output;
 import com.github.akurilov.confuse.Config;
 import java.io.EOFException;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -32,7 +29,7 @@ public final class DummyStorageDriverMock<I extends Item, O extends Operation<I>
 	private final int concurrencyLimit;
 	private final LongAdder scheduledOpCount = new LongAdder();
 	private final LongAdder completedOpCount = new LongAdder();
-	private LoadStepContext<I, O> loadStepCtx = null;
+	private Output<O> opResultOut = null;
 
 	public DummyStorageDriverMock(final Config storageConfig) {
 		final Config limitConfig = storageConfig.configVal("driver-limit");
@@ -45,7 +42,7 @@ public final class DummyStorageDriverMock<I extends Item, O extends Operation<I>
 			throwUnchecked(new EOFException());
 		}
 		checkStateFor(task);
-		if (loadStepCtx.put(task)) {
+		if (opResultOut.put(task)) {
 			scheduledOpCount.increment();
 			completedOpCount.increment();
 			return true;
@@ -64,7 +61,7 @@ public final class DummyStorageDriverMock<I extends Item, O extends Operation<I>
 		while (i < to && isStarted()) {
 			nextTask = tasks.get(i);
 			checkStateFor(nextTask);
-			if (loadStepCtx.put(tasks.get(i))) {
+			if (opResultOut.put(tasks.get(i))) {
 				i++;
 			} else {
 				break;
@@ -85,7 +82,7 @@ public final class DummyStorageDriverMock<I extends Item, O extends Operation<I>
 		for (final O nextOp : tasks) {
 			if (isStarted()) {
 				checkStateFor(nextOp);
-				if (loadStepCtx.put(nextOp)) {
+				if (opResultOut.put(nextOp)) {
 					n++;
 				} else {
 					break;
@@ -144,8 +141,8 @@ public final class DummyStorageDriverMock<I extends Item, O extends Operation<I>
 	}
 
 	@Override
-	public void loadStepContext(final LoadStepContext<I, O> loadStepCtx) {
-		this.loadStepCtx = loadStepCtx;
+	public final void operationResultOutput(final Output<O> opResultOut) {
+		this.opResultOut = opResultOut;
 	}
 
 	@Override
@@ -211,7 +208,7 @@ public final class DummyStorageDriverMock<I extends Item, O extends Operation<I>
 
 	@Override
 	protected final void doClose() throws IOException {
-		loadStepCtx = null;
+		opResultOut = null;
 		Loggers.MSG.debug("{}: closed", toString());
 	}
 

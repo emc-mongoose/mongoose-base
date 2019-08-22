@@ -71,7 +71,7 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 		this.id = id;
 		this.generator = generator;
 		this.driver = driver;
-		this.driver.loadStepContext(this);
+		this.driver.operationResultOutput(this);
 		this.metricsCtx = metricsCtx;
 		this.tracePersistFlag = tracePersistFlag;
 		this.batchSize = loadConfig.intVal("batch-size");

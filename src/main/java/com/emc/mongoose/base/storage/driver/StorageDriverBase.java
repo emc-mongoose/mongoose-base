@@ -9,17 +9,13 @@ import com.emc.mongoose.base.config.IllegalConfigurationException;
 import com.emc.mongoose.base.item.Item;
 import com.emc.mongoose.base.item.op.Operation;
 import com.emc.mongoose.base.item.op.data.DataOperation;
-import com.emc.mongoose.base.load.step.local.context.LoadStepContext;
 import com.emc.mongoose.base.logging.Loggers;
 import com.emc.mongoose.base.storage.Credential;
 import com.github.akurilov.commons.concurrent.ThreadUtil;
 import com.github.akurilov.commons.io.Input;
+import com.github.akurilov.commons.io.Output;
 import com.github.akurilov.confuse.Config;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
@@ -31,7 +27,7 @@ public abstract class StorageDriverBase<I extends Item, O extends Operation<I>> 
 
 	private final DataInput itemDataInput;
 	protected final String stepId;
-	private LoadStepContext<I, O> loadStepCtx = null;
+	private Output<O> opResultOut = null;
 	protected final int concurrencyLimit;
 	protected final int ioWorkerCount;
 	protected final String namespace;
@@ -81,9 +77,8 @@ public abstract class StorageDriverBase<I extends Item, O extends Operation<I>> 
 		}
 	}
 
-	@Override
-	public final void loadStepContext(final LoadStepContext<I, O> loadStepCtx) {
-		this.loadStepCtx = loadStepCtx;
+	public final void operationResultOutput(final Output<O> opResultOut) {
+		this.opResultOut = opResultOut;
 	}
 
 	protected abstract String requestNewPath(final String path);
@@ -124,7 +119,7 @@ public abstract class StorageDriverBase<I extends Item, O extends Operation<I>> 
 				Loggers.MSG.trace("{}: Load operation completed", op);
 			}
 			final O opResult = op.result();
-			if (loadStepCtx.put(opResult)) {
+			if (opResultOut.put(opResult)) {
 				return true;
 			} else {
 				Loggers.ERR.error(
@@ -155,7 +150,7 @@ public abstract class StorageDriverBase<I extends Item, O extends Operation<I>> 
 			super.doClose();
 			Loggers.MSG.debug("{}: closed", toString());
 		}
-		loadStepCtx = null;
+		opResultOut = null;
 	}
 
 	@Override
