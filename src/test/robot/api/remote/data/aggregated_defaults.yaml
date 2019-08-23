@@ -52,7 +52,7 @@ run:
   id: 0
   port: 9999
   scenario: null
-  version: "4.2.14"
+  version: "4.2.15"
 storage:
   namespace: null
   driver:

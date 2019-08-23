@@ -25,7 +25,7 @@ public class ConcurrencyMetricSnapshotImpl extends NamedMetricSnapshotBase
 		ConcurrencyMetricSnapshot nextSnapshot;
 		for (int i = 0; i < snapshotsCount; i++) {
 			nextSnapshot = snapshots.get(i);
-			lastSum = nextSnapshot.last();
+			lastSum += nextSnapshot.last();
 			meanSum += nextSnapshot.mean();
 		}
 		return new ConcurrencyMetricSnapshotImpl(snapshots.get(0).name(), lastSum, meanSum);
