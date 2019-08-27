@@ -27,6 +27,7 @@ import com.emc.mongoose.base.logging.Loggers;
 import com.emc.mongoose.base.metrics.MetricsManager;
 import com.emc.mongoose.base.metrics.MetricsManagerImpl;
 import com.emc.mongoose.base.svc.Service;
+import com.emc.mongoose.base.svc.netty.ApiServerImpl;
 import com.github.akurilov.confuse.Config;
 import com.github.akurilov.confuse.SchemaProvider;
 import com.github.akurilov.confuse.exceptions.InvalidValuePathException;
@@ -179,10 +180,15 @@ public final class Main {
 					final MetricsManager metricsMgr,
 					final Path appHomePath)
 					throws Exception {
-
-		// init the API server
-		final var port = fullDefaultConfig.intVal("run-port");
-		final var server = new Server(port);
+		final var server = new ApiServerImpl(extClsLoader, extensions, metricsMgr, fullDefaultConfig, appHomePath);
+		try {
+			server
+				.start()
+				.await();
+		} finally {
+			server.close();
+		}
+		/*final var server = new Server(port);
 		final var context = new ServletContextHandler();
 		context.setContextPath("/");
 		server.setHandler(context);
@@ -214,7 +220,7 @@ public final class Main {
 			}
 		} finally {
 			server.stop();
-		}
+		}*/
 	}
 
 	private static void runScenario(
