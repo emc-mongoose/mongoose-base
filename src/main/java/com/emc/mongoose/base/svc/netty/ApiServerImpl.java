@@ -5,6 +5,8 @@ import com.emc.mongoose.base.logging.LogUtil;
 import com.emc.mongoose.base.metrics.MetricsManager;
 import com.emc.mongoose.base.svc.Server;
 import com.emc.mongoose.base.svc.netty.handler.impl.ConfigRequestHandler;
+import com.emc.mongoose.base.svc.netty.handler.impl.LogsRequestHandler;
+import com.emc.mongoose.base.svc.netty.handler.impl.MetricsRequestHandler;
 import com.emc.mongoose.base.svc.netty.handler.impl.RunRequestHandler;
 import com.github.akurilov.commons.concurrent.AsyncRunnableBase;
 import com.github.akurilov.confuse.Config;
@@ -32,6 +34,8 @@ implements Server {
 		chanInitializer = new ServerChannelInitializerImpl();
 		chanInitializer
 			.appendHandler(new ConfigRequestHandler(aggregatedConfigWithArgs))
+			.appendHandler(new LogsRequestHandler())
+			.appendHandler(new MetricsRequestHandler())
 			.appendHandler(new RunRequestHandler(clsLoader, extensions, metricsMgr, aggregatedConfigWithArgs, appHomePath));
 		httpServer = new HttpServerImpl(port, chanInitializer);
 	}
