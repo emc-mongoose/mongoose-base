@@ -1,4 +1,4 @@
-package com.emc.mongoose.base.control.run;
+package com.emc.mongoose.base;
 
 public interface Run extends Runnable {
 

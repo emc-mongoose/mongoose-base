@@ -1,4 +1,4 @@
-package com.emc.mongoose.base.control.run;
+package com.emc.mongoose.base;
 
 import com.emc.mongoose.base.logging.LogUtil;
 import com.emc.mongoose.base.logging.Loggers;

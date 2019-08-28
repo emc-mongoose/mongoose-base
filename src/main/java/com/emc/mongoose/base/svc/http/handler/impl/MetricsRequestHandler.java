@@ -1,7 +1,7 @@
-package com.emc.mongoose.base.svc.netty.handler.impl;
+package com.emc.mongoose.base.svc.http.handler.impl;
 
 import com.emc.mongoose.base.logging.LogUtil;
-import com.emc.mongoose.base.svc.netty.handler.UriMatchingRequestHandlerBase;
+import com.emc.mongoose.base.svc.http.handler.UriMatchingRequestHandlerBase;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashSet;
 
 import static com.emc.mongoose.base.Constants.MIB;
+import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.respondEmptyContent;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
@@ -61,8 +62,7 @@ extends UriMatchingRequestHandlerBase {
 		}
 		// make response
 		if(null == respContent) {
-			final var resp = new DefaultFullHttpResponse(HTTP_1_1, INTERNAL_SERVER_ERROR);
-			writeEmptyContentResponse(ctx, resp);
+			respondEmptyContent(ctx, INTERNAL_SERVER_ERROR);
 		} else {
 			final var resp = new DefaultFullHttpResponse(HTTP_1_1, OK, respContent);
 			final var respHeaders = resp.headers();

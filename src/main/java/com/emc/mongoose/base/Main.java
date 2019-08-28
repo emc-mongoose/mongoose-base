@@ -2,7 +2,6 @@ package com.emc.mongoose.base;
 
 import static com.emc.mongoose.base.Constants.APP_NAME;
 import static com.emc.mongoose.base.Constants.DIR_EXT;
-import static com.emc.mongoose.base.Constants.MIB;
 import static com.emc.mongoose.base.Constants.PATH_DEFAULTS;
 import static com.emc.mongoose.base.Exceptions.throwUncheckedIfInterrupted;
 import static com.emc.mongoose.base.config.CliArgUtil.allCliArgs;
@@ -12,11 +11,6 @@ import com.emc.mongoose.base.config.AliasingUtil;
 import com.emc.mongoose.base.config.CliArgUtil;
 import com.emc.mongoose.base.config.ConfigUtil;
 import com.emc.mongoose.base.config.IllegalArgumentNameException;
-import com.emc.mongoose.base.control.AddCorsHeadersRule;
-import com.emc.mongoose.base.control.ConfigServlet;
-import com.emc.mongoose.base.control.logs.LogServlet;
-import com.emc.mongoose.base.control.run.RunImpl;
-import com.emc.mongoose.base.control.run.RunServlet;
 import com.emc.mongoose.base.env.CoreResourcesToInstall;
 import com.emc.mongoose.base.env.Extension;
 import com.emc.mongoose.base.load.step.ScenarioUtil;
@@ -26,13 +20,12 @@ import com.emc.mongoose.base.logging.LogUtil;
 import com.emc.mongoose.base.logging.Loggers;
 import com.emc.mongoose.base.metrics.MetricsManager;
 import com.emc.mongoose.base.metrics.MetricsManagerImpl;
-import com.emc.mongoose.base.svc.Service;
-import com.emc.mongoose.base.svc.netty.ApiServerImpl;
+import com.emc.mongoose.base.svc.legacy.Service;
+import com.emc.mongoose.base.svc.http.ApiServerImpl;
 import com.github.akurilov.confuse.Config;
 import com.github.akurilov.confuse.SchemaProvider;
 import com.github.akurilov.confuse.exceptions.InvalidValuePathException;
 import com.github.akurilov.confuse.exceptions.InvalidValueTypeException;
-import io.prometheus.client.exporter.MetricsServlet;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -43,13 +36,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.script.ScriptEngine;
-import javax.servlet.MultipartConfigElement;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.Level;
-import org.eclipse.jetty.rewrite.handler.RewriteHandler;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 
 public final class Main {
 
@@ -174,53 +162,24 @@ public final class Main {
 	}
 
 	private static void runNode(
-					final Config fullDefaultConfig,
-					final ClassLoader extClsLoader,
-					final List<Extension> extensions,
-					final MetricsManager metricsMgr,
-					final Path appHomePath)
-					throws Exception {
-		final var server = new ApiServerImpl(extClsLoader, extensions, metricsMgr, fullDefaultConfig, appHomePath);
-		try {
+		final Config fullDefaultConfig,
+		final ClassLoader extClsLoader,
+		final List<Extension> extensions,
+		final MetricsManager metricsMgr,
+		final Path appHomePath
+	) throws Exception {
+		final var listenPort = fullDefaultConfig.intVal("load-step-node-port");
+		try (
+			final var server = new ApiServerImpl(extClsLoader, extensions, metricsMgr, fullDefaultConfig, appHomePath);
+			final Service fileMgrSvc = new FileManagerServiceImpl(listenPort);
+			final Service scenarioStepSvc = new LoadStepManagerServiceImpl(listenPort, extensions, metricsMgr)
+		) {
+			fileMgrSvc.start();
+			scenarioStepSvc.start();
 			server
 				.start()
 				.await();
-		} finally {
-			server.close();
 		}
-		/*final var server = new Server(port);
-		final var context = new ServletContextHandler();
-		context.setContextPath("/");
-		server.setHandler(context);
-		final var addCorsHeaderHandler = new RewriteHandler();
-		addCorsHeaderHandler.addRule(new AddCorsHeadersRule());
-		server.insertHandler(addCorsHeaderHandler);
-		context.addServlet(new ServletHolder(new ConfigServlet(fullDefaultConfig)), "/config/*");
-		context.addServlet(new ServletHolder(new LogServlet()), "/logs/*");
-		context.addServlet(new ServletHolder(new MetricsServlet()), "/metrics");
-		final var runServletHolder = new ServletHolder(
-						new RunServlet(extClsLoader, extensions, metricsMgr, fullDefaultConfig, appHomePath));
-		runServletHolder
-						.getRegistration()
-						.setMultipartConfig(new MultipartConfigElement("", 16 * MIB, 16 * MIB, 16 * MIB));
-		context.addServlet(runServletHolder, "/run/*");
-		try {
-			server.start();
-			Loggers.MSG.info("Started to serve the remote API @ port # " + port);
-			final var listenPort = fullDefaultConfig.intVal("load-step-node-port");
-			try (final Service fileMgrSvc = new FileManagerServiceImpl(listenPort);
-							final Service scenarioStepSvc = new LoadStepManagerServiceImpl(listenPort, extensions, metricsMgr)) {
-				fileMgrSvc.start();
-				scenarioStepSvc.start();
-				scenarioStepSvc.await();
-			} catch (final InterruptedException e) {
-				throw e;
-			} catch (final Throwable cause) {
-				LogUtil.trace(Loggers.ERR, Level.FATAL, cause, "Run node failure");
-			}
-		} finally {
-			server.stop();
-		}*/
 	}
 
 	private static void runScenario(

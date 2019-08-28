@@ -1,4 +1,4 @@
-package com.emc.mongoose.base.svc.netty.handler;
+package com.emc.mongoose.base.svc.http.handler;
 
 import io.netty.handler.codec.http.FullHttpRequest;
 

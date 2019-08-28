@@ -1,4 +1,4 @@
-package com.emc.mongoose.base.svc;
+package com.emc.mongoose.base.svc.legacy;
 
 import com.emc.mongoose.base.logging.LogUtil;
 import com.emc.mongoose.base.logging.Loggers;

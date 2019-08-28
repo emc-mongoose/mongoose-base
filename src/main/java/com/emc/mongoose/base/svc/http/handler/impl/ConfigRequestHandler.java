@@ -1,8 +1,8 @@
-package com.emc.mongoose.base.svc.netty.handler.impl;
+package com.emc.mongoose.base.svc.http.handler.impl;
 
 import com.emc.mongoose.base.config.ConfigFormat;
 import com.emc.mongoose.base.config.ConfigUtil;
-import com.emc.mongoose.base.svc.netty.handler.UriMatchingRequestHandlerBase;
+import com.emc.mongoose.base.svc.http.handler.UriMatchingRequestHandlerBase;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
@@ -10,21 +10,16 @@ import com.github.akurilov.confuse.Config;
 import com.github.akurilov.confuse.io.yaml.TypeNames;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
-import io.netty.handler.codec.http.DefaultHttpHeaders;
-import io.netty.handler.codec.http.EmptyHttpHeaders;
 import io.netty.handler.codec.http.FullHttpRequest;
 
 import static com.emc.mongoose.base.config.ConfigFormat.JSON;
 import static com.emc.mongoose.base.config.ConfigFormat.YAML;
 import static com.emc.mongoose.base.config.ConfigUtil.writerWithPrettyPrinter;
+import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.respondContent;
+import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.respondEmptyContent;
 import static io.netty.handler.codec.http.HttpHeaderNames.ACCEPT;
-import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
-import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpHeaderValues.APPLICATION_JSON;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
-import static io.netty.handler.codec.http.HttpResponseStatus.OK;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 public final class ConfigRequestHandler
 extends UriMatchingRequestHandlerBase {
@@ -59,23 +54,16 @@ extends UriMatchingRequestHandlerBase {
 				respTxt = ConfigUtil.toString(config, format);
 			}
 			final var respContent = Unpooled.wrappedBuffer(respTxt.getBytes());
-			final var respHeaders = new DefaultHttpHeaders();
-			respHeaders.add(CONTENT_LENGTH, respContent.readableBytes());
 			switch(format) {
 				case JSON:
-					respHeaders.add(CONTENT_TYPE, APPLICATION_JSON);
+					respondContent(ctx, respContent, APPLICATION_JSON.toString());
 					break;
 				case YAML:
-					respHeaders.add(CONTENT_TYPE, "application/yaml");
+					respondContent(ctx, respContent, "application/yaml");
 					break;
 			}
-			final var resp = new DefaultFullHttpResponse(
-				HTTP_1_1, OK, respContent, respHeaders, EmptyHttpHeaders.INSTANCE
-			);
-			ctx.writeAndFlush(resp);
 		} catch(final Exception e) {
-			final var resp = new DefaultFullHttpResponse(HTTP_1_1, INTERNAL_SERVER_ERROR);
-			ctx.writeAndFlush(resp);
+			respondEmptyContent(ctx, INTERNAL_SERVER_ERROR);
 		}
 	}
 

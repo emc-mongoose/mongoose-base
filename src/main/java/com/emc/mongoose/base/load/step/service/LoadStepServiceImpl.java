@@ -11,7 +11,7 @@ import com.emc.mongoose.base.load.step.LoadStep;
 import com.emc.mongoose.base.logging.Loggers;
 import com.emc.mongoose.base.metrics.MetricsManager;
 import com.emc.mongoose.base.metrics.snapshot.AllMetricsSnapshot;
-import com.emc.mongoose.base.svc.ServiceBase;
+import com.emc.mongoose.base.svc.legacy.ServiceBase;
 import com.github.akurilov.confuse.Config;
 import java.io.IOException;
 import java.rmi.RemoteException;

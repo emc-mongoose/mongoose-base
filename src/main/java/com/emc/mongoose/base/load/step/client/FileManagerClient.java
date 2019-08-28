@@ -2,7 +2,7 @@ package com.emc.mongoose.base.load.step.client;
 
 import com.emc.mongoose.base.load.step.service.file.FileManagerService;
 import com.emc.mongoose.base.logging.LogUtil;
-import com.emc.mongoose.base.svc.ServiceUtil;
+import com.emc.mongoose.base.svc.legacy.ServiceUtil;
 import org.apache.logging.log4j.Level;
 
 public interface FileManagerClient {

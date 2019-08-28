@@ -1,4 +1,4 @@
-package com.emc.mongoose.base.svc.netty;
+package com.emc.mongoose.base.svc.http;
 
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInboundHandler;
@@ -9,6 +9,8 @@ public interface ServerChannelInitializer
 extends AutoCloseable, ChannelHandler {
 
 	ServerChannelInitializer appendHandler(final ChannelInboundHandler handler);
+
+	ServerChannelInitializer appendHandlers(final ChannelInboundHandler... handlers);
 
 	List<ChannelInboundHandler> handlers();
 }

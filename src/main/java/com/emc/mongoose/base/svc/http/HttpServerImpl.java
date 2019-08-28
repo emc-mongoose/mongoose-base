@@ -1,23 +1,14 @@
-package com.emc.mongoose.base.svc.netty;
+package com.emc.mongoose.base.svc.http;
 
-import com.emc.mongoose.base.logging.LogContextThreadFactory;
 import com.emc.mongoose.base.svc.Server;
 import com.github.akurilov.commons.concurrent.AsyncRunnableBase;
-import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInboundHandler;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.http.HttpServerCodec;
-import io.netty.handler.stream.ChunkedWriteHandler;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static com.github.akurilov.commons.lang.Exceptions.throwUnchecked;

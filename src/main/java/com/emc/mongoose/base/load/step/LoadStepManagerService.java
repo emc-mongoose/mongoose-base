@@ -1,6 +1,6 @@
 package com.emc.mongoose.base.load.step;
 
-import com.emc.mongoose.base.svc.Service;
+import com.emc.mongoose.base.svc.legacy.Service;
 import com.github.akurilov.confuse.Config;
 import java.rmi.RemoteException;
 import java.util.List;

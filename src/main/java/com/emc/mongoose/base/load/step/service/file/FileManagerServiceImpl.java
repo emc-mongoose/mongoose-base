@@ -6,7 +6,7 @@ import static org.apache.logging.log4j.CloseableThreadContext.put;
 
 import com.emc.mongoose.base.load.step.file.FileManager;
 import com.emc.mongoose.base.load.step.file.FileManagerImpl;
-import com.emc.mongoose.base.svc.ServiceBase;
+import com.emc.mongoose.base.svc.legacy.ServiceBase;
 import java.io.IOException;
 
 public final class FileManagerServiceImpl extends ServiceBase implements FileManagerService {

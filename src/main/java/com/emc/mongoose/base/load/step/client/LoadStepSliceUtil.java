@@ -11,7 +11,7 @@ import com.emc.mongoose.base.load.step.LoadStepManagerService;
 import com.emc.mongoose.base.load.step.service.LoadStepService;
 import com.emc.mongoose.base.logging.LogUtil;
 import com.emc.mongoose.base.logging.Loggers;
-import com.emc.mongoose.base.svc.ServiceUtil;
+import com.emc.mongoose.base.svc.legacy.ServiceUtil;
 import com.github.akurilov.confuse.Config;
 import java.rmi.RemoteException;
 import java.util.List;

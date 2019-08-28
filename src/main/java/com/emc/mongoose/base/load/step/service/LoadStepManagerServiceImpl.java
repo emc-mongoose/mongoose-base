@@ -7,7 +7,7 @@ import com.emc.mongoose.base.env.Extension;
 import com.emc.mongoose.base.load.step.LoadStepManagerService;
 import com.emc.mongoose.base.logging.Loggers;
 import com.emc.mongoose.base.metrics.MetricsManager;
-import com.emc.mongoose.base.svc.ServiceBase;
+import com.emc.mongoose.base.svc.legacy.ServiceBase;
 import com.github.akurilov.confuse.Config;
 import java.rmi.RemoteException;
 import java.util.List;

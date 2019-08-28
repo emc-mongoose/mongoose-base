@@ -1,4 +1,4 @@
-package com.emc.mongoose.base.svc;
+package com.emc.mongoose.base.svc.legacy;
 
 import com.github.akurilov.commons.concurrent.AsyncRunnable;
 import java.rmi.Remote;

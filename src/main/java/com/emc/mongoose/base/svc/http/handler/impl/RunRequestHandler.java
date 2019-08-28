@@ -1,16 +1,16 @@
-package com.emc.mongoose.base.svc.netty.handler.impl;
+package com.emc.mongoose.base.svc.http.handler.impl;
 
 import com.emc.mongoose.base.concurrent.SingleTaskExecutor;
 import com.emc.mongoose.base.concurrent.SingleTaskExecutorImpl;
 import com.emc.mongoose.base.config.ConfigUtil;
-import com.emc.mongoose.base.control.run.Run;
-import com.emc.mongoose.base.control.run.RunImpl;
+import com.emc.mongoose.base.Run;
+import com.emc.mongoose.base.RunImpl;
 import com.emc.mongoose.base.env.Extension;
 import com.emc.mongoose.base.load.step.ScenarioUtil;
 import com.emc.mongoose.base.logging.LogUtil;
 import com.emc.mongoose.base.logging.Loggers;
 import com.emc.mongoose.base.metrics.MetricsManager;
-import com.emc.mongoose.base.svc.netty.handler.UriMatchingRequestHandlerBase;
+import com.emc.mongoose.base.svc.http.handler.UriMatchingRequestHandlerBase;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.github.akurilov.confuse.Config;
 import com.github.akurilov.confuse.exceptions.InvalidValuePathException;
@@ -37,6 +37,8 @@ import java.util.function.BiConsumer;
 
 import static com.emc.mongoose.base.config.ConfigFormat.JSON;
 import static com.emc.mongoose.base.config.ConfigFormat.YAML;
+import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.respondEmptyContent;
+import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.writeEmptyContentResponse;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpHeaderNames.ETAG;
 import static io.netty.handler.codec.http.HttpHeaderNames.IF_MATCH;
@@ -99,8 +101,7 @@ extends UriMatchingRequestHandlerBase {
 		} else if(DELETE.equals(method)) {
 			stopRun(ctx, req);
 		} else {
-			final var resp = new DefaultFullHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
-			writeEmptyContentResponse(ctx, resp);
+			respondEmptyContent(ctx, METHOD_NOT_ALLOWED);
 		}
 	}
 
