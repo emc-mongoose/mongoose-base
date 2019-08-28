@@ -15,11 +15,12 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import static com.emc.mongoose.base.config.ConfigFormat.JSON;
 import static com.emc.mongoose.base.config.ConfigFormat.YAML;
 import static com.emc.mongoose.base.config.ConfigUtil.writerWithPrettyPrinter;
-import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.respondContent;
-import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.respondEmptyContent;
+import static com.emc.mongoose.base.svc.http.handler.CorsResponseUtil.respondContent;
+import static com.emc.mongoose.base.svc.http.handler.CorsResponseUtil.respondEmptyContent;
 import static io.netty.handler.codec.http.HttpHeaderNames.ACCEPT;
 import static io.netty.handler.codec.http.HttpHeaderValues.APPLICATION_JSON;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
+import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 
 public final class ConfigRequestHandler
 extends UriMatchingRequestHandlerBase {
@@ -56,10 +57,10 @@ extends UriMatchingRequestHandlerBase {
 			final var respContent = Unpooled.wrappedBuffer(respTxt.getBytes());
 			switch(format) {
 				case JSON:
-					respondContent(ctx, respContent, APPLICATION_JSON.toString());
+					respondContent(ctx, OK, respContent, APPLICATION_JSON.toString());
 					break;
 				case YAML:
-					respondContent(ctx, respContent, "application/yaml");
+					respondContent(ctx, OK, respContent, "application/yaml");
 					break;
 			}
 		} catch(final Exception e) {

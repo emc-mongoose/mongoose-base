@@ -37,8 +37,8 @@ import java.util.function.BiConsumer;
 
 import static com.emc.mongoose.base.config.ConfigFormat.JSON;
 import static com.emc.mongoose.base.config.ConfigFormat.YAML;
-import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.respondEmptyContent;
-import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.writeEmptyContentResponse;
+import static com.emc.mongoose.base.svc.http.handler.CorsResponseUtil.respondEmptyContent;
+import static com.emc.mongoose.base.svc.http.handler.CorsResponseUtil.writeEmptyContentResponse;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpHeaderNames.ETAG;
 import static io.netty.handler.codec.http.HttpHeaderNames.IF_MATCH;
@@ -125,12 +125,10 @@ extends UriMatchingRequestHandlerBase {
 						incomingScenario = ((HttpData) scenarioPart).getString();
 					}
 				} else {
-					final var resp = new DefaultFullHttpResponse(HTTP_1_1, BAD_REQUEST);
-					ctx.writeAndFlush(resp);
+					respondEmptyContent(ctx, BAD_REQUEST);
 				}
 			} catch(final IOException e) {
-				final var resp = new DefaultFullHttpResponse(HTTP_1_1, INTERNAL_SERVER_ERROR);
-				ctx.writeAndFlush(resp);
+				respondEmptyContent(ctx, INTERNAL_SERVER_ERROR);
 			} finally {
 				multipartReqDecoder.destroy();
 			}

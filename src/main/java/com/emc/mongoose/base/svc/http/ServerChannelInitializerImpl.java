@@ -1,12 +1,12 @@
 package com.emc.mongoose.base.svc.http;
 
-import com.emc.mongoose.base.svc.http.handler.AddCorsHeadersResponseHandler;
 import io.netty.channel.ChannelInboundHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
+import io.netty.handler.codec.http.HttpServerExpectContinueHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +26,7 @@ implements ServerChannelInitializer {
 		final ChannelPipeline pipeline = socketChannel.pipeline();
 		pipeline.addLast(new HttpServerCodec());
 		pipeline.addLast(new HttpObjectAggregator(MIB));
+		pipeline.addLast(new HttpServerExpectContinueHandler());
 		for(final ChannelInboundHandler handler: handlers) {
 			pipeline.addLast(handler);
 		}

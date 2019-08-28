@@ -29,8 +29,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.emc.mongoose.base.Constants.MIB;
-import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.respondContent;
-import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.respondEmptyContent;
+import static com.emc.mongoose.base.svc.http.handler.CorsResponseUtil.respondContent;
+import static com.emc.mongoose.base.svc.http.handler.CorsResponseUtil.respondEmptyContent;
 import static io.netty.handler.codec.http.HttpHeaderValues.APPLICATION_JSON;
 import static io.netty.handler.codec.http.HttpHeaderValues.TEXT_PLAIN;
 import static io.netty.handler.codec.http.HttpMethod.GET;
@@ -167,7 +167,7 @@ extends UriMatchingRequestHandlerBase {
 			if(size > 0) {
 				try {
 					final var rangeContent = Unpooled.wrappedBuffer(readFileRange(filePath, offset, size));
-					respondContent(ctx, rangeContent, TEXT_PLAIN.toString());
+					respondContent(ctx, OK, rangeContent, TEXT_PLAIN.toString());
 				} catch(final IOException e) {
 					respondEmptyContent(ctx, INTERNAL_SERVER_ERROR);
 				}
@@ -198,7 +198,7 @@ extends UriMatchingRequestHandlerBase {
 		if(null == content) {
 			respondEmptyContent(ctx, INTERNAL_SERVER_ERROR);
 		} else {
-			respondContent(ctx, content, APPLICATION_JSON.toString());
+			respondContent(ctx, OK, content, APPLICATION_JSON.toString());
 		}
 	}
 

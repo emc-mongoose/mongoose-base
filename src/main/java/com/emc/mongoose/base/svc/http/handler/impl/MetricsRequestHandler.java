@@ -5,7 +5,6 @@ import com.emc.mongoose.base.svc.http.handler.UriMatchingRequestHandlerBase;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.QueryStringDecoder;
 import io.prometheus.client.CollectorRegistry;
@@ -19,12 +18,10 @@ import java.util.Collections;
 import java.util.HashSet;
 
 import static com.emc.mongoose.base.Constants.MIB;
-import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.respondEmptyContent;
-import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_LENGTH;
-import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
+import static com.emc.mongoose.base.svc.http.handler.CorsResponseUtil.respondContent;
+import static com.emc.mongoose.base.svc.http.handler.CorsResponseUtil.respondEmptyContent;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
-import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 public final class MetricsRequestHandler
 extends UriMatchingRequestHandlerBase {
@@ -64,11 +61,7 @@ extends UriMatchingRequestHandlerBase {
 		if(null == respContent) {
 			respondEmptyContent(ctx, INTERNAL_SERVER_ERROR);
 		} else {
-			final var resp = new DefaultFullHttpResponse(HTTP_1_1, OK, respContent);
-			final var respHeaders = resp.headers();
-			respHeaders.add(CONTENT_LENGTH, respContent.readableBytes());
-			respHeaders.add(CONTENT_TYPE, TextFormat.CONTENT_TYPE_004);
-			ctx.writeAndFlush(resp);
+			respondContent(ctx, OK, respContent, TextFormat.CONTENT_TYPE_004);
 		}
 	}
 }
