@@ -5,6 +5,7 @@ import com.emc.mongoose.base.logging.LogUtil;
 import com.emc.mongoose.base.logging.Loggers;
 import com.emc.mongoose.base.metrics.MetricsManager;
 import com.emc.mongoose.base.svc.Server;
+import com.emc.mongoose.base.svc.http.handler.AddCorsHeadersResponseHandler;
 import com.emc.mongoose.base.svc.http.handler.impl.ConfigRequestHandler;
 import com.emc.mongoose.base.svc.http.handler.impl.LogsRequestHandler;
 import com.emc.mongoose.base.svc.http.handler.impl.MetricsRequestHandler;
@@ -34,6 +35,7 @@ implements Server {
 		final var port = aggregatedConfigWithArgs.intVal("run-port");
 		chanInitializer = new ServerChannelInitializerImpl();
 		chanInitializer.appendHandlers(
+			new AddCorsHeadersResponseHandler(),
 			new ConfigRequestHandler(aggregatedConfigWithArgs),
 			new LogsRequestHandler(),
 			new MetricsRequestHandler(),

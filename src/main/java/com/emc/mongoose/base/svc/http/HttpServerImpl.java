@@ -18,18 +18,17 @@ extends AsyncRunnableBase
 implements Server {
 
 	private final int port;
-	private final EventLoopGroup dispatcherGroup;
-	private final EventLoopGroup workerGroup;
+	private final EventLoopGroup evtLoopGroup;
 	private final ServerBootstrap bootstrap;
 
 	private Channel channel;
 
 	public HttpServerImpl(final int port, final ServerChannelInitializer chanInitializer) {
 		this.port = port;
-		dispatcherGroup = new NioEventLoopGroup(1);
-		workerGroup = new NioEventLoopGroup(1);
+		evtLoopGroup = new NioEventLoopGroup();
 		bootstrap = new ServerBootstrap();
-		bootstrap.group(dispatcherGroup, workerGroup)
+		bootstrap
+			.group(evtLoopGroup)
 			.channel(NioServerSocketChannel.class)
 			.childHandler(chanInitializer);
 	}
@@ -47,8 +46,7 @@ implements Server {
 
 	@Override
 	public final void doStop() {
-		dispatcherGroup.shutdownGracefully(1, 1, TimeUnit.SECONDS);
-		workerGroup.shutdownGracefully(1, 1, TimeUnit.SECONDS);
+		evtLoopGroup.shutdownGracefully(1, 1, TimeUnit.SECONDS);
 	}
 
 	@Override

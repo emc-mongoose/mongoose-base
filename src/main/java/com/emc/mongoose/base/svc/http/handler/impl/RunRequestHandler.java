@@ -16,6 +16,7 @@ import com.github.akurilov.confuse.Config;
 import com.github.akurilov.confuse.exceptions.InvalidValuePathException;
 import com.github.akurilov.confuse.exceptions.InvalidValueTypeException;
 import com.github.akurilov.confuse.impl.BasicConfig;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -37,8 +38,8 @@ import java.util.function.BiConsumer;
 
 import static com.emc.mongoose.base.config.ConfigFormat.JSON;
 import static com.emc.mongoose.base.config.ConfigFormat.YAML;
-import static com.emc.mongoose.base.svc.http.handler.CorsResponseUtil.respondEmptyContent;
-import static com.emc.mongoose.base.svc.http.handler.CorsResponseUtil.writeEmptyContentResponse;
+import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.respondEmptyContent;
+import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.writeEmptyContentResponse;
 import static io.netty.handler.codec.http.HttpHeaderNames.CONTENT_TYPE;
 import static io.netty.handler.codec.http.HttpHeaderNames.ETAG;
 import static io.netty.handler.codec.http.HttpHeaderNames.IF_MATCH;
@@ -57,6 +58,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.NO_CONTENT;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
+@ChannelHandler.Sharable
 public final class RunRequestHandler
 extends UriMatchingRequestHandlerBase {
 

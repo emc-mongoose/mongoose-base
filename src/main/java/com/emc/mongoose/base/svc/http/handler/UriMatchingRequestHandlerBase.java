@@ -1,7 +1,9 @@
 package com.emc.mongoose.base.svc.http.handler;
 
+import io.netty.channel.ChannelHandler;
 import io.netty.handler.codec.http.FullHttpRequest;
 
+@ChannelHandler.Sharable
 public abstract class UriMatchingRequestHandlerBase
 extends MatchingRequestHandlerBase {
 

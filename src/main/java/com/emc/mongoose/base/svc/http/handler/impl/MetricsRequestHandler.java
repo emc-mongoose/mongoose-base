@@ -4,6 +4,7 @@ import com.emc.mongoose.base.logging.LogUtil;
 import com.emc.mongoose.base.svc.http.handler.UriMatchingRequestHandlerBase;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.QueryStringDecoder;
@@ -18,11 +19,12 @@ import java.util.Collections;
 import java.util.HashSet;
 
 import static com.emc.mongoose.base.Constants.MIB;
-import static com.emc.mongoose.base.svc.http.handler.CorsResponseUtil.respondContent;
-import static com.emc.mongoose.base.svc.http.handler.CorsResponseUtil.respondEmptyContent;
+import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.respondContent;
+import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.respondEmptyContent;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 
+@ChannelHandler.Sharable
 public final class MetricsRequestHandler
 extends UriMatchingRequestHandlerBase {
 

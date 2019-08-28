@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.akurilov.commons.collection.Range;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpHeaderNames;
@@ -29,8 +30,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.emc.mongoose.base.Constants.MIB;
-import static com.emc.mongoose.base.svc.http.handler.CorsResponseUtil.respondContent;
-import static com.emc.mongoose.base.svc.http.handler.CorsResponseUtil.respondEmptyContent;
+import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.respondContent;
+import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.respondEmptyContent;
 import static io.netty.handler.codec.http.HttpHeaderValues.APPLICATION_JSON;
 import static io.netty.handler.codec.http.HttpHeaderValues.TEXT_PLAIN;
 import static io.netty.handler.codec.http.HttpMethod.GET;
@@ -43,6 +44,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpResponseStatus.REQUESTED_RANGE_NOT_SATISFIABLE;
 import static java.nio.file.StandardOpenOption.READ;
 
+@ChannelHandler.Sharable
 public final class LogsRequestHandler
 extends UriMatchingRequestHandlerBase {
 

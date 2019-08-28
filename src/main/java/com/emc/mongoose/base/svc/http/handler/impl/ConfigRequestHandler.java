@@ -9,19 +9,21 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import com.github.akurilov.confuse.Config;
 import com.github.akurilov.confuse.io.yaml.TypeNames;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpRequest;
 
 import static com.emc.mongoose.base.config.ConfigFormat.JSON;
 import static com.emc.mongoose.base.config.ConfigFormat.YAML;
 import static com.emc.mongoose.base.config.ConfigUtil.writerWithPrettyPrinter;
-import static com.emc.mongoose.base.svc.http.handler.CorsResponseUtil.respondContent;
-import static com.emc.mongoose.base.svc.http.handler.CorsResponseUtil.respondEmptyContent;
+import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.respondContent;
+import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.respondEmptyContent;
 import static io.netty.handler.codec.http.HttpHeaderNames.ACCEPT;
 import static io.netty.handler.codec.http.HttpHeaderValues.APPLICATION_JSON;
 import static io.netty.handler.codec.http.HttpResponseStatus.INTERNAL_SERVER_ERROR;
 import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 
+@ChannelHandler.Sharable
 public final class ConfigRequestHandler
 extends UriMatchingRequestHandlerBase {
 

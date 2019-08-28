@@ -1,6 +1,6 @@
 package com.emc.mongoose.base.svc.http;
 
-import io.netty.channel.ChannelInboundHandler;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
@@ -18,40 +18,38 @@ public final class ServerChannelInitializerImpl
 extends ChannelInitializer<SocketChannel>
 implements ServerChannelInitializer {
 
-	private final List<ChannelInboundHandler> handlers = new ArrayList<>();
+	private final List<ChannelHandler> handlers = new ArrayList<>();
 
 	@Override
-	protected final void initChannel(final SocketChannel socketChannel)
-	throws Exception {
+	protected final void initChannel(final SocketChannel socketChannel) {
 		final ChannelPipeline pipeline = socketChannel.pipeline();
 		pipeline.addLast(new HttpServerCodec());
 		pipeline.addLast(new HttpObjectAggregator(MIB));
 		pipeline.addLast(new HttpServerExpectContinueHandler());
-		for(final ChannelInboundHandler handler: handlers) {
+		for(final ChannelHandler handler: handlers) {
 			pipeline.addLast(handler);
 		}
 	}
 
 	@Override
-	public final ServerChannelInitializerImpl appendHandler(final ChannelInboundHandler handler) {
+	public final ServerChannelInitializerImpl appendHandler(final ChannelHandler handler) {
 		handlers.add(handler);
 		return this;
 	}
 
 	@Override
-	public final ServerChannelInitializerImpl appendHandlers(final ChannelInboundHandler... handlers) {
+	public final ServerChannelInitializerImpl appendHandlers(final ChannelHandler... handlers) {
 		this.handlers.addAll(Arrays.asList(handlers));
 		return this;
 	}
 
 	@Override
-	public final List<ChannelInboundHandler> handlers() {
+	public final List<ChannelHandler> handlers() {
 		return handlers;
 	}
 
 	@Override
-	public final void close()
-	throws Exception {
+	public final void close() {
 		handlers.clear();
 	}
 }
