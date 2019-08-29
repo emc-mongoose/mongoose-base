@@ -1,10 +1,12 @@
-package com.emc.mongoose.base.svc.http.handler;
+package com.emc.mongoose.base.svc.http.handler.impl;
 
 import com.emc.mongoose.base.load.step.file.FileManager;
 import com.emc.mongoose.base.logging.Loggers;
+import com.emc.mongoose.base.svc.http.handler.UriPrefixMatchingRequestHandlerBase;
 import com.github.akurilov.commons.collection.Range;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -34,6 +36,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 import static io.netty.handler.codec.http.HttpResponseStatus.REQUESTED_RANGE_NOT_SATISFIABLE;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
+@ChannelHandler.Sharable
 public final class FilesRequestHandler
 extends UriPrefixMatchingRequestHandlerBase {
 
