@@ -1,4 +1,4 @@
-package com.emc.mongoose.base.svc.http.handler.impl;
+package com.emc.mongoose.base.svc.http.handler.impl.logs;
 
 public final class NoLogFileException extends Exception {
 

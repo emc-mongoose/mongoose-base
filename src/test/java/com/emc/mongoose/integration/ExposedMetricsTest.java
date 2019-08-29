@@ -32,9 +32,9 @@ import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /** @author veronika K. on 15.10.18 */
@@ -59,23 +59,23 @@ public class ExposedMetricsTest {
 	private static final Double[] QUANTILE_VALUES = {0.25, 0.5, 0.75
 	};
 	private static final List<String> nodeList = Arrays.asList("127.0.0.1:1099");
-	private final String STEP_ID = ExposedMetricsTest.class.getSimpleName();
-	private final int RUN_ID = 123;
-	private final OpType OP_TYPE = OpType.CREATE;
-	private final IntSupplier nodeCountSupplier = () -> 1;
-	private final int CONCURRENCY_LIMIT = 0;
-	private final int CONCURRENCY_THRESHOLD = 0;
-	private final SizeInBytes ITEM_DATA_SIZE = ItemSize.SMALL.getValue();
-	private final int UPDATE_INTERVAL_SEC = (int) TimeUnit.MICROSECONDS.toSeconds(MARK_DUR);
-	private Supplier<List<AllMetricsSnapshot>> snapshotsSupplier;
-	private ServerChannelInitializer chanInitializer = null;
-	private AsyncRunnable server = null;
+	private static final String STEP_ID = ExposedMetricsTest.class.getSimpleName();
+	private static final int RUN_ID = 123;
+	private static final OpType OP_TYPE = OpType.CREATE;
+	private static final IntSupplier NODE_COUNT_SUPPLIER = () -> 1;
+	private static final int CONCURRENCY_LIMIT = 0;
+	private static final int CONCURRENCY_THRESHOLD = 0;
+	private static final SizeInBytes ITEM_DATA_SIZE = ItemSize.SMALL.getValue();
+	private static final int UPDATE_INTERVAL_SEC = (int) TimeUnit.MICROSECONDS.toSeconds(MARK_DUR);
+	private static Supplier<List<AllMetricsSnapshot>> snapshotsSupplier;
+	private static ServerChannelInitializer chanInitializer = null;
+	private static AsyncRunnable server = null;
 	//
-	private DistributedMetricsContext distributedMetricsContext;
-	private MetricsContext metricsContext;
+	private static DistributedMetricsContext distributedMetricsContext;
+	private static MetricsContext metricsContext;
 
-	@Before
-	public void setUp() throws Exception {
+	@BeforeClass
+	public static void setUp() throws Exception {
 		//
 		chanInitializer = new ServerChannelInitializerImpl();
 		chanInitializer.appendHandler(new MetricsRequestHandler());
@@ -100,7 +100,7 @@ public class ExposedMetricsTest {
 		distributedMetricsContext = DistributedMetricsContextImpl.builder()
 						.loadStepId(STEP_ID)
 						.opType(OP_TYPE)
-						.nodeCountSupplier(nodeCountSupplier)
+						.nodeCountSupplier(NODE_COUNT_SUPPLIER)
 						.concurrencyLimit(CONCURRENCY_LIMIT)
 						.concurrencyThreshold(CONCURRENCY_THRESHOLD)
 						.itemDataSize(ITEM_DATA_SIZE)
@@ -117,8 +117,8 @@ public class ExposedMetricsTest {
 		distributedMetricsContext.start();
 	}
 
-	@After
-	public void tearDown()
+	@AfterClass
+	public static void tearDown()
 	throws Exception {
 		distributedMetricsContext.close();
 		metricsContext.close();

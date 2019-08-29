@@ -10,7 +10,7 @@ import com.emc.mongoose.base.load.step.ScenarioUtil;
 import com.emc.mongoose.base.logging.LogUtil;
 import com.emc.mongoose.base.logging.Loggers;
 import com.emc.mongoose.base.metrics.MetricsManager;
-import com.emc.mongoose.base.svc.http.handler.UriMatchingRequestHandlerBase;
+import com.emc.mongoose.base.svc.http.handler.UriPrefixMatchingRequestHandlerBase;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.github.akurilov.confuse.Config;
 import com.github.akurilov.confuse.exceptions.InvalidValuePathException;
@@ -60,7 +60,7 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 @ChannelHandler.Sharable
 public final class RunRequestHandler
-extends UriMatchingRequestHandlerBase {
+extends UriPrefixMatchingRequestHandlerBase {
 
 	private static final String PART_KEY_DEFAULTS = "defaults";
 	private static final String PART_KEY_SCENARIO = "scenario";
@@ -87,7 +87,7 @@ extends UriMatchingRequestHandlerBase {
 	}
 
 	@Override
-	protected final String uriStartsWith() {
+	protected final String uriPrefix() {
 		return "/run";
 	}
 

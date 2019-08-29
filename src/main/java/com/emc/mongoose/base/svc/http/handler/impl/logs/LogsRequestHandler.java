@@ -1,7 +1,7 @@
-package com.emc.mongoose.base.svc.http.handler.impl;
+package com.emc.mongoose.base.svc.http.handler.impl.logs;
 
 import com.emc.mongoose.base.logging.Loggers;
-import com.emc.mongoose.base.svc.http.handler.UriMatchingRequestHandlerBase;
+import com.emc.mongoose.base.svc.http.handler.UriPrefixMatchingRequestHandlerBase;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,7 +46,7 @@ import static java.nio.file.StandardOpenOption.READ;
 
 @ChannelHandler.Sharable
 public final class LogsRequestHandler
-extends UriMatchingRequestHandlerBase {
+extends UriPrefixMatchingRequestHandlerBase {
 
 	private static final String KEY_STEP_ID = "stepId";
 	private static final String KEY_LOGGER_NAME = "loggerName";
@@ -85,7 +85,7 @@ extends UriMatchingRequestHandlerBase {
 	}
 
 	@Override
-	protected final String uriStartsWith() {
+	protected final String uriPrefix() {
 		return "/logs";
 	}
 

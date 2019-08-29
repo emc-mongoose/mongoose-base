@@ -1,7 +1,7 @@
 package com.emc.mongoose.base.svc.http.handler.impl;
 
 import com.emc.mongoose.base.logging.LogUtil;
-import com.emc.mongoose.base.svc.http.handler.UriMatchingRequestHandlerBase;
+import com.emc.mongoose.base.svc.http.handler.UriPrefixMatchingRequestHandlerBase;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
@@ -26,7 +26,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 
 @ChannelHandler.Sharable
 public final class MetricsRequestHandler
-extends UriMatchingRequestHandlerBase {
+extends UriPrefixMatchingRequestHandlerBase {
 
 	private final CollectorRegistry registry;
 
@@ -39,7 +39,7 @@ extends UriMatchingRequestHandlerBase {
 	}
 
 	@Override
-	protected final String uriStartsWith() {
+	protected final String uriPrefix() {
 		return "/metrics";
 	}
 
@@ -55,6 +55,7 @@ extends UriMatchingRequestHandlerBase {
 			final var writer = new OutputStreamWriter(out);
 		) {
 			TextFormat.write004(writer, filteredMetrics);
+			writer.flush();
 			respContent = Unpooled.wrappedBuffer(out.toByteArray());
 		} catch(final IOException e) {
 			LogUtil.exception(Level.ERROR, e, "Unexpected failure");

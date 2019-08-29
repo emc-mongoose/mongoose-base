@@ -7,7 +7,7 @@ import com.emc.mongoose.base.metrics.MetricsManager;
 import com.emc.mongoose.base.svc.Server;
 import com.emc.mongoose.base.svc.http.handler.AddCorsHeadersResponseHandler;
 import com.emc.mongoose.base.svc.http.handler.impl.ConfigRequestHandler;
-import com.emc.mongoose.base.svc.http.handler.impl.LogsRequestHandler;
+import com.emc.mongoose.base.svc.http.handler.impl.logs.LogsRequestHandler;
 import com.emc.mongoose.base.svc.http.handler.impl.MetricsRequestHandler;
 import com.emc.mongoose.base.svc.http.handler.impl.RunRequestHandler;
 import com.github.akurilov.commons.concurrent.AsyncRunnableBase;

@@ -2,7 +2,7 @@ package com.emc.mongoose.base.svc.http.handler.impl;
 
 import com.emc.mongoose.base.config.ConfigFormat;
 import com.emc.mongoose.base.config.ConfigUtil;
-import com.emc.mongoose.base.svc.http.handler.UriMatchingRequestHandlerBase;
+import com.emc.mongoose.base.svc.http.handler.UriPrefixMatchingRequestHandlerBase;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
@@ -25,7 +25,7 @@ import static io.netty.handler.codec.http.HttpResponseStatus.OK;
 
 @ChannelHandler.Sharable
 public final class ConfigRequestHandler
-extends UriMatchingRequestHandlerBase {
+extends UriPrefixMatchingRequestHandlerBase {
 
 	private final Config config;
 
@@ -34,13 +34,13 @@ extends UriMatchingRequestHandlerBase {
 	}
 
 	@Override
-	protected final String uriStartsWith() {
+	protected final String uriPrefix() {
 		return "/config";
 	}
 
 	@Override
 	protected final void handle(final ChannelHandlerContext ctx, final FullHttpRequest req) {
-		final var schemaFlag = req.uri().equals(uriStartsWith() + "/schema");
+		final var schemaFlag = req.uri().equals(uriPrefix() + "/schema");
 		final var reqHeaders = req.headers();
 		final var reqHeaderAccept = reqHeaders.get(ACCEPT);
 		final ConfigFormat format;
