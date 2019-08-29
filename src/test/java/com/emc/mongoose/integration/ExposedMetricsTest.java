@@ -13,9 +13,13 @@ import com.emc.mongoose.base.metrics.context.DistributedMetricsContextImpl;
 import com.emc.mongoose.base.metrics.context.MetricsContext;
 import com.emc.mongoose.base.metrics.context.MetricsContextImpl;
 import com.emc.mongoose.base.metrics.snapshot.AllMetricsSnapshot;
+import com.emc.mongoose.base.svc.http.HttpServerImpl;
+import com.emc.mongoose.base.svc.http.ServerChannelInitializer;
+import com.emc.mongoose.base.svc.http.ServerChannelInitializerImpl;
+import com.emc.mongoose.base.svc.http.handler.impl.MetricsRequestHandler;
 import com.emc.mongoose.params.ItemSize;
+import com.github.akurilov.commons.concurrent.AsyncRunnable;
 import com.github.akurilov.commons.system.SizeInBytes;
-import io.prometheus.client.exporter.MetricsServlet;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -27,9 +31,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.IntSupplier;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
+
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,7 +68,8 @@ public class ExposedMetricsTest {
 	private final SizeInBytes ITEM_DATA_SIZE = ItemSize.SMALL.getValue();
 	private final int UPDATE_INTERVAL_SEC = (int) TimeUnit.MICROSECONDS.toSeconds(MARK_DUR);
 	private Supplier<List<AllMetricsSnapshot>> snapshotsSupplier;
-	private final Server server = new Server(PORT);
+	private ServerChannelInitializer chanInitializer = null;
+	private AsyncRunnable server = null;
 	//
 	private DistributedMetricsContext distributedMetricsContext;
 	private MetricsContext metricsContext;
@@ -73,10 +77,9 @@ public class ExposedMetricsTest {
 	@Before
 	public void setUp() throws Exception {
 		//
-		final var context = new ServletContextHandler();
-		context.setContextPath("/");
-		server.setHandler(context);
-		context.addServlet(new ServletHolder(new MetricsServlet()), CONTEXT);
+		chanInitializer = new ServerChannelInitializerImpl();
+		chanInitializer.appendHandler(new MetricsRequestHandler());
+		server = new HttpServerImpl(PORT, chanInitializer);
 		server.start();
 		//
 		metricsContext = MetricsContextImpl.builder()
@@ -112,6 +115,15 @@ public class ExposedMetricsTest {
 						.runId(RUN_ID)
 						.build();
 		distributedMetricsContext.start();
+	}
+
+	@After
+	public void tearDown()
+	throws Exception {
+		distributedMetricsContext.close();
+		metricsContext.close();
+		server.close();
+		chanInitializer.close();
 	}
 
 	@Test

@@ -1,5 +1,10 @@
 package com.emc.mongoose.base.control;
 
+import com.emc.mongoose.base.svc.http.HttpServerImpl;
+import com.emc.mongoose.base.svc.http.ServerChannelInitializer;
+import com.emc.mongoose.base.svc.http.ServerChannelInitializerImpl;
+import com.emc.mongoose.base.svc.http.handler.impl.ConfigRequestHandler;
+import com.github.akurilov.commons.concurrent.AsyncRunnable;
 import com.github.akurilov.confuse.Config;
 import com.github.akurilov.confuse.impl.BasicConfig;
 import java.io.BufferedReader;
@@ -9,16 +14,13 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /** @author veronika K. on 02.11.18 */
-public class ConfigServletTest {
+public class ConfigApiTest {
 
 	private static final int PORT = 9999;
 	private static final String HOST = "http://localhost:" + PORT;
@@ -36,14 +38,14 @@ public class ConfigServletTest {
 		CONFIG.val("key", "value");
 	}
 
-	private static final Server server = new Server(PORT);
+	private static ServerChannelInitializer chanInitializer = null;
+	private static AsyncRunnable server = null;
 
-	@Before
-	public void setUp() throws Exception {
-		final ServletContextHandler context = new ServletContextHandler();
-		context.setContextPath("/");
-		server.setHandler(context);
-		context.addServlet(new ServletHolder(new ConfigServlet(CONFIG)), "/config/*");
+	@BeforeClass
+	public static void setUp() throws Exception {
+		chanInitializer = new ServerChannelInitializerImpl()
+			.appendHandler(new ConfigRequestHandler(CONFIG));
+		server = new HttpServerImpl(PORT, chanInitializer);
 		server.start();
 	}
 
@@ -65,8 +67,9 @@ public class ConfigServletTest {
 		return result;
 	}
 
-	@After
-	public void tearDown() throws Exception {
-		server.stop();
+	@AfterClass
+	public static void tearDown() throws Exception {
+		chanInitializer.close();
+		server.close();
 	}
 }
