@@ -451,8 +451,12 @@ task listAllModulesDeps(dependsOn: jar) {
 			"--module-path ${javaHome}${File.separator}jmods",
 			"--list-deps ${jar.outputs.files.iterator().next()}",
 		].join(' ')
-		def deps = execute(cmd).takeWhile { it != '/' } + '\n'
-		modulesDepsFile.append(deps)
+		def moduleDeps = execute(cmd)
+			.split(System.lineSeparator())
+			.collect { it.takeWhile { it != '/' } }
+		moduleDeps.each {
+			modulesDepsFile.append(it + System.lineSeparator())
+		}
 	}
 }
 
@@ -491,6 +495,7 @@ import com.bmuschko.gradle.docker.tasks.image.*
 import com.bmuschko.gradle.docker.tasks.container.*
 
 task dockerBuildImage(type: DockerBuildImage) {
+	noCache = true
 	inputDir = project.projectDir
 	dockerFile = project.file("ci${File.separator}docker${File.separator}Dockerfile")
 	imageId = "emcmongoose/${project.name}".toString()
