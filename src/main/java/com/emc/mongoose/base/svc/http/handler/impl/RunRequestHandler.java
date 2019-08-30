@@ -118,13 +118,17 @@ extends UriPrefixMatchingRequestHandlerBase {
 			try {
 				if(multipartReqDecoder.isMultipart()) {
 					req.retain();
-					final var defaultsPart = multipartReqDecoder.getBodyHttpData(PART_KEY_DEFAULTS).retain();
+					final var defaultsPart = multipartReqDecoder.getBodyHttpData(PART_KEY_DEFAULTS);
 					if(null != defaultsPart) {
+						defaultsPart.retain();
 						incomingDefaults = ((HttpData) defaultsPart).getString();
+						defaultsPart.release();
 					}
-					final var scenarioPart = multipartReqDecoder.getBodyHttpData(PART_KEY_SCENARIO).retain();
+					final var scenarioPart = multipartReqDecoder.getBodyHttpData(PART_KEY_SCENARIO);
 					if(null != scenarioPart) {
+						scenarioPart.retain();
 						incomingScenario = ((HttpData) scenarioPart).getString();
+						scenarioPart.release();
 					}
 				} else {
 					respondEmptyContent(ctx, BAD_REQUEST);
