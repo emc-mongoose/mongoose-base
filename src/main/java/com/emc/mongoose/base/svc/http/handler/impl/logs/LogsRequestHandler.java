@@ -52,7 +52,7 @@ extends UriPrefixMatchingRequestHandlerBase {
 	private static final String KEY_LOGGER_NAME = "loggerName";
 	private static final Pattern PATTERN_URI_PATH = Pattern.compile(
 		"/logs/(?<" + KEY_STEP_ID + ">[\\w\\-_.,;:~=+@]+)/(?<" + KEY_LOGGER_NAME + ">[\\w_.]+)");
-	private static final String PATTERN_STEP_ID_SUBST = "${ctx:" + KEY_STEP_ID + "}";
+	private static final String PATTERN_STEP_ID_SUBST = "${ctx:step_id}";
 	private static final int LOG_PAGE_SIZE_LIMIT = MIB;
 
 	private final Map<String, String> logFileNamePatternByName;
@@ -212,6 +212,6 @@ extends UriPrefixMatchingRequestHandlerBase {
 			fileChan.position(offset);
 			while(-1 != fileChan.read(logPageContent));
 		}
-		return logPageContent;
+		return logPageContent.flip();
 	}
 }
