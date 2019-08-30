@@ -122,13 +122,11 @@ extends UriPrefixMatchingRequestHandlerBase {
 					if(null != defaultsPart) {
 						defaultsPart.retain();
 						incomingDefaults = ((HttpData) defaultsPart).getString();
-						defaultsPart.release();
 					}
 					final var scenarioPart = multipartReqDecoder.getBodyHttpData(PART_KEY_SCENARIO);
 					if(null != scenarioPart) {
 						scenarioPart.retain();
 						incomingScenario = ((HttpData) scenarioPart).getString();
-						scenarioPart.release();
 					}
 				} else {
 					respondEmptyContent(ctx, BAD_REQUEST);
