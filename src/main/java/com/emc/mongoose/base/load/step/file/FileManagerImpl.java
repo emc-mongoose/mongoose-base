@@ -6,6 +6,7 @@ import static org.apache.logging.log4j.CloseableThreadContext.put;
 
 import java.io.EOFException;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ByteChannel;
@@ -78,9 +79,9 @@ public class FileManagerImpl implements FileManager {
 
 	@Override
 	public final void writeToFile(final String fileName, final byte[] buff) throws IOException {
-		try (final ByteChannel fileChannel = Files.newByteChannel(Paths.get(fileName), APPEND_OPEN_OPTIONS)) {
-			final ByteBuffer bb = ByteBuffer.wrap(buff);
-			int n = 0;
+		try (final var fileChannel = Files.newByteChannel(Paths.get(fileName), APPEND_OPEN_OPTIONS)) {
+			final var bb = ByteBuffer.wrap(buff);
+			var n = 0;
 			while (n < buff.length) {
 				n = fileChannel.write(bb);
 			}
@@ -94,15 +95,20 @@ public class FileManagerImpl implements FileManager {
 
 	@Override
 	public final void truncateFile(final String fileName, final long size) throws IOException {
-		try (final SeekableByteChannel fileChannel = Files.newByteChannel(Paths.get(fileName), WRITE_OPEN_OPTIONS)) {
+		try (final var fileChannel = Files.newByteChannel(Paths.get(fileName), WRITE_OPEN_OPTIONS)) {
 			fileChannel.truncate(size);
 		}
 	}
 
 	@Override
 	public final void deleteFile(final String fileName) throws IOException {
-		if (!new File(fileName).delete()) {
-			throw new FileSystemException(fileName, null, "Failed to delete");
+		final var f = new File(fileName);
+		if(f.exists()) {
+			if(!f.delete()) {
+				throw new FileSystemException(fileName, null, "Failed to delete");
+			}
+		} else {
+			throw new FileNotFoundException();
 		}
 	}
 }

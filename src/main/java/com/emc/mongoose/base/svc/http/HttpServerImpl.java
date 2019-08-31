@@ -1,5 +1,6 @@
 package com.emc.mongoose.base.svc.http;
 
+import com.emc.mongoose.base.logging.Loggers;
 import com.emc.mongoose.base.svc.Server;
 import com.github.akurilov.commons.concurrent.AsyncRunnableBase;
 import io.netty.bootstrap.ServerBootstrap;
@@ -39,6 +40,7 @@ implements Server {
 		try {
 			bind.sync();
 			channel = bind.sync().channel();
+			Loggers.MSG.info("HTTP server started @ port #" + port);
 		} catch(final InterruptedException e) {
 			throwUnchecked(e);
 		}
@@ -47,6 +49,7 @@ implements Server {
 	@Override
 	public final void doStop() {
 		evtLoopGroup.shutdownGracefully(1, 1, TimeUnit.SECONDS);
+		Loggers.MSG.info("HTTP server stopped");
 	}
 
 	@Override

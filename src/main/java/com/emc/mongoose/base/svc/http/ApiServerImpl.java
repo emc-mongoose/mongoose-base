@@ -1,12 +1,16 @@
 package com.emc.mongoose.base.svc.http;
 
 import com.emc.mongoose.base.env.Extension;
+import com.emc.mongoose.base.load.step.file.FileManager;
+import com.emc.mongoose.base.load.step.file.FileManagerImpl;
 import com.emc.mongoose.base.logging.LogUtil;
 import com.emc.mongoose.base.logging.Loggers;
 import com.emc.mongoose.base.metrics.MetricsManager;
 import com.emc.mongoose.base.svc.Server;
 import com.emc.mongoose.base.svc.http.handler.AddCorsHeadersResponseHandler;
 import com.emc.mongoose.base.svc.http.handler.impl.ConfigRequestHandler;
+import com.emc.mongoose.base.svc.http.handler.impl.FilesRequestHandler;
+import com.emc.mongoose.base.svc.http.handler.impl.LoadStepRequestHandler;
 import com.emc.mongoose.base.svc.http.handler.impl.logs.LogsRequestHandler;
 import com.emc.mongoose.base.svc.http.handler.impl.MetricsRequestHandler;
 import com.emc.mongoose.base.svc.http.handler.impl.RunRequestHandler;
@@ -28,6 +32,7 @@ implements Server {
 	public ApiServerImpl(
 		final ClassLoader clsLoader,
 		final List<Extension> extensions,
+		final FileManager fileMgr,
 		final MetricsManager metricsMgr,
 		final Config aggregatedConfigWithArgs,
 		final Path appHomePath
@@ -37,6 +42,8 @@ implements Server {
 		chanInitializer.appendHandlers(
 			new AddCorsHeadersResponseHandler(),
 			new ConfigRequestHandler(aggregatedConfigWithArgs),
+			new FilesRequestHandler(fileMgr),
+			new LoadStepRequestHandler(),
 			new LogsRequestHandler(),
 			new MetricsRequestHandler(),
 			new RunRequestHandler(clsLoader, extensions, metricsMgr, aggregatedConfigWithArgs, appHomePath)
@@ -48,7 +55,6 @@ implements Server {
 	protected void doStart() {
 		try {
 			httpServer.start();
-			Loggers.MSG.info("Started to serve the remote API");
 		} catch(final IOException e) {
 			LogUtil.exception(Level.ERROR, e, "Failed to start the HTTP server");
 		}

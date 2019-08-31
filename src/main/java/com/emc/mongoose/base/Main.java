@@ -14,6 +14,7 @@ import com.emc.mongoose.base.config.IllegalArgumentNameException;
 import com.emc.mongoose.base.env.CoreResourcesToInstall;
 import com.emc.mongoose.base.env.Extension;
 import com.emc.mongoose.base.load.step.ScenarioUtil;
+import com.emc.mongoose.base.load.step.file.FileManagerImpl;
 import com.emc.mongoose.base.load.step.service.LoadStepManagerServiceImpl;
 import com.emc.mongoose.base.load.step.service.file.FileManagerServiceImpl;
 import com.emc.mongoose.base.logging.LogUtil;
@@ -169,8 +170,11 @@ public final class Main {
 		final Path appHomePath
 	) throws Exception {
 		final var listenPort = fullDefaultConfig.intVal("load-step-node-port");
+		final var fileMgr = new FileManagerImpl();
 		try (
-			final var server = new ApiServerImpl(extClsLoader, extensions, metricsMgr, fullDefaultConfig, appHomePath);
+			final var server = new ApiServerImpl(
+				extClsLoader, extensions, fileMgr, metricsMgr, fullDefaultConfig, appHomePath
+			);
 			final Service fileMgrSvc = new FileManagerServiceImpl(listenPort);
 			final Service scenarioStepSvc = new LoadStepManagerServiceImpl(listenPort, extensions, metricsMgr)
 		) {

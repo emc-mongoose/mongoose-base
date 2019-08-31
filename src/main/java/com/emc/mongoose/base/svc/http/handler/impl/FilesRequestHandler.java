@@ -14,6 +14,7 @@ import io.netty.handler.codec.http.HttpMethod;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.NoSuchFileException;
 import java.util.stream.Collectors;
 
 import static com.emc.mongoose.base.svc.http.handler.ResponseUtil.respondContent;
@@ -65,7 +66,7 @@ extends UriPrefixMatchingRequestHandlerBase {
 				respondEmptyContent(ctx, METHOD_NOT_ALLOWED);
 			}
 		} else {
-			final var filePath = reqUri.substring(uriPrefix().length() + 1);
+			final var filePath = reqUri.substring(uriPrefix().length());
 			Loggers.MSG.debug("File request, method={}, file={}", method, filePath);
 			if(DELETE.equals(method)) {
 				handleDeleteFileRequest(ctx, filePath);
@@ -95,6 +96,7 @@ extends UriPrefixMatchingRequestHandlerBase {
 	void handleDeleteFileRequest(final ChannelHandlerContext ctx, final String filePath) {
 		try {
 			fileMgr.deleteFile(filePath);
+			respondEmptyContent(ctx, OK);
 		} catch(final FileNotFoundException e) {
 			respondEmptyContent(ctx, NOT_FOUND);
 		} catch(final IOException e) {
@@ -142,7 +144,7 @@ extends UriPrefixMatchingRequestHandlerBase {
 			try {
 				final var content = fileMgr.readFromFile(filePath, offset);
 				respondContent(ctx, OK, Unpooled.wrappedBuffer(content), APPLICATION_OCTET_STREAM.toString());
-			} catch(final FileNotFoundException e) {
+			} catch(final FileNotFoundException | NoSuchFileException e) {
 				respondEmptyContent(ctx, NOT_FOUND);
 			} catch(final IOException e) {
 				respondEmptyContent(ctx, INTERNAL_SERVER_ERROR);
@@ -162,6 +164,7 @@ extends UriPrefixMatchingRequestHandlerBase {
 		}
 		try {
 			fileMgr.writeToFile(filePath, bytes);
+			respondEmptyContent(ctx, OK);
 		} catch(final IOException e) {
 			respondEmptyContent(ctx, INTERNAL_SERVER_ERROR);
 		}

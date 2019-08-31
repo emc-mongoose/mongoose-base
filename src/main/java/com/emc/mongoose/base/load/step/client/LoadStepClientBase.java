@@ -326,8 +326,7 @@ public abstract class LoadStepClientBase extends LoadStepBase implements LoadSte
 		final var metricsAvgPersistFlag = metricsConfig.boolVal("average-persist");
 		final var metricsSumPersistFlag = metricsConfig.boolVal("summary-persist");
 		// it's not known yet how many nodes are involved, so passing the function "this::sliceCount"
-		// reference for
-		// further usage
+		// reference for further usage
 		final var metricsCtx = (DistributedMetricsContext) DistributedMetricsContextImpl.builder()
 						.loadStepId(loadStepId())
 						.opType(opType)
