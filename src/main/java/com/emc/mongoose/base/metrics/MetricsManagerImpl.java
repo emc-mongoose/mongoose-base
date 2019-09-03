@@ -134,12 +134,11 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 						metricsCtx.comment(),
 						String.valueOf(metricsCtx.runId())
 				};
-				distributedMetrics.put(
-								distributedMetricsCtx,
-								new PrometheusMetricsExporterImpl(distributedMetricsCtx)
-												.labels(METRIC_LABELS, labelValues)
-												.quantiles(distributedMetricsCtx.quantileValues())
-												.register());
+				final var exporter = new PrometheusMetricsExporterImpl(distributedMetricsCtx)
+					.labels(METRIC_LABELS, labelValues)
+					.quantiles(distributedMetricsCtx.quantileValues())
+					.<PrometheusMetricsExporterImpl>register();
+				distributedMetrics.put(distributedMetricsCtx, exporter);
 			}
 			Loggers.MSG.debug("Metrics context \"{}\" registered", metricsCtx);
 		} catch (final Exception e) {

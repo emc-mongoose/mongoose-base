@@ -3,8 +3,11 @@ package com.emc.mongoose.base.metrics.type;
 import static org.junit.Assert.assertEquals;
 
 import com.emc.mongoose.base.metrics.snapshot.HistogramSnapshot;
+import com.emc.mongoose.base.metrics.snapshot.HistogramSnapshotImpl;
 import com.emc.mongoose.base.metrics.util.ConcurrentSlidingWindowLongReservoir;
 import java.util.stream.LongStream;
+
+import org.junit.Ignore;
 import org.junit.Test;
 
 /** @author veronika K. on 16.10.18 */
@@ -35,5 +38,41 @@ public class HistogramImplTest {
 		assertEquals(560, snapshot.quantile(0.95));
 		assertEquals(640, snapshot.quantile(0.99));
 		assertEquals(640, snapshot.quantile(0.999));
+	}
+
+	@Test @Ignore(value="invalid")
+	public void mergeQuantilesTest()
+	throws Exception {
+		final long[] data1 = new long[] {
+			450, 9, 400, 36, 225, 72, 360, 56, 180, 600, 21, 162, 150, 320, 160, 270, 162, 210, 60,
+		};
+		final long[] data2 = new long[] {
+			504, 175, 150, 80, 200, 48, 180, 18, 80, 84, 126, 30, 32, 216, 63, 640, 36, 200, 45, 300,
+		};
+		final long[] dataCombined = new long[] {
+			450, 9, 400, 36, 225, 72, 360, 56, 180, 600, 21, 162, 150, 320, 160, 270, 162, 210, 60,
+			504, 175, 150, 80, 200, 48, 180, 18, 80, 84, 126, 30, 32, 216, 63, 640, 36, 200, 45, 300,
+		};
+		final var snapshot1 = new HistogramSnapshotImpl(data1);
+		final var snapshot2 = new HistogramSnapshotImpl(data2);
+		final var snapshotCombined = new HistogramSnapshotImpl(dataCombined);
+		final var median1 = snapshot1.quantile(0.5); // 162
+		final var median2 = snapshot2.quantile(0.5); // 126
+		final var medianCombined = snapshotCombined.quantile(0.5); // 160
+		final long[] dataSynthetic = new long[data1.length + data2.length];
+		for(int i = 0; i < (int) (data1.length * 0.5); i ++) {
+			dataSynthetic[i] = median1;
+		}
+		for(int i = (int) (data1.length * 0.5); i < data1.length; i ++) {
+			dataSynthetic[i] = median1 + 1;
+		}
+		for(int i = 0; i < (int) (data2.length * 0.5); i ++) {
+			dataSynthetic[data1.length + i] = median2;
+		}
+		for(int i = (int) (data2.length * 0.5); i < data2.length; i ++) {
+			dataSynthetic[data1.length + i] = median2 + 1;
+		}
+		final var snapshotSynthetic = new HistogramSnapshotImpl(dataSynthetic);
+		System.out.println(snapshotSynthetic.quantile(0.5));
 	}
 }
