@@ -302,6 +302,11 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 				metricsCtx.markSucc(countBytesDone, reqDuration, respLatency);
 				counterResults.increment();
 			}
+		} else if (Status.PENDING.equals(status)) {
+			//in case driver cannot finish operation due to storage API issues or of some other sort, we need
+			//to set the operation status to Pending, so that we don't count it in the metrics and recycle the operation
+			generator.recycle(opResult);
+			counterResults.increment();
 		} else {
 			if (recycleFlag) {
 				latestSuccOpResultByItem.remove(opResult.item());
@@ -378,6 +383,11 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 					metricsCtx.markSucc(countBytesDone, reqDuration, respLatency);
 					counterResults.increment();
 				}
+			} else if (Status.PENDING.equals(status)) {
+				//in case driver cannot finish operation due to storage API issues or of some other sort, we need
+				//to set the operation status to Pending, so that we don't count it in the metrics and recycle the operation
+				generator.recycle(opResult);
+				counterResults.increment();
 			} else {
 				if (recycleFlag) {
 					latestSuccOpResultByItem.remove(opResult.item());
