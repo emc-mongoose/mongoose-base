@@ -68,6 +68,14 @@
 * [0.1.4](#014) 09/17/14
 * [0.1.3](#013) 08/15/14
 
+# 4.2.16
+
+## Fixed Bugs
+
+| Id | Description |
+|----|-------------|
+| [BASE-1386](https://mongoose-issues.atlassian.net/browse/BASE-1386) | Add Pending status handling for unfinished operations | 
+
 # 4.2.15
 
 ## Fixed Bugs
