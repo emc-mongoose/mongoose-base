@@ -88,7 +88,7 @@ debugging capability via the port #5005.
 docker run \
     --network host \
     --expose 5005
-    --entrypoint /opt/mongoose/entrypoint-debug.sh \
+    --entrypoint /opt/mongoose/entrypoint_debug.sh \
     emcmongoose/<IMAGE> \
     [<ARGS>]
 ```
