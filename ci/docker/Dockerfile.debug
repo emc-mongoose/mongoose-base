@@ -1,5 +1,7 @@
 FROM emcmongoose/mongoose:${MONGOOSE_VERSION}
 
+EXPOSE 5005
+
 RUN apk --no-cache add openjdk11 --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community
 
 ADD ci/docker/entrypoint_debug.sh /opt/mongoose/entrypoint_debug.sh
