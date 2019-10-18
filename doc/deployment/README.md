@@ -84,12 +84,19 @@ docker run \
 The example below starts the Mongoose in the container with remote
 debugging capability via the port #5005.
 
+At first it's need to build new docker image for debug:
+
+
+```bash
+ docker build -f ci/docker/Dockerfile.debug -t emcmongoose/<IMAGE>:debug .
+```
+
+and run:
+
 ```bash
 docker run \
     --network host \
-    --expose 5005
-    --entrypoint /opt/mongoose/entrypoint_debug.sh \
-    emcmongoose/<IMAGE> \
+    emcmongoose/<IMAGE>:debug \
     [<ARGS>]
 ```
 
