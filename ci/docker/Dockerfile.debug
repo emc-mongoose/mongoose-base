@@ -1,3 +1,5 @@
+ARG MONGOOSE_VERSION=latest
+
 FROM emcmongoose/mongoose:${MONGOOSE_VERSION}
 
 EXPOSE 5005

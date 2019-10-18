@@ -88,7 +88,11 @@ At first it's need to build new docker image for debug:
 
 
 ```bash
- docker build -f ci/docker/Dockerfile.debug -t emcmongoose/<IMAGE>:debug .
+docker build --build-arg MONGOOSE_VERSION=latest -f ci/docker/Dockerfile.debug -t mongoose-base:debug .
+```
+or with `MONGOOSE_VERSION` value bt default (latest):
+```bash
+docker build -f ci/docker/Dockerfile.debug -t mongoose-base:debug .
 ```
 
 and run:
