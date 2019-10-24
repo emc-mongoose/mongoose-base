@@ -394,7 +394,21 @@ public abstract class LoadStepClientBase extends LoadStepBase implements LoadSte
 							.map(
 											stepSlice -> {
 												try {
-													return stepSlice.await(timeout, timeUnit);
+													var invokeTimeMillis = System.currentTimeMillis();
+													var timeOutMillis = timeUnit.toMillis(timeout);
+													var await_result = false;
+													long elapsedTimeMillis;
+													while(timeOutMillis > (elapsedTimeMillis = System.currentTimeMillis() - invokeTimeMillis)) {
+														elapsedTimeMillis = System.currentTimeMillis() - invokeTimeMillis;
+														if (timeOutMillis <= elapsedTimeMillis) {
+															break;
+														}
+														if (Thread.currentThread().isInterrupted()){
+															throwUnchecked(new InterruptedException());
+														}
+														await_result = stepSlice.await(1, TimeUnit.MILLISECONDS);
+													}
+													return await_result;
 												} catch (final InterruptedException e) {
 													throwUnchecked(e);
 												} catch (final RemoteException e) {
