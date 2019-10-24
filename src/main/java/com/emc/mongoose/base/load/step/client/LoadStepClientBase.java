@@ -394,9 +394,9 @@ public abstract class LoadStepClientBase extends LoadStepBase implements LoadSte
 							.map(
 											stepSlice -> {
 												try {
-													var invokeTimeMillis = System.currentTimeMillis();
-													var timeOutMillis = timeUnit.toMillis(timeout);
-													var await_result = false;
+													final var invokeTimeMillis = System.currentTimeMillis();
+													final var timeOutMillis = timeUnit.toMillis(timeout);
+													var awaitResult = false;
 													long elapsedTimeMillis;
 													while(timeOutMillis > (elapsedTimeMillis = System.currentTimeMillis() - invokeTimeMillis)) {
 														elapsedTimeMillis = System.currentTimeMillis() - invokeTimeMillis;
@@ -404,11 +404,11 @@ public abstract class LoadStepClientBase extends LoadStepBase implements LoadSte
 															break;
 														}
 														if (Thread.currentThread().isInterrupted()){
-															throwUnchecked(new InterruptedException());
+															break;
 														}
-														await_result = stepSlice.await(1, TimeUnit.MILLISECONDS);
+														awaitResult = stepSlice.await(1, TimeUnit.MILLISECONDS);
 													}
-													return await_result;
+													return awaitResult;
 												} catch (final InterruptedException e) {
 													throwUnchecked(e);
 												} catch (final RemoteException e) {
