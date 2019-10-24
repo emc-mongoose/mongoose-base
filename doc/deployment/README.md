@@ -106,9 +106,16 @@ docker run \
 
 # Kubernetes
 
-Mongoose can be deployed in a [kubernetes](https://kubernetes.io/) cluster. Examples of yaml files are in the directory `ci/kubernetes`. The following describes a more detailed use of scripts:
+Mongoose can be deployed in a [kubernetes](https://kubernetes.io/) cluster manually or with Helm. 
 
-> * You can use a ready-made cluster or [deploy your own](../KUBE-CLUSTER.md). <- TODO
+## Helm
+
+[Mongoose Melm chart doc](https://github.com/emc-mongoose/mongoose-helm-charts)
+
+## Manual deployment
+Examples of yaml files are in the directory `ci/kubernetes`. The following describes a more detailed use of scripts:
+
+> * You need a ready-made cluster.
 > * The examples use the mongoose image with the `latest` tag. To use specifically the version you need to specify ` - image: emcmongoose/mongoose:<x.y.z>`
 > * All of the following configurations use `mongoose` namespace. Therefore, it is necessary to first create a namespace:
 > ```bash
@@ -131,7 +138,7 @@ CLI args can be added in following lines:
 
 #### Deployment & Pod
 
-There are 2 options to start the mongoose: as `Pod` resource and as `Deployment` resource. In the first case, when the scenario completes, pod goes into status `Completed` before it is deleted. In the second case, after the completion deployment will be restarted infinitely many times.
+There are 2 options to start the mongoose: as separately `Pod` resource and as `Deployment` resource-controller (see more details in Kubernetes doc). In the first case, when the scenario completes, pod goes into status `Completed` before it is deleted. In the second case, after the completion deployment will restart mongoose pod infinitely many times.
 
 Run Mongoose in standalone mode as deployment:
 ```bash
@@ -165,7 +172,7 @@ kubectl apply -f kuberenetes/distributed.yaml
 
 > `---` - separates configurations for different resources. Each resource can be launched separately as in the previous examples with command `kubectl apply ...`
 
-The number of replicas means the number of nodes on which `Service` Mongoose will be running.
+The number of replicas means the number of mongoose nodes (`StatefulSet`).
 ```
 ...
 spec:
@@ -173,7 +180,7 @@ spec:
 ...
 ```
 
-`Pod` plays the role of the entry node.
+Separate `Pod` plays the role of the entry node.
 
 ```
 apiVersion: v1
