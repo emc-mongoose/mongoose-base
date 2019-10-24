@@ -37,10 +37,11 @@ COPY --from=0 /build/jre /opt/mongoose
 COPY --from=0 /build/libs/mongoose-*.jar /opt/mongoose/
 ADD ci/docker/entrypoint.sh /opt/mongoose/entrypoint.sh
 
+
 RUN ln -s /opt/mongoose/mongoose-*.jar /opt/mongoose/mongoose.jar; \
     mkdir ${HOME}/.mongoose; \
     chmod -R ugo+rwx ${HOME}/.mongoose; \
     chmod -R +x /opt/mongoose/bin; \
-    chmod +x /opt/mongoose/entrypoint.sh
+    chmod +x /opt/mongoose/entrypoint.sh;
 
 ENTRYPOINT ["/opt/mongoose/entrypoint.sh"]
