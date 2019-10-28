@@ -404,7 +404,7 @@ public abstract class LoadStepClientBase extends LoadStepBase implements LoadSte
 															break;
 														}
 														if (Thread.currentThread().isInterrupted()){
-															break;
+															throwUnchecked(new InterruptedException());
 														}
 														awaitResult = stepSlice.await(1, TimeUnit.MILLISECONDS);
 													}
@@ -420,6 +420,7 @@ public abstract class LoadStepClientBase extends LoadStepBase implements LoadSte
 							.orElse(false);
 		} finally {
 			Loggers.MSG.info("{}: await for {} step slices done", loadStepId(), stepSliceCount);
+			doStop();
 		}
 	}
 
