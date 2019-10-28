@@ -394,7 +394,21 @@ public abstract class LoadStepClientBase extends LoadStepBase implements LoadSte
 							.map(
 											stepSlice -> {
 												try {
-													return stepSlice.await(timeout, timeUnit);
+													final var invokeTimeMillis = System.currentTimeMillis();
+													final var timeOutMillis = timeUnit.toMillis(timeout);
+													var awaitResult = false;
+													long elapsedTimeMillis;
+													while(timeOutMillis > (elapsedTimeMillis = System.currentTimeMillis() - invokeTimeMillis)) {
+														elapsedTimeMillis = System.currentTimeMillis() - invokeTimeMillis;
+														if (timeOutMillis <= elapsedTimeMillis) {
+															break;
+														}
+														if (Thread.currentThread().isInterrupted()){
+															throwUnchecked(new InterruptedException());
+														}
+														awaitResult = stepSlice.await(1, TimeUnit.MILLISECONDS);
+													}
+													return awaitResult;
 												} catch (final InterruptedException e) {
 													throwUnchecked(e);
 												} catch (final RemoteException e) {
@@ -406,6 +420,7 @@ public abstract class LoadStepClientBase extends LoadStepBase implements LoadSte
 							.orElse(false);
 		} finally {
 			Loggers.MSG.info("{}: await for {} step slices done", loadStepId(), stepSliceCount);
+			doStop();
 		}
 	}
 
