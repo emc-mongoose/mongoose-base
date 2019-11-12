@@ -17,7 +17,7 @@ public final class ExternalDataInput extends CachedDataInput {
 					final int layerSize,
 					final int layersCacheCountLimit)
 					throws IOException {
-		super((MappedByteBuffer) ByteBuffer.allocateDirect(layerSize), layersCacheCountLimit);
+		super((MappedByteBuffer) ByteBuffer.allocate/*Direct*/(layerSize), layersCacheCountLimit);
 
 		int doneByteCount = 0, n;
 

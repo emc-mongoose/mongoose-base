@@ -7,7 +7,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 
 /**
 * Created by andrey on 24.07.17. The data input able to produce the layer of different data using
@@ -19,13 +18,13 @@ public class CachedDataInput extends DataInputBase {
 
 	private int layersCacheCountLimit;
 	@SuppressWarnings("ThreadLocalNotStaticFinal")
-	private final ThreadLocal<Int2ObjectOpenHashMap<MappedByteBuffer>> thrLocLayersCache = new ThreadLocal<>();
+	private final ThreadLocal<Int2ObjectOpenHashMap<ByteBuffer>> thrLocLayersCache = new ThreadLocal<>();
 
 	public CachedDataInput() {
 		super();
 	}
 
-	public CachedDataInput(final MappedByteBuffer initialLayer, final int layersCacheCountLimit) {
+	public CachedDataInput(final ByteBuffer initialLayer, final int layersCacheCountLimit) {
 		super(initialLayer);
 		if (layersCacheCountLimit < 1) {
 			throw new IllegalArgumentException("Cache limit value should be more than 1");
@@ -43,7 +42,7 @@ public class CachedDataInput extends DataInputBase {
 	}
 
 	@Override
-	public final MappedByteBuffer getLayer(final int layerIndex) throws OutOfMemoryError {
+	public final ByteBuffer getLayer(final int layerIndex) throws OutOfMemoryError {
 
 		if (layerIndex == 0) {
 			return inputBuff;
@@ -73,7 +72,7 @@ public class CachedDataInput extends DataInputBase {
 				layersCache.trim();
 			}
 			// generate the layer
-			layer = (MappedByteBuffer) ByteBuffer.allocateDirect(layerSize);
+			layer = ByteBuffer.allocate/*Direct*/(layerSize);
 			final var layerSeed = Long.reverseBytes((xorShift(getInitialSeed()) << layerIndex) ^ layerIndex);
 			generateData(layer, layerSeed);
 			layersCache.put(layerIndex - 1, layer);
@@ -83,7 +82,7 @@ public class CachedDataInput extends DataInputBase {
 
 	public void close() throws IOException {
 		super.close();
-		final var layersCache = (Int2ObjectMap<MappedByteBuffer>) thrLocLayersCache.get();
+		final var layersCache = (Int2ObjectMap<ByteBuffer>) thrLocLayersCache.get();
 		if (layersCache != null) {
 			layersCache.clear();
 			thrLocLayersCache.set(null);
