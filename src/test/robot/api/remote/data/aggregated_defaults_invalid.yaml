@@ -29,6 +29,7 @@ item:
       seed: "7a42d9c483244167"
       layer:
         size: "4MB"
+        heap: false
         cache: 16
       file: null
     verify: false

@@ -92,8 +92,9 @@ public class LinearLoadStepLocal
 			}
 
 			final DataInput dataInput = DataInput.instance(
-							dataInputConfig.stringVal("file"), dataInputConfig.stringVal("seed"), dataLayerSize,
-							dataLayerConfig.intVal("cache"));
+				dataInputConfig.stringVal("file"), dataInputConfig.stringVal("seed"), dataLayerSize,
+				dataLayerConfig.intVal("cache"), dataLayerConfig.boolVal("heap")
+			);
 
 			final int batchSize = loadConfig.intVal("batch-size");
 

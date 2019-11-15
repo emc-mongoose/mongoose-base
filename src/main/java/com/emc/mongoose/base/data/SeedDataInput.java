@@ -1,22 +1,22 @@
 package com.emc.mongoose.base.data;
 
 import static com.emc.mongoose.base.data.DataInput.generateData;
-
-import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
+import static java.nio.ByteBuffer.allocate;
+import static java.nio.ByteBuffer.allocateDirect;
 
 /**
-* Created by kurila on 23.07.14. A uniform data input for producing uniform data items. Implemented
-* as finite buffer of pseudo random bytes.
-*/
-public final class SeedDataInput extends CachedDataInput {
+ Created by kurila on 23.07.14. A uniform data input for producing uniform data items. Implemented
+ as finite buffer of pseudo random bytes.
+ */
+public final class SeedDataInput
+extends CachedDataInput {
 
 	public SeedDataInput() {
 		super();
 	}
 
-	public SeedDataInput(final long seed, final int size, final int cacheLimit) {
-		super(ByteBuffer.allocate(size), cacheLimit);
+	public SeedDataInput(final long seed, final int size, final int cacheLimit, final boolean isInHeapMem) {
+		super(isInHeapMem ? allocate(size) : allocateDirect(size), cacheLimit, isInHeapMem);
 		generateData(inputBuff, seed);
 	}
 
