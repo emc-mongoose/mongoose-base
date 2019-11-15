@@ -6,6 +6,7 @@ item:
       file: string
       layer:
         cache: int
+        heap: boolean
         size: any
       seed: string
     ranges:

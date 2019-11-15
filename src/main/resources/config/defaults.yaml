@@ -6,6 +6,7 @@ item:
       file: null
       layer:
         cache: 16
+        heap: false
         size: 4MB
       seed: 7a42d9c483244167
     ranges:

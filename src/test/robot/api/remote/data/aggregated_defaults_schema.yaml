@@ -26,6 +26,7 @@ item:
       seed: "string"
       layer:
         size: "any"
+        heap: "boolean"
         cache: "int"
       file: "string"
     verify: "boolean"

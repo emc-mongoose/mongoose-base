@@ -1,7 +1,7 @@
 # Contents
 
 ## 2019
-* [4.2.17](#4217) 2019-10-24
+* [4.2.17](#4217) 2019-11-18
 * [4.2.16](#4216) 2019-10-16
 * [4.2.15](#4215) 2019-08-23
 * [4.2.14](#4214) 2019-08-22
@@ -76,7 +76,8 @@
 | Id | Description |
 |----|-------------|
 | SLTM-1230 | curl HEAD does not return currently executing jobs | 
-| SLTM-1231 | curl DELETE does not stop running job | 
+| SLTM-1231 | curl DELETE does not stop running job |
+| BASE-1388 | Make it possible to use heap memory for the data input |
 
 # 4.2.16
 
