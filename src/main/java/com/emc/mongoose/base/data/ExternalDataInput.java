@@ -2,7 +2,6 @@ package com.emc.mongoose.base.data;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 
 /** Created by andrey on 24.07.17. */
@@ -17,7 +16,7 @@ public final class ExternalDataInput extends CachedDataInput {
 					final int layerSize,
 					final int layersCacheCountLimit)
 					throws IOException {
-		super((MappedByteBuffer) ByteBuffer.allocateDirect(layerSize), layersCacheCountLimit);
+		super(ByteBuffer.allocate(layerSize), layersCacheCountLimit);
 
 		int doneByteCount = 0, n;
 

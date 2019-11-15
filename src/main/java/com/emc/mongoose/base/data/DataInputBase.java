@@ -1,18 +1,18 @@
 package com.emc.mongoose.base.data;
 
 import java.io.IOException;
-import java.nio.MappedByteBuffer;
+import java.nio.ByteBuffer;
 
 /** Created by andrey on 24.07.17. */
 public abstract class DataInputBase implements DataInput {
 
-	protected MappedByteBuffer inputBuff;
+	protected ByteBuffer inputBuff;
 
 	protected DataInputBase() {
 		inputBuff = null;
 	}
 
-	protected DataInputBase(final MappedByteBuffer inputBuff) {
+	protected DataInputBase(final ByteBuffer inputBuff) {
 		this.inputBuff = inputBuff;
 		inputBuff.clear();
 	}
@@ -28,7 +28,7 @@ public abstract class DataInputBase implements DataInput {
 	}
 
 	@Override
-	public abstract MappedByteBuffer getLayer(final int layerIndex);
+	public abstract ByteBuffer getLayer(final int layerIndex);
 
 	@Override
 	public void close() throws IOException {

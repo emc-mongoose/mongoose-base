@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.CompletionHandler;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
@@ -336,7 +335,7 @@ public class DataItemImpl extends ItemImpl implements DataItem {
 	@Override
 	public final int read(final ByteBuffer dst) {
 		final int n;
-		final MappedByteBuffer ringBuff = (MappedByteBuffer) dataInput.getLayer(layerNum).asReadOnlyBuffer();
+		final ByteBuffer ringBuff = dataInput.getLayer(layerNum).asReadOnlyBuffer();
 		ringBuff.position((int) ((offset + position) % dataInputSize));
 		// bytes count to transfer
 		n = Math.min(dst.remaining(), ringBuff.remaining());
@@ -354,7 +353,7 @@ public class DataItemImpl extends ItemImpl implements DataItem {
 			return 0;
 		}
 		int m;
-		final MappedByteBuffer ringBuff = (MappedByteBuffer) dataInput.getLayer(layerNum).asReadOnlyBuffer();
+		final ByteBuffer ringBuff = dataInput.getLayer(layerNum).asReadOnlyBuffer();
 		ringBuff.position((int) ((offset + position) % dataInputSize));
 		final int n = Math.min(src.remaining(), ringBuff.remaining());
 		if (n > 0) {
@@ -376,7 +375,7 @@ public class DataItemImpl extends ItemImpl implements DataItem {
 	@Override
 	public final long writeToSocketChannel(final WritableByteChannel chanDst, final long maxCount)
 					throws IOException {
-		final MappedByteBuffer ringBuff = (MappedByteBuffer) dataInput.getLayer(layerNum).asReadOnlyBuffer();
+		final ByteBuffer ringBuff = dataInput.getLayer(layerNum).asReadOnlyBuffer();
 		long doneCount = 0;
 		int n, m;
 		// spin while not done either destination channel consumes all the data
@@ -397,7 +396,7 @@ public class DataItemImpl extends ItemImpl implements DataItem {
 	@Override
 	public final long writeToFileChannel(final FileChannel chanDst, final long maxCount)
 					throws IOException {
-		final MappedByteBuffer ringBuff = (MappedByteBuffer) dataInput.getLayer(layerNum).asReadOnlyBuffer();
+		final ByteBuffer ringBuff = dataInput.getLayer(layerNum).asReadOnlyBuffer();
 		int n = (int) ((offset + position) % dataInputSize);
 		ringBuff.position(n);
 		n = (int) Math.min(maxCount, ringBuff.remaining());
@@ -412,7 +411,7 @@ public class DataItemImpl extends ItemImpl implements DataItem {
 		final AsyncChannel dstChan, final long dstPos, final long maxCount, final A attach,
 		final CompletionHandler<Integer, ? super A> handler
 	) {
-		final MappedByteBuffer ringBuff = (MappedByteBuffer) dataInput.getLayer(layerNum).asReadOnlyBuffer();
+		final ByteBuffer ringBuff = dataInput.getLayer(layerNum).asReadOnlyBuffer();
 		int n = (int) ((offset + position) % dataInputSize);
 		ringBuff.position(n);
 		n = (int) Math.min(maxCount, ringBuff.remaining());

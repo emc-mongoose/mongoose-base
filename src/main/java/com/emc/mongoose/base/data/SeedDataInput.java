@@ -16,7 +16,7 @@ public final class SeedDataInput extends CachedDataInput {
 	}
 
 	public SeedDataInput(final long seed, final int size, final int cacheLimit) {
-		super((MappedByteBuffer) ByteBuffer.allocateDirect(size), cacheLimit);
+		super(ByteBuffer.allocate(size), cacheLimit);
 		generateData(inputBuff, seed);
 	}
 

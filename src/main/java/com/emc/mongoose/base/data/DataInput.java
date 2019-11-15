@@ -8,7 +8,6 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,7 +22,7 @@ public interface DataInput extends Closeable {
 
 	int getSize();
 
-	MappedByteBuffer getLayer(final int layerIndex);
+	ByteBuffer getLayer(final int layerIndex);
 
 	static DataInput instance(
 					final String inputFilePath,
@@ -63,7 +62,7 @@ public interface DataInput extends Closeable {
 		return instance;
 	}
 
-	static void generateData(final MappedByteBuffer byteLayer, final long seed) {
+	static void generateData(final ByteBuffer byteLayer, final long seed) {
 		final int ringBuffSize = byteLayer.capacity();
 		final int countWordBytes = Long.SIZE / Byte.SIZE;
 		final int countWords = ringBuffSize / countWordBytes;
