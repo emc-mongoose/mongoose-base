@@ -22,6 +22,7 @@ reference.
 |:-----------------------------------------------|:-------------|:-----------------|:-------------------------------------------------|
 | item-data-input-file                           | Path         | null             | The source file for the content generation       |
 | item-data-input-layer-cache                    | Integer > 0  | 25               | The maximum count of the data "layers" to be cached into the memory
+| item-data-input-layer-heap                     | Boolean      | false            | Specifies the type of memory for the data (payload) generation. Direct (off-heap) memory buffers are used by default.
 | item-data-input-layer-size                     | Fixed Size   | 4MB              | The size of the content source ring buffer |
 | item-data-input-seed                           | String (hex) | 7a42d9c483244167 | The initial value for the random data generation |
 | item-data-ranges-concat                        | Range | null | The number/range of numbers of the source objects used to concatenate every destination objec

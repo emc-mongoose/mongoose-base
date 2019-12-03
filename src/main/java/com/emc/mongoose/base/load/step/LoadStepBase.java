@@ -99,6 +99,7 @@ public abstract class LoadStepBase extends DaemonBase implements LoadStep, Runna
 				close();
 			} catch (final Exception e) {
 				throwUncheckedIfInterrupted(e);
+				doStop();
 				LogUtil.trace(Loggers.ERR, Level.WARN, e, "Failed to close \"{}\"", toString());
 			}
 		}

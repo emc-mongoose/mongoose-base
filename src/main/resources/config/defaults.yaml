@@ -6,6 +6,7 @@ item:
       file: null
       layer:
         cache: 16
+        heap: false
         size: 4MB
       seed: 7a42d9c483244167
     ranges:
@@ -82,7 +83,7 @@ run:
   node: false
   port: 9999
   scenario: null
-  version: 4.2.16
+  version: 4.2.17
 
 storage:
   auth:

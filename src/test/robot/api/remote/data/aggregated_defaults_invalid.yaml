@@ -29,6 +29,7 @@ item:
       seed: "7a42d9c483244167"
       layer:
         size: "4MB"
+        heap: false
         cache: 16
       file: null
     verify: false
@@ -52,7 +53,7 @@ run:
   id: 0
   port: 9999
   scenario: null
-  version: "4.2.16"
+  version: "4.2.17"
 storage:
   net:
     node:
