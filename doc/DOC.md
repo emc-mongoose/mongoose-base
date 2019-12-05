@@ -3,7 +3,7 @@
 1. Design<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;1.1. [Architecture](design/architecture)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;1.2. [Distributed Mode](design/distributed_mode)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;1.3. [Installer](src/main/java/com/emc/mongoose/base/env)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;1.3. [Installer](../src/main/java/com/emc/mongoose/base/env)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;1.4. [Recycle Mode](design/recycle_mode)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;1.5. [Data Reentrancy](design/data_reentrancy)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;1.6. [Byte Range Operations](usage/load/operations/byte_ranges)<br/>
