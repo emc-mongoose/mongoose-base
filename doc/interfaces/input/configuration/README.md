@@ -69,6 +69,7 @@ reference.
 | output-metrics-threshold                       | 0 <= Float <= 1 | 0 | The concurrency threshold to enable intermediate statistics calculation, 0 means no threshold
 | run-comment                                    | String | "" | A user defined comment to run the scenario via the Control API
 | run-node                                       | Flag | false | Run in the slave node or not
+| run-port                                       | Integer > 0 | 9999 | Port for REST API
 | run-scenario                                   | Path | null | The default file scenario to run, null means invoking the default.js scenario bundled into the distribution
 | run-version                                    | String | 4.2.15 | The Mongoose version
 | run-id                                         | long | 0 | The run identifier (see Runs API). If not specified, it takes the value of timestam
