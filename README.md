@@ -22,9 +22,9 @@
 &nbsp;&nbsp;&nbsp;&nbsp;2.3.1. [Load Steps](#231-load-steps)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;2.3.2. [Storage Drivers](#232-storage-drivers)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;2.3.3. [Scenario Engine](#233-scenario-engine)<br/>
-3.[Get started](doc/GETSTARTED.md)<br/>
-4.[Comparison With Similar Tools](doc/COMPARISION.md)<br/>
-5.[Documentation](/doc)<br/>
+3. [Get started](doc/GETSTARTED.md)<br/>
+4. [Comparison With Similar Tools](doc/COMPARISION.md)<br/>
+5. [Documentation](doc/)<br/>
 6. [Contributing](doc/CONTRIBUTING.md)<br/>
 7. [Changelog](doc/changelog)<br/>
 
