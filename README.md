@@ -22,45 +22,11 @@
 &nbsp;&nbsp;&nbsp;&nbsp;2.3.1. [Load Steps](#231-load-steps)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;2.3.2. [Storage Drivers](#232-storage-drivers)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;2.3.3. [Scenario Engine](#233-scenario-engine)<br/>
-&nbsp;&nbsp;2.4. [Comparison With Similar Tools](#21-comparison-with-similar-tools)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.4.1. [General](#241-general)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.4.2. [Purpose](#242-purpose)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.4.3. [Scalability](#243-scalability)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.4.4. [Input](#244-input)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.4.5. [Output](#245-output)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.4.6. [Load Generation Patterns](#246-load-generation-patterns)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.4.7. [Storages Support](#247-storages-support)<br/>
-3. Documentation<br/>
-&nbsp;&nbsp;3.1. [Deployment](doc/deployment)<br/>
-&nbsp;&nbsp;3.2. [Usage](doc/usage)<br/>
-&nbsp;&nbsp;3.2. [Troubleshooting](doc/troubleshooting)<br/>
-&nbsp;&nbsp;3.3. Storage Drivers<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.3.2. [S3](storage/driver/coop/netty/http/s3)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.3.3. [Atmos](storage/driver/coop/netty/http/atmos)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.3.4. [Swift](storage/driver/coop/netty/http/swift)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.3.5. [FS](storage/driver/coop/nio/fs)<br/>
-&nbsp;&nbsp;3.4. [Dependencies](doc/dependencies)<br/>
-&nbsp;&nbsp;3.5. [Interfaces](doc/interfaces#interfaces)<br/>
-&nbsp;&nbsp;&nbsp;3.5.1 [Input](doc/interfaces/input)<br/>
-&nbsp;&nbsp;&nbsp;3.5.2 [Output](doc/interfaces/output)<br/>
-&nbsp;&nbsp;&nbsp;3.5.3 [Remote API](doc/interfaces/api/remote)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.5.3.1 [Config API](doc/interfaces/api/remote#config)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.5.3.2 [Runs API](doc/interfaces/api/remote#run)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.5.3.3 [Logs API](doc/interfaces/api/remote#logs)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.5.3.4 [Metrics API](doc/interfaces/api/remote#metrics)<br/>
-&nbsp;&nbsp;&nbsp;3.5.4 Extentions <br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.5.4.1 [Load Step Types](doc/interfaces/api/extensions/load_step)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.5.4.2 [Storage Drivers](doc/interfaces/api/extensions/storage_driver)<br/>
-&nbsp;&nbsp;3.6. Design<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.7.1. [Architecture](doc/design/architecture)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.7.2. [Distributed Mode](doc/design/distributed_mode)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.7.3. [Installer](src/main/java/com/emc/mongoose/base/env)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.7.4. [Recycle Mode](doc/design/recycle_mode)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.7.5. [Data Reentrancy](doc/design/data_reentrancy)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.7.6. [Byte Range Operations](doc/usage/load/operations/byte_ranges)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.7.7. [Copy Mode](doc/design/copy_mode)<br/>
-&nbsp;&nbsp;3.8. [Contributing](CONTRIBUTING.md)<br/>
-&nbsp;&nbsp;3.9. [Changelog](doc/changelog)<br/>
+3.[Get started](doc/GETSTARTED.md)<br/>
+4.[Comparison With Similar Tools](doc/COMPARISION.md)<br/>
+5.[Documentation](/doc)<br/>
+6. [Contributing](doc/CONTRIBUTING.md)<br/>
+7. [Changelog](doc/changelog)<br/>
 
 # 1. Overview
 
