@@ -8,8 +8,6 @@
 
 # Contents
 
-[TOC]
-
 1. [Overview](#1-overview)
 2. [Features](#2-features)<br/>
 &nbsp;&nbsp;2.1. [Scalability](#21-scalability)<br/>
