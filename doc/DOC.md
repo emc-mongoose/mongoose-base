@@ -37,5 +37,5 @@
 &nbsp;&nbsp;7.4 Extentions <br/>
 &nbsp;&nbsp;&nbsp;&nbsp;7.4.1 [Load Step Types](interfaces/api/extensions/load_step)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;7.4.2 [Storage Drivers](interfaces/api/extensions/storage_driver)<br/>
-8. [Contributing](CONTRIBUTING.md)<br/>
+8. [Contributing](../CONTRIBUTING.md)<br/>
 9. [Changelog](changelog)<br/>
