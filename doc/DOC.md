@@ -34,8 +34,5 @@
 &nbsp;&nbsp;&nbsp;&nbsp;7.3.2 [Runs API](interfaces/api/remote#run)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;7.3.3 [Logs API](interfaces/api/remote#logs)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;7.3.4 [Metrics API](interfaces/api/remote#metrics)<br/>
-&nbsp;&nbsp;7.4 Extentions <br/>
-&nbsp;&nbsp;&nbsp;&nbsp;7.4.1 [Load Step Types](interfaces/api/extensions/load_step)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;7.4.2 [Storage Drivers](interfaces/api/extensions/storage_driver)<br/>
 8. [Contributing](../CONTRIBUTING.md)<br/>
 9. [Changelog](changelog)<br/>
