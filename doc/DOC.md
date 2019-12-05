@@ -34,5 +34,5 @@
 &nbsp;&nbsp;&nbsp;&nbsp;7.3.2 [Runs API](interfaces/api/remote#run)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;7.3.3 [Logs API](interfaces/api/remote#logs)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;7.3.4 [Metrics API](interfaces/api/remote#metrics)<br/>
-8. [Contributing](../CONTRIBUTING.md)<br/>
+8. [Contributing](CONTRIBUTING.md)<br/>
 9. [Changelog](changelog)<br/>

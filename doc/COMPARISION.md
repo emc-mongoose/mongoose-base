@@ -18,7 +18,7 @@
 ## 1. General
 |                   | Mongoose  | COSBench | LoadRunner         | Locust |
 | ---               | :---:     | :---:    | :---:              | :---:  |
-|**License**        |[MIT License](LICENSE)|[Apache 2.0](https://github.com/intel-cloud/cosbench/blob/master/LICENSE)|[Proprietary](https://en.wikipedia.org/wiki/LoadRunner)|[MIT License](https://github.com/locustio/locust/blob/master/LICENSE)|
+|**License**        |[MIT License](../LICENSE)|[Apache 2.0](https://github.com/intel-cloud/cosbench/blob/master/LICENSE)|[Proprietary](https://en.wikipedia.org/wiki/LoadRunner)|[MIT License](https://github.com/locustio/locust/blob/master/LICENSE)|
 |**Open Source**    |:heavy_check_mark:|:heavy_check_mark:    |:x:|  :heavy_check_mark:|
 
 ## 2. Purpose
@@ -52,7 +52,7 @@
 | ---                   | :---:     | :---:    | :---:      | :---:  |
 |**[Weighted load](https://github.com/emc-mongoose/mongoose-load-step-weighted)**|:heavy_check_mark:| :heavy_check_mark:| TBD |:x:|
 |**[Pipeline load](https://github.com/emc-mongoose/mongoose-load-step-pipeline)**|:heavy_check_mark:| :x:| TBD |:x:|
-|**[Recycle mode](doc/design/recycle_mode)**|:heavy_check_mark: |:x:| TBD |:x:|
+|**[Recycle mode](design/recycle_mode)**|:heavy_check_mark: |:x:| TBD |:x:|
 
 ## 7. Storages Support
 
