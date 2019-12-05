@@ -7,13 +7,13 @@
 
 # Content 
 
-&nbsp;&nbsp;1. [General](#241-general)<br/>
-&nbsp;&nbsp;2. [Purpose](#242-purpose)<br/>
-&nbsp;&nbsp;3. [Scalability](#243-scalability)<br/>
-&nbsp;&nbsp;4. [Input](#244-input)<br/>
-&nbsp;&nbsp;5. [Output](#245-output)<br/>
-&nbsp;&nbsp;6. [Load Generation Patterns](#246-load-generation-patterns)<br/>
-&nbsp;&nbsp;7. [Storages Support](#247-storages-support)<br/>
+&nbsp;&nbsp;1. [General](#1-general)<br/>
+&nbsp;&nbsp;2. [Purpose](#2-purpose)<br/>
+&nbsp;&nbsp;3. [Scalability](#3-scalability)<br/>
+&nbsp;&nbsp;4. [Input](#4-input)<br/>
+&nbsp;&nbsp;5. [Output](#5-output)<br/>
+&nbsp;&nbsp;6. [Load Generation Patterns](#6-load-generation-patterns)<br/>
+&nbsp;&nbsp;7. [Storages Support](#7-storages-support)<br/>
 
 ## 1. General
 |                   | Mongoose  | COSBench | LoadRunner         | Locust |
