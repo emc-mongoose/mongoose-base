@@ -25,6 +25,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;4.3. [Docker](deployment#docker)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;4.4. [Kubernetes](deployment#kubernetes)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.4.1 [Helm](https://github.com/emc-mongoose/mongoose-helm-charts)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.4.2 [Manual](deployment#manual-deployment)<br/>
 
 5. [Usage](usage)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;5.1. [Input](usage/input)<br/>
