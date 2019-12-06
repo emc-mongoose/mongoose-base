@@ -1,4 +1,4 @@
-# All documentation
+# Documentation
 
 1. [Get started](getstarted)<br/>
 
