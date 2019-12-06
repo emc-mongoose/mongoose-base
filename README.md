@@ -10,18 +10,6 @@
 
 1. [Overview](#1-overview)
 2. [Features](#2-features)<br/>
-&nbsp;&nbsp;2.1. [Scalability](#21-scalability)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.1.1. [Vertical](#211-vertical)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.1.2. [Horizontal](#212-horizontal)<br/>
-&nbsp;&nbsp;2.2. [Customization](#22-customization)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.2.1. [Flexible Configuration](#221-flexible-configuration)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.2.2. [Load Generation Patterns](#222-load-generation-patterns)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.2.3. [Scenarios](#223-scenarios)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.2.4. [Metrics Reporting](#224-metrics-reporting)<br/>
-&nbsp;&nbsp;2.3. [Extension](#23-extension)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.3.1. [Load Steps](#231-load-steps)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.3.2. [Storage Drivers](#232-storage-drivers)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.3.3. [Scenario Engine](#233-scenario-engine)<br/>
 3. [Get started](doc/GETSTARTED.md)<br/>
 4. [Comparison With Similar Tools](doc/COMPARISION.md)<br/>
 5. [Documentation](doc/)<br/>
