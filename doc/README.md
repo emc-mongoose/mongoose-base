@@ -1,13 +1,15 @@
 # All documentation
 
-1. Design<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;1.1. [Architecture](design/architecture)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;1.2. [Distributed Mode](design/distributed_mode)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;1.3. [Installer](design/installer)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;1.4. [Recycle Mode](design/recycle_mode)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;1.5. [Data Reentrancy](design/data_reentrancy)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;1.6. [Byte Range Operations](usage/load/operations/byte_ranges)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;1.7. [Copy Mode](design/copy_mode)<br/>
+1. Design <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;1.1. [Basic Terms](design//architecture#1-basic-terms)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;1.2. [Components](design//architecture#2-components)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;1.3. [Concurrency](design//architecture#3-concurrency)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;1.4. [Distributed Mode](design/distributed_mode)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;1.5. [Installer](design/installer)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;1.6. [Recycle Mode](design/recycle_mode)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;1.7. [Data Reentrancy](design/data_reentrancy)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;1.8. [Byte Range Operations](usage/load/operations/byte_ranges)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;1.9. [Copy Mode](design/copy_mode)<br/>
 2. [Deployment](deployment)<br/>
 3. [Usage](usage)<br/>
 4. [Troubleshooting](troubleshooting)<br/>
