@@ -54,7 +54,7 @@ bottleneck.
 
 * Safe: the configuration options are being checked against the schema
 * Extensible: Mongoose's plugins may come up with own configuration options making them available from the joint CLI and being checked against the schema 
-* [Expressions](doc/interfaces/input/configuration#124-expression) allow to specify the dynamically changing values 
+* [Expressions](doc/usage/input/configuration#124-expression) allow to specify the dynamically changing values 
 
 ### 2.2.2. Load Generation Patterns
 
@@ -76,11 +76,11 @@ bottleneck.
 
 * Custom Payload Data
 
-### 2.2.3. [Scenarios](doc/interfaces/input/scenarios)
+### 2.2.3. [Scenarios](doc/usage/input/scenarios)
 
 Scenaruis allow to organize the load steps in the required order and reuse the complex performance tests
 
-### 2.2.4. [Metrics Reporting](doc/interfaces/output#2-metrics)
+### 2.2.4. [Metrics Reporting](doc/usage/output#2-metrics)
 
 The metrics reported by Mongoose are designed to be most useful for the performance analysis. The following metrics are
 available:
