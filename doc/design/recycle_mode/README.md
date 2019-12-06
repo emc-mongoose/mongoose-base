@@ -1,3 +1,14 @@
+# Recycle mode
+
+# Contents
+
+1. [Introduction](#introduction)
+2. [Limitations](#limitations)
+3. [Requirements](#requirements)
+4. [Approach](#approach)
+5. [Configuration](#configuration)
+6. [Output](#output)
+
 # Introduction
 
 Some cases require to perform the load operations on the limited set of
