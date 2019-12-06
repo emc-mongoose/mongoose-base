@@ -9,19 +9,19 @@ java -jar mongoose-<VERSION>.jar --load-step-id=custom_test_0 ...
 
 See also the [output reference](../../output#111-load-step-id)
 
-# 2. Type
+## 2. Type
 
-## 2.1. Linear
+### 2.1. Linear
 
 *Linear* load step type is used by default and may be considered as a straightforward way to generate a load.
 
-## 2.2. Weighted
+### 2.2. Weighted
 
 *Weighted* load step type is additional and requires the [WeightedLoad](https://github.com/emc-mongoose/mongoose-load-step-weighted) extention. 
 Weighted load extension, allowing to generate 20% write and 80% read operations, for example.
 
 
-## 2.3. Pipeline
+### 2.3. Pipeline
 
 *Pipeline* load step type is additional and requires the [PipelineLoad](https://github.com/emc-mongoose/mongoose-load-step-pipeline) extention. 
 Load operations pipeline (create, delay, read-then-update, for example), extension.
