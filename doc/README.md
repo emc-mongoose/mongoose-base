@@ -3,9 +3,9 @@
 
 
 
-1. [Get started](doc/getstarted)<br/>
+1. [Get started](getstarted)<br/>
 
-2. [Comparison With Similar Tools](doc/comparision)<br/>
+2. [Comparison With Similar Tools](comparision)<br/>
 
 3. Design <br/>
 &nbsp;&nbsp;&nbsp;&nbsp;3.1. [Architecture](design/architecture)<br/>
