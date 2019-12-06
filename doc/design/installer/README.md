@@ -1,3 +1,11 @@
+# Installer
+
+# Contents
+
+1. [Introduction](#introduction)
+2. [Installer](#installer)
+3. [Stages](#stages)
+
 # Introduction
 
 To use any Mongoose extension it should be placed to the `<USER_HOME_DIR>/.mongoose/<VERSION>/ext` directory.
