@@ -82,15 +82,16 @@
 
 **&nbsp;&nbsp;3.3. [Load Steps](load/steps)<br/>**
 &nbsp;&nbsp;&nbsp;&nbsp;3.3.1. [Load Step Identification](load/steps#1-identification)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.3.2. [Load Step Limits](load/steps#2-limits)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2.1. [Operations Count](load/steps#21-operations-count)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2.2. [Time](load/steps#22-time)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2.3. [Transfer Size](load/steps#23-transfer-size)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2.4. [End Of Input](load/steps#24-end-of-input)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.3.3. [Types](load/steps#3-type) <br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3.1. [Linear Load](load/steps#31-linear)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3.2. [Pipeline Load](https://github.com/emc-mongoose/mongoose-load-step-pipeline)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3.3. [Weighted Load](https://github.com/emc-mongoose/mongoose-load-step-weighted)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;3.3.2. [Types](load/steps#3-type) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2.1. [Linear Load](load/steps#31-linear)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2.2. [Pipeline Load](https://github.com/emc-mongoose/mongoose-load-step-pipeline)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2.3. [Weighted Load](https://github.com/emc-mongoose/mongoose-load-step-weighted)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;3.3.3. [Load Step Limits](load/steps#2-limits)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3.1. [Operations Count](load/steps#21-operations-count)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3.2. [Time](load/steps#22-time)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3.3. [Transfer Size](load/steps#23-transfer-size)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3.4. [End Of Input](load/steps#24-end-of-input)<br/>
+
 
 ### 4. [Load Scaling](scaling)
 &nbsp;&nbsp;4.1. [Rate](scaling#1-rate)<br/>
