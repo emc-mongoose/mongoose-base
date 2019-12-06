@@ -5,6 +5,7 @@
 1. [Environment Requirements](#environment-requirements)<br/>
 2. [Jar](#jar)<br/>
 3. [Docker](#docker)<br/>
+	3.1. [Mount files](#mount-files)
 4. [Kubernetes](#kubernetes)<br/>
 	4.1.[Helm](#helm)<br/>
 	4.2.[Manual](#manual-deployment)<br/>
@@ -25,6 +26,8 @@ High-load tests may allocate up to few GBs of the memory depending on the scenar
 Mongoose is distributed as a single jar file from:
 http://central.maven.org/maven2/com/github/emc-mongoose/mongoose-base/
 
+[About bundle jars](https://github.com/emc-mongoose/mongoose#backward-compatibility-notes)
+
 # Docker
 
 Mongoose images are stored in the [Docker Hub](https://hub.docker.com/u/emcmongoose/)
@@ -44,6 +47,17 @@ docker run \
     emcmongoose/mongoose[-<TYPE>] [\
     <ARGS>]
 ```
+
+##### Mount files
+
+An example for mounting and using a scenario. Thus, files for input/output, configurations, logs and metrics can be mounted.
+
+```
+docker run -d --network host  \
+    -v /path/to/scenario.js:/opt/scenario.js \
+    emcmongoose/mongoose[-<TYPE>] \
+    --run-scenario=/opt/scenario.js
+``` 
 
 ### Distributed Mode
 
