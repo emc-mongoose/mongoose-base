@@ -10,10 +10,10 @@
 
 1. [Overview](#1-overview)
 2. [Features](#2-features)<br/>
-3. [Get started](doc/GETSTARTED.md)<br/>
-4. [Comparison With Similar Tools](doc/COMPARISION.md)<br/>
+3. [Get started](doc/getstarted)<br/>
+4. [Comparison With Similar Tools](doc/comparision)<br/>
 5. [Documentation](doc)<br/>
-6. [Contributing](doc/CONTRIBUTING.md)<br/>
+6. [Contributing](doc/contributing)<br/>
 7. [Changelog](doc/changelog)<br/>
 
 # 1. Overview

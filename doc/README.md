@@ -60,6 +60,6 @@
 
 6. [Dependencies](dependencies)<br/>
 
-7. [Contributing](CONTRIBUTING.md)<br/>
+7. [Contributing](contributing)<br/>
 
 8. [Changelog](changelog)<br/>
