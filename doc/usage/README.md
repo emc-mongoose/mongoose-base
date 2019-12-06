@@ -60,7 +60,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.3.2.1.1. [Multiuser Variable Path](item/output#211-multiuser)<br/>
 
 **&nbsp;&nbsp;3.2. Load Operations<br/>**
-&nbsp;&nbsp;&nbsp;&nbsp;3.2.1. [Load Operation Types](load/operations/types)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;3.2.1. [Operation Types](load/operations/types)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.1.1. [Create](load/operations/types#1-create)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.1.1.1. [Basic](load/operations/types#11-basic)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.1.1.2. [Copy Mode](load/operations/types#12-copy-mode)<br/>
@@ -78,15 +78,15 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.3.1. [Storage-Side Concatenation](load/operations/composite#1-storage-side-concatenation)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.3.1.1. [S3 Multipart Upload](load/operations/composite#131-s3-multipart-upload)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.3.1.2. [Swift Dynamic Large Objects](load/operations/composite#132-swift-dynamic-large-objects)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.2.4. [Load Operations Recycling](load/operations/recycling)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;3.2.4. [Operations Recycling](load/operations/recycling)<br/>
 
 **&nbsp;&nbsp;3.3. [Load Steps](load/steps)<br/>**
-&nbsp;&nbsp;&nbsp;&nbsp;3.3.1. [Load Step Identification](load/steps#1-identification)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.3.2. [Types](load/steps#3-type) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;3.3.1. [Step Identification](load/steps#1-identification)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;3.3.2. [Step Types](load/steps#3-type) <br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2.1. [Linear Load](load/steps#31-linear)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2.2. [Pipeline Load](https://github.com/emc-mongoose/mongoose-load-step-pipeline)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2.3. [Weighted Load](https://github.com/emc-mongoose/mongoose-load-step-weighted)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.3.3. [Load Step Limits](load/steps#2-limits)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;3.3.3. [Step Limits](load/steps#2-limits)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3.1. [Operations Count](load/steps#21-operations-count)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3.2. [Time](load/steps#22-time)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3.3. [Transfer Size](load/steps#23-transfer-size)<br/>
