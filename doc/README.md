@@ -9,9 +9,9 @@
 
 3. [Design](design) <br/>
     3.1. [Architecture](design/architecture)<br/>
-        3.1.1 [Basic Terms](design//architecture#1-basic-terms)<br/>
-        3.1.2 [Components](design//architecture#2-components)<br/>
-        3.1.3 [Concurrency](design//architecture#3-concurrency)<br/>
+            3.1.1 [Basic Terms](design//architecture#1-basic-terms)<br/>
+            3.1.2 [Components](design//architecture#2-components)<br/>
+            3.1.3 [Concurrency](design//architecture#3-concurrency)<br/>
     3.2. [Distributed Mode](design/distributed_mode)<br/>
     3.3. [Installer](design/installer)<br/>
     3.4. [Recycle Mode](design/recycle_mode)<br/>
