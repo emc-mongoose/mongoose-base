@@ -1,11 +1,10 @@
 # Contents
 
 ### 1. [Input](input)
-&nbsp;&nbsp;1.1. [Defaults](defaults)<br/>
-&nbsp;&nbsp;1.2. [Configuration](input/configuration)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;1.2.1. [CLI](input/cli)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;1.2.2. [Configuration Reference Table](input/configuration#11-reference-table)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;1.2.3. [Expressions](input/configuration#124-expression)<br/>
+&nbsp;&nbsp;1.1. [Configuration](input/configuration)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;1.1.1. [Configuration Reference Table](input/configuration#11-reference-table)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;1.1.2. [Expressions](input/configuration#124-expression)<br/>
+&nbsp;&nbsp;1.2. [CLI](input/cli)<br/>
 &nbsp;&nbsp;1.3. [Scenarios](input/scenarios)<br/>
     
 ### 2. [Output](output)
