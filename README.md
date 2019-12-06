@@ -10,7 +10,7 @@
 
 1. [Overview](#1-overview)
 2. [Features](#2-features)<br/>
-3. [Bundles & Extenstions](#2-bundles-and-extenstions)
+3. [Bundles & Extenstions](#3-bundles-and-extenstions)
 4. [Get started](doc/getstarted)<br/>
 5. [Comparison With Similar Tools](doc/comparision)<br/>
 6. [Documentation](doc)<br/>
@@ -126,7 +126,7 @@ which does nothing actually and useful only for demo/testing purposes. See the k
 Any Mongoose scenario may be written using any JSR-223 compliant scripting language. Javascript support is available
 out-of-the-box.
 
-# Bundles and Extenstions
+# 3. Bundles and Extenstions
 
 This repo (`mongoose-base`) containts only base functionality. All extentions and additional mongoose tools located into the independent repos and the corresponding components. Each component has its own documentation, CI versioning.
 
