@@ -78,12 +78,14 @@ client configuration. The functionality includes:
 * Rate limit related things
 * Callbacks for the completed operations
 
-The driver is a `layer` between the *Load generator* and the tested Storage. Since storages of different types have different interaction protocols, then the implementation of Storage driver depends on the storage type. Therefore, the base image of the mongoose has only the implementation of the **Mock Storage driver**.
+![Storage drivers](../../images/storage_drivers.png)
+
+The driver is a "layer" between the *Load generator* and the tested Storage. Since storages of different types have different interaction protocols, then the implementation of Storage driver depends on the storage type. Therefore, the base image of the mongoose has only the implementation of the **Mock Storage driver**.
 
 Storage mock in a mongoose is called **Dummy Mock**.
 It is set by a parameter `--storage-driver-type=dummy-mock`.
 And it is needed only for **test purposes**.
-To use mongoose with real Storage, use Storage driver extentions. 
+To use mongoose with real Storage, use [Storage driver extentions](https://github.com/emc-mongoose/mongoose#bundle-contents). 
 
 ## 2.2. Load Generator
 
