@@ -12,7 +12,7 @@
 2. [Features](#2-features)<br/>
 3. [Get started](doc/GETSTARTED.md)<br/>
 4. [Comparison With Similar Tools](doc/COMPARISION.md)<br/>
-5. [Documentation](doc/)<br/>
+5. [Documentation](doc)<br/>
 6. [Contributing](doc/CONTRIBUTING.md)<br/>
 7. [Changelog](doc/changelog)<br/>
 
@@ -66,7 +66,7 @@ bottleneck.
 
 ### 2.2.3. [Scenarios](doc/usage/input/scenarios)
 
-Scenaruis allow to organize the load steps in the required order and reuse the complex performance tests
+Scenarios allow to organize the load steps in the required order and reuse the complex performance tests
 
 ### 2.2.4. [Metrics Reporting](doc/usage/output#2-metrics)
 
