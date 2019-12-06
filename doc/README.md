@@ -8,8 +8,8 @@
 2. [Comparison With Similar Tools](comparision)<br/>
 
 3. [Design](design) <br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.1. [Architecture](design/architecture)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.1 [Basic Terms](design//architecture#1-basic-terms)<br/>
+    3.1. [Architecture](design/architecture)<br/>
+        3.1.1 [Basic Terms](design//architecture#1-basic-terms)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.2 [Components](design//architecture#2-components)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.3 [Concurrency](design//architecture#3-concurrency)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;3.2. [Distributed Mode](design/distributed_mode)<br/>
