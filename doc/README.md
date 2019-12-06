@@ -4,7 +4,7 @@
 
 2. [Comparison With Similar Tools](comparision)<br/>
 
-3. [Design](design) <br/>
+**3. [Design](design) <br/>**
     3.1. [Architecture](design/architecture)<br/>
     &nbsp;&nbsp;&nbsp;&nbsp;3.1.1 [Basic Terms](design//architecture#1-basic-terms)<br/>
     &nbsp;&nbsp;&nbsp;&nbsp;3.1.2 [Components](design//architecture#2-components)<br/>
@@ -16,7 +16,7 @@
     3.6. [Byte Range Operations](usage/load/operations/byte_ranges)<br/>
     3.7. [Copy Mode](design/copy_mode)<br/>
 
-4. [Deployment](deployment)<br/>
+**4. [Deployment](deployment)<br/>**
     4.1. [Environment Requirements](deployment#environment-requirements)<br/>
     4.2. [Jar](deployment#jar)<br/>
     4.3. [Docker](deployment#docker)<br/>
@@ -25,7 +25,7 @@
     &nbsp;&nbsp;&nbsp;&nbsp;4.4.1 [Helm](https://github.com/emc-mongoose/mongoose-helm-charts)<br/>
     &nbsp;&nbsp;&nbsp;&nbsp;4.4.2 [Manual](deployment#manual-deployment)<br/>
 
-5. [Usage](usage)<br/>
+**5. [Usage](usage)<br/>**
     5.1. [Input](usage/input)<br/>
     &nbsp;&nbsp;&nbsp;&nbsp;5.1.1. [CLI](usage/input/cli)<br/>
     &nbsp;&nbsp;&nbsp;&nbsp;5.1.2. [Configuration](usage/input/configuration)<br/>
@@ -47,9 +47,9 @@
     &nbsp;&nbsp;&nbsp;&nbsp;5.5.2. [Concurrency](usage/scaling#2-concurrency)<br/>
     &nbsp;&nbsp;&nbsp;&nbsp;5.5.3. [Distributed Mode](usage/scaling3-distributed-mode)<br/>
 
-6. [Troubleshooting](troubleshooting)<br/>
+**6. [Troubleshooting](troubleshooting)<br/>**
 
-7. [Extentions](https://github.com/emc-mongoose/mongoose)<br/>
+**7. [Extentions](https://github.com/emc-mongoose/mongoose)<br/>**
     7.1. Storage Drivers<br/>
     &nbsp;&nbsp;&nbsp;&nbsp;7.1.1  [S3](https://github.com/emc-mongoose/mongoose-storage-driver-s3)<br/>
     &nbsp;&nbsp;&nbsp;&nbsp;7.1.2. [Atmos](https://github.com/emc-mongoose/mongoose-storage-driver-atmos)<br/>
@@ -64,8 +64,8 @@
     &nbsp;&nbsp;&nbsp;&nbsp;7.2.2. [Weighted](https://github.com/emc-mongoose/mongoose-load-step-weighted)<br/>
     7.3. [Auxiliary Tools](https://github.com/emc-mongoose/mongoose#auxiliary-tools)
 
-8. [Dependencies](dependencies)<br/>
+**8. [Dependencies](dependencies)<br/>**
 
-9. [Contributing](contributing)<br/>
+**9. [Contributing](contributing)<br/>**
 
-10. [Changelog](changelog)<br/>
+**10. [Changelog](changelog)<br/>**
