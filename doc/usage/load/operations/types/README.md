@@ -47,7 +47,7 @@ Load
     .run();
 ```
 
-For additional usage details refer to the [Copy Mode Specification](../../../../design/copy_mode).
+For additional usage details refer to the [Copy Mode Specification](../../../../design/modes/copy_mode).
 
 **Note**:
 > Not all storage driver implementations support the copy mode. For details refer to the particular storage driver

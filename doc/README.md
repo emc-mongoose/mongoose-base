@@ -11,8 +11,8 @@
     &nbsp;&nbsp;&nbsp;&nbsp;3.1.3 [Concurrency](design//architecture#3-concurrency)<br/>
     3.2. [Modes](design/modes)<br/>
     &nbsp;&nbsp;&nbsp;&nbsp;3.2.1 [Distributed Mode](design/modes/distributed_mode)<br/>
-    &nbsp;&nbsp;&nbsp;&nbsp;3.2.2 [Recycle Mode](design/recycle_mode)<br/>
-    &nbsp;&nbsp;&nbsp;&nbsp;3.2.3 [Copy Mode](design/copy_mode)<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;3.2.2 [Recycle Mode](design/modes/recycle_mode)<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;3.2.3 [Copy Mode](design/modes/copy_mode)<br/>
     3.3. [Installer](design/installer)<br/>
     3.4. [Data Reentrancy](design/data_reentrancy)<br/>
     3.5. [Byte Range Operations](usage/load/operations/byte_ranges)<br/>

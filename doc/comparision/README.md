@@ -52,7 +52,7 @@
 | ---                   | :---:     | :---:    | :---:      | :---:  |
 |**[Weighted load](https://github.com/emc-mongoose/mongoose-load-step-weighted)**|:heavy_check_mark:| :heavy_check_mark:| TBD |:x:|
 |**[Pipeline load](https://github.com/emc-mongoose/mongoose-load-step-pipeline)**|:heavy_check_mark:| :x:| TBD |:x:|
-|**[Recycle mode](../design/recycle_mode)**|:heavy_check_mark: |:x:| TBD |:x:|
+|**[Recycle mode](../design/modes/recycle_mode)**|:heavy_check_mark: |:x:| TBD |:x:|
 
 ## 7. Storages Support
 

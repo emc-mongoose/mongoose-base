@@ -6,7 +6,7 @@
     1.3 [Concurrency](architecture#3-concurrency)<br/>
 2. [Distributed Mode](modes/distributed_mode)
 3. [Installer](installer)
-4. [Recycle Mode](recycle_mode)
+4. [Recycle Mode](modes/recycle_mode)
 5. [Data Reentrancy](data_reentrancy)
 6. [Byte Range Operations](../usage/load/operations/byte_ranges)
-7. [Copy Mode](copy_mode)
+7. [Copy Mode](modes/copy_mode)

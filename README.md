@@ -47,7 +47,7 @@ bottleneck.
 
 ### 2.2.2. Load Generation Patterns
 
-* CRUD operations and the extensions: Noop, [Copy](doc/design/copy_mode), etc
+* CRUD operations and the extensions: Noop, [Copy](doc/design/modes/copy_mode), etc
 
 * [Parial Operations](doc/usage/load/operations/byte_ranges)
 
@@ -56,7 +56,7 @@ bottleneck.
 * Complex Load Steps
     * [Pipeline Load](https://github.com/emc-mongoose/mongoose-load-step-pipeline)
     * [Weighted Load](https://github.com/emc-mongoose/mongoose-load-step-weighted)
-* [Recycle Mode](doc/design/recycle_mode)
+* [Recycle Mode](doc/design/modes/recycle_mode)
 
 * [Data Reentrancy](doc/design/data_reentrancy)
 

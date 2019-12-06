@@ -21,5 +21,5 @@ This mod is used to increase the load on the stoarge.
 
 # Other modes:
 
-* [Recycle mode](../recycle_mode)
-* [Copy mode](../copy_mode)
+* [Recycle mode](recycle_mode)
+* [Copy mode](copy_mode)
