@@ -16,6 +16,8 @@ in the file ```<MONGOOSE_DIR>/config/defaults.yaml```. The file contains
 the comments so it's quite self-descriptive and may be used as quick
 reference.
 
+TODO DEFAULTS -> doc/usage/defaults
+
 ### 1.1. Reference Table
 
 | Name                                           | Type         | Default Value    | Description                                      |
