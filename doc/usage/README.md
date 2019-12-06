@@ -1,14 +1,15 @@
 # Contents
 
-1. Input<br/>
-&nbsp;&nbsp;1.1. [Defaults](defaults)<br/>
-&nbsp;&nbsp;1.2. [Configuration](input/configuration)<br/>
+**1. Input<br/>**
+    1.1. [Defaults](defaults)<br/>
+    1.2. [Configuration](input/configuration)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;1.2.1. [CLI](input/cli)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;1.2.2. [Configuration Reference Table](input/configuration#11-reference-table)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;1.2.3. [Expressions](input/configuration#124-expression)<br/>
-&nbsp;&nbsp;1.3. [Scenarios](input/scenarios)<br/>
-2. [Output](output)<br/>
-&nbsp;&nbsp;2.1. [General Output](output#1-general)<br/>
+    1.3. [Scenarios](input/scenarios)<br/>
+    
+**2. [Output](output)<br/>**
+    2.1. [General Output](output#1-general)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;2.1.1. [Logging](output#11-logging-subsystem)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1.1. [Logs Separation By Load Step Id](output#111-load-step-id)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.1.2. [Console](output#112-console)<br/>
@@ -22,13 +23,14 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2.5. [Error Messages](output#125-error-messages)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2.6. [General Messages](output#126-general-messages)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.1.2.7. [Item List Files](output#127-item-list-files)<br/>
-&nbsp;&nbsp;2.2. [Metrics Output](output#2-metrics)<br/>
+    2.2. [Metrics Output](output#2-metrics)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;2.2.1. [Load Average](output#21-load-average)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;2.2.2. [Load Step Summary](output#22-load-step-summary)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;2.2.3. [Operation Traces](output#23-operation-traces)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;2.2.4. [Accounting Activation By The Threshold](output#24-threshold)<br/>
-3. Load Generation<br/>
-&nbsp;&nbsp;3.1. Items<br/>
+
+**3. Load Generation<br/>**
+    3.1. Items<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;3.1.1. [Item Types](item/types)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.1.1. [Data Item](item/types#1-data)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.1.1.1. [Data Item Size](item/types#11-size)<br/>
@@ -56,7 +58,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.3.2. [Item Output Path](item/output#2-path)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.3.2.1. [Variable Path](item/output#21-variable)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.3.2.1.1. [Multiuser Variable Path](item/output#211-multiuser)<br/>
-&nbsp;&nbsp;3.2. Load Operations<br/>
+    3.2. Load Operations<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;3.2.1. [Load Operation Types](load/operations/types)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.1.1. [Create](load/operations/types#1-create)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.1.1.1. [Basic](load/operations/types#11-basic)<br/>
@@ -76,7 +78,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.3.1.1. [S3 Multipart Upload](load/operations/composite#131-s3-multipart-upload)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.3.1.2. [Swift Dynamic Large Objects](load/operations/composite#132-swift-dynamic-large-objects)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;3.2.4. [Load Operations Recycling](load/operations/recycling)<br/>
-&nbsp;&nbsp;3.3. [Load Steps](load/steps)<br/>
+    3.3. [Load Steps](load/steps)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;3.3.1. [Load Step Identification](load/steps#1-identification)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;3.3.2. [Load Step Limits](load/steps#2-limits)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2.1. [Operations Count](load/steps#21-operations-count)<br/>
@@ -87,7 +89,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3.1. Linear Load<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3.2. [Pipeline Load](https://github.com/emc-mongoose/mongoose-load-step-pipeline)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3.3. [Weighted Load](https://github.com/emc-mongoose/mongoose-load-step-weighted)<br/>
-4. [Load Scaling](scaling)<br/>
-&nbsp;&nbsp;4.1. [Rate](scaling#1-rate)<br/>
-&nbsp;&nbsp;4.2. [Concurrency](scaling#2-concurrency)<br/>
-&nbsp;&nbsp;4.3. [Distributed Mode](scaling3-distributed-mode)<br/>
+
+**4. [Load Scaling](scaling)<br/>**
+    4.1. [Rate](scaling#1-rate)<br/>
+    4.2. [Concurrency](scaling#2-concurrency)<br/>
+    4.3. [Distributed Mode](scaling3-distributed-mode)<br/>
