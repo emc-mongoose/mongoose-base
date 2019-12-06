@@ -20,6 +20,7 @@
     4.1. [Environment Requirements](deployment#environment-requirements)<br/>
     4.2. [Jar](deployment#jar)<br/>
     4.3. [Docker](deployment#docker)<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;4.3.1 [Mount files](deployment#mount-files)<br/>
     4.4. [Kubernetes](deployment#kubernetes)<br/>
     &nbsp;&nbsp;&nbsp;&nbsp;4.4.1 [Helm](https://github.com/emc-mongoose/mongoose-helm-charts)<br/>
     &nbsp;&nbsp;&nbsp;&nbsp;4.4.2 [Manual](deployment#manual-deployment)<br/>
