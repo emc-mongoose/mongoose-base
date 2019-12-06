@@ -7,7 +7,7 @@
 
 2. [Comparison With Similar Tools](comparision)<br/>
 
-3. Design <br/>
+3. [Design](design) <br/>
 &nbsp;&nbsp;&nbsp;&nbsp;3.1. [Architecture](design/architecture)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.1 [Basic Terms](design//architecture#1-basic-terms)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.2 [Components](design//architecture#2-components)<br/>
