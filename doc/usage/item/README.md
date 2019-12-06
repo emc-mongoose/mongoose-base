@@ -1,3 +1,5 @@
+# Items
+
 1. [Item types](types)<br/>
-1. [Items input](input)<br/>
-1. [Items output](output)<br/>
+2. [Items input](input)<br/>
+3. [Items output](output)<br/>
