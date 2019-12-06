@@ -33,7 +33,7 @@ significant performance degradation.
 
 ### 2.1.2. Horizontal
 
-The [distributed mode](doc/design/distributed_mode) in Mongoose was designed as P2P network. Each peer/node performs
+The [distributed mode](doc/design/modes/distributed_mode) in Mongoose was designed as P2P network. Each peer/node performs
 independently as much as possible. This eliminates the excess network interaction between the nodes which may be a
 bottleneck.
 

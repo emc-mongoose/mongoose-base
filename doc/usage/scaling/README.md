@@ -32,4 +32,4 @@ java -jar mongoose-<VERSION>.jar --storage-driver-limit-concurrency=0 ...
 The load may be scaled out using many hosts running the same test
 
 * [Deployment](../../deployment#distributed-mode)
-* [Design](../../design/distributed_mode/README.md)
+* [Design](../../design/modes/distributed_mode/README.md)
