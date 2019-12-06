@@ -1,3 +1,5 @@
+# Contributing
+
 Become one of the contributors! We thrive to build a welcoming and open community for anyone who wants to use Mongoose
 or contribute to it.
 [Here](https://github.com/thecodeteam/codedellemc.github.io/wiki/How-to-contribute-to-%7Bcode%7D-and-add-your-project)
