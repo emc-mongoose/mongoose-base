@@ -2,7 +2,8 @@
 2. [Jar](#jar)<br/>
 3. [Docker](#docker)<br/>
 4. [Kubernetes](#kubernetes)<br/>
-	4.1.[Helm](https://github.com/emc-mongoose/mongoose-helm-charts)<br/>
+	4.1.[Helm](#helm)<br/>
+	4.2.[Manual](#manual-deployment)<br/>
 
 # Environment Requirements
 
