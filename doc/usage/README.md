@@ -31,7 +31,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;2.2.4. [Accounting Activation By The Threshold](output#24-threshold)<br/>
 
 ### 3. Load Generation
-**&nbsp;&nbsp;3.1. Items<br/>**
+**&nbsp;&nbsp;3.1. [Items](item)<br/>**
 &nbsp;&nbsp;&nbsp;&nbsp;3.1.1. [Item Types](item/types)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.1.1. [Data Item](item/types#1-data)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.1.1.1. [Data Item Size](item/types#11-size)<br/>
@@ -96,4 +96,4 @@
 ### 4. [Load Scaling](scaling)
 &nbsp;&nbsp;4.1. [Rate](scaling#1-rate)<br/>
 &nbsp;&nbsp;4.2. [Concurrency](scaling#2-concurrency)<br/>
-&nbsp;&nbsp;4.3. [Distributed Mode](scaling3-distributed-mode)<br/>
+&nbsp;&nbsp;4.3. [Distributed Mode](scaling#3-distributed-mode)<br/>
