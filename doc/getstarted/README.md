@@ -61,31 +61,26 @@ This command will **"create"** "items" with random size for 20 seconds and then 
 
 Create `scenario2.js` file on local machine:
 ```
-Load
-		.config(
-			{
-				"storage": {
-					"driver": {
-						"limit": {
-							"concurrency": 0
-						}
+Load.config({
+	"storage": {
+		"driver": {
+			"limit": {
+				"concurrency": 0					
+				}
+			}
+		}
+	})
+	.run();
+
+DeleteLoad.config({
+		"load": {
+			"step": {
+				"limit": {
+					"time": "5m"
 					}
 				}
 			}
-		)
-		.run();
-DeleteLoad
-		.config(
-			{
-				"load": {
-					"step": {
-						"limit": {
-							"time": "5m"
-						}
-					}
-				}
-			}
-		)
+		})
 		.run();
 ```
 Run with mounted scenario:
