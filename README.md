@@ -11,9 +11,9 @@
 1. [Overview](#1-overview)
 2. [Features](#2-features)<br/>
 3. [Bundles & Extenstions](#3-bundles-and-extenstions)
-4. [Get started](doc/getstarted)<br/>
+4. [Get started](doc/getstarted) 🏁 <br/>
 5. [Comparison With Similar Tools](doc/comparision)<br/>
-6. [Documentation](doc)<br/>
+6. [Documentation](doc) 📄 <br/>
 7. [Contributing](doc/contributing)<br/>
 8. [Changelog](doc/changelog)<br/>
 
