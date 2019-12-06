@@ -11,29 +11,38 @@
 &nbsp;&nbsp;&nbsp;&nbsp;1.5. [Data Reentrancy](design/data_reentrancy)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;1.6. [Byte Range Operations](usage/load/operations/byte_ranges)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;1.7. [Copy Mode](design/copy_mode)<br/>
+
 2. [Deployment](deployment)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;2.1. [Environment Requirements](deployment#environment-requirements)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;2.2. [Jar](deployment#jar)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;2.3. [Docker](deployment#docker)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;2.4. [Kubernetes](deployment#kubernetes)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.4.1 [Helm](https://github.com/emc-mongoose/mongoose-helm-charts)<br/>
+
 3. [Usage](usage)<br/>
-&nbsp;&nbsp;3.1. Input<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.1.1. [Defaults](usage/defaults)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.1.2. [Configuration](interfaces/input/configuration)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.1.3. [Scenarios](interfaces/input/scenarios)<br/>
-&nbsp;&nbsp;3.2. [Output](interfaces/output)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.2.1. [General Output](interfaces/output#1-general)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.2.2. [Metrics Output](interfaces/output#2-metrics)<br/>
-&nbsp;&nbsp;3.3. Load Generation<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.3.1. Items<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.3.2. Load Operations<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.3.3. [Load Steps](usage/load/steps)<br/>
-&nbsp;&nbsp;3.4. [Load Scaling](usage/scaling)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.4.1. [Rate](usage/scaling#1-rate)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.4.2. [Concurrency](usage/scaling#2-concurrency)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.4.3. [Distributed Mode](usage/scaling3-distributed-mode)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;3.1. [Input](usage/input)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.1. [CLI](usage/input/cli)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.2. [Configuration](usage/input/configuration)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.1.3. [Scenarios](usage/input/scenarios)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;3.2. [Output](usage/output)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.1. [General Output](usage/output#1-general)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.2.2. [Metrics Output](usage/output#2-metrics)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;3.3. [Remote API](usage/api/remote)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.1 [Config API](usage/api/remote#config)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2 [Runs API](usage/api/remote#run)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3 [Logs API](usage/api/remote#logs)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.4 [Metrics API](usage/api/remote#metrics)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;3.3. Load Generation<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.1. [Items](usage/item) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2. [Load Operations](usage/load/operations) <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3. [Load Steps](usage/load/steps)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;3.4. [Load Scaling](usage/scaling)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.4.1. [Rate](usage/scaling#1-rate)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.4.2. [Concurrency](usage/scaling#2-concurrency)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.4.3. [Distributed Mode](usage/scaling3-distributed-mode)<br/>
+
 4. [Troubleshooting](troubleshooting)<br/>
+
 5. [Extentions](https://github.com/emc-mongoose/mongoose)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;5.1. Storage Drivers<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.1.1  [S3](https://github.com/emc-mongoose/mongoose-storage-driver-s3)<br/>
@@ -48,14 +57,9 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.2.1  [Pipeline](https://github.com/emc-mongoose/mongoose-load-step-pipeline)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.2.2. [Weighted](https://github.com/emc-mongoose/mongoose-load-step-weighted)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;5.3. [Auxiliary Tools](https://github.com/emc-mongoose/mongoose#auxiliary-tools)
+
 6. [Dependencies](dependencies)<br/>
-7. [Interfaces](interfaces#interfaces)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;7.1 [Input](interfaces/input)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;7.2 [Output](interfaces/output)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;7.3 [Remote API](interfaces/api/remote)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7.3.1 [Config API](interfaces/api/remote#config)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7.3.2 [Runs API](interfaces/api/remote#run)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7.3.3 [Logs API](interfaces/api/remote#logs)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;7.3.4 [Metrics API](interfaces/api/remote#metrics)<br/>
-8. [Contributing](CONTRIBUTING.md)<br/>
-9. [Changelog](changelog)<br/>
+
+7. [Contributing](CONTRIBUTING.md)<br/>
+
+8. [Changelog](changelog)<br/>
