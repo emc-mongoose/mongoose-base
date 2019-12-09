@@ -1,6 +1,6 @@
 # Get started 
 
-It's recommended to begin by exploring the **[basic terms](../design/architecture#1-basic-terms)** to better understand the documentation.
+It's recommended to begin by exploring the 👉 **[basic terms](../design/architecture#1-basic-terms)** 👈 to better understand the documentation.
 
 ## Simple deploy
 
