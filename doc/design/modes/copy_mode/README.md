@@ -26,7 +26,7 @@ sent while copying the objects so these requests may be significantly faster tha
 ### 2.1. General
 
 Copy mode is enabled if:
-* `--load-type` option is set to `create` (this is by default) ***and***
+* `--load-op-type` option is set to `create` (this is by default) ***and***
 * one of the item inputs is configured:
     * `--item-input-path` is set to existing bucket/container/directory ***or***
     * `--item-input-file` is set to existing items list file
