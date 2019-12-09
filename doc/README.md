@@ -47,7 +47,7 @@
     **5.5. [Load Scaling](usage/scaling)<br/>**
     &nbsp;&nbsp;&nbsp;&nbsp;5.5.1. [Rate](usage/scaling#1-rate)<br/>
     &nbsp;&nbsp;&nbsp;&nbsp;5.5.2. [Concurrency](usage/scaling#2-concurrency)<br/>
-    &nbsp;&nbsp;&nbsp;&nbsp;5.5.3. [Distributed Mode](usage/scaling3-distributed-mode)<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;5.5.3. [Distributed Mode](usage/scaling#3-distributed-mode)<br/>
 
 6. [Troubleshooting](troubleshooting)<br/>
 
