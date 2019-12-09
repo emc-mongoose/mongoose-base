@@ -89,7 +89,7 @@ The configuration parameters which are the subject of slicing in the scenario:
 
 1. `item-input-file`
 2. `item-input-path`
-3. `item-naming-offset`
+3. `item-naming-seed`
 4. `item-output-path` (in case of parameterization is used)
 5. `storage-auth-file`
 6. `storage-net-http-headers-*` (in case of parameterization is used)
@@ -123,7 +123,7 @@ count of the additional nodes involved in the test.
 Example:
 
 * item-naming-length: 2
-* item-naming-offset: 0
+* item-naming-seed: 0
 * item-naming-radix: 10
 * item-naming-step: 1
 * item-naming-type: serial
