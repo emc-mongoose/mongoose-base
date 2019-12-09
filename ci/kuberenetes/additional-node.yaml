@@ -65,20 +65,10 @@ spec:
       - image: "emcmongoose/mongoose-base"
         imagePullPolicy: Always
         name: mongoose-node
-
-        args: {{- printf " [" -}}
-          {{- printf "\"--run-node\"" -}}
-          {{ if (ne $.Values.args "") and (ne $.Values.args nil) }}
-            {{- printf "," }}
-            {{- .Values.args -}}
-          {{ end }}
-          {{- printf "]" }}
+        args: ["--run-node"]
 
         ports:
         - containerPort: 1099
         - containerPort: 9999
-        {{ if .Values.debug }}
-        - containerPort: 5005
-        command: ["/opt/mongoose/entrypoint_debug.sh"]
-        {{- end }}
+
 
