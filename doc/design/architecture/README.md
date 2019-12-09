@@ -52,6 +52,10 @@
 
   Load step is an unit of metrics reporting. A Load Step may include several Load Step Contexts.
 
+* **Storage Driver**
+
+  Storage driver is a load operations executer. An implementation of Storage driver depends on the storage type and used as mongoose      extention (plugin).
+
 * **Scenario**
 
   A set of load steps combined and organized using flow elements
@@ -66,6 +70,7 @@
 * **Additional Node**
 
   In the distributed mode, the *additional nodes* are used to execute a scenario steps together with entry node
+
 
 # 2. Components
 
