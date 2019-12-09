@@ -31,7 +31,7 @@ reference.
 | item-data-ranges-random                        | Integer >= 0 | 0                | The count of the random ranges to update or read |
 | item-data-ranges-threshold                     | Size | 0                        | The size threshold to enable the multipart upload if supported by the configured storage driver |
 | item-data-size                                 | Size | 1MB                      | The size of the data items to process. Doesn't have any effect if item.type=container |
-| item-data-verify                               | Flag | false                    | Specifies whether to verify the content while reading the data items or not. Doesn't have any effect if load-type != read |
+| item-data-verify                               | Flag | false                    | Specifies whether to verify the content while reading the data items or not. Doesn't have any effect if load-op-type != read |
 | item-input-file                                | Path | null                     | The source file for the items to process. If null the behavior depends on the load type. |
 | item-input-path                                | String | null                   | The source path which may be used as items input if not "item-input-file" is specified. Also used for the copy mode as the path containing the items to be copied into the output path. |
 | item-naming-length                             | Integer > 0 | 12                | The name length for the new items. Has effect only in the case of create (if not partial) load
@@ -111,7 +111,7 @@ The configuration parameters supporting the time type:
 
 The configuration parameters supporting the time type:
 
-* item-data-content-ring-size
+* item-data-input-layer-size
 * item-data-size
 * item-data-ranges-threshold
 * storage-net-rcvBuf

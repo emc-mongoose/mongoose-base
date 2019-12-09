@@ -13,7 +13,7 @@ spec:
         name: mongoose
     spec:
       containers:
-        - image: emcmongoose/mongoose
+        - image: emcmongoose/mongoose-base
           name: mongoose-controller
           args:
             - --load-step-limit-time=1m

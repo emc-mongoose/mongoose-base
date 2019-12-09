@@ -44,8 +44,8 @@ The base image may be used in the standalone mode:
 ```bash
 docker run \
     --network host \
-    emcmongoose/mongoose[-<TYPE>] [\
-    <ARGS>]
+    emcmongoose/mongoose[-<TYPE>] \
+    [<MONGOOSE CLI ARGS>]
 ```
 
 ##### Mount files
@@ -68,9 +68,17 @@ First, it's necessary to start some node/peer services:
 docker run \
     --network host \
     emcmongoose/mongoose[-<TYPE>] \
-    --run-node [\
-    --load-step-node-port=<PORT>]
+    --run-node 
 ```
+> NOTE: Mongoose uses `1099` port for RMI between mongoose nodes and `9999` for REST API. If you run several mongoose nodes on the same host (in different docker containers, for example) or if the ports are used by another service, then ports can be redefined:
+> ```bash
+> docker run \
+>    --network host \
+>    emcmongoose/mongoose[-<TYPE>] \
+>    --run-node \
+>    --load-step-node-port=<RMI PORT> \
+>    --run-port=<HTTP PORT> 
+> ```
 
 #### Run
 
@@ -79,8 +87,8 @@ To invoke the run in the distributed mode it's necessary to specify the addition
 docker run \
     --network host \
     emcmongoose/mongoose[-<TYPE>] \
-    --load-step-node-addrs=<ADDR1,ADDR2,...> [\
-    <ARGS>]
+    --load-step-node-addrs=<ADDR1,ADDR2:<CUSTOM RMI PORT>,ADDR3...> \
+    [<MONGOOSE CLI ARGS>]
 ```
 
 ## Additional Notes
@@ -95,7 +103,7 @@ docker run \
     --network host \
     --mount type=bind,source="$(pwd)"/log,target=/root/.mongoose/<VERSION>/log
     emcmongoose/<IMAGE> \
-    [<ARGS>]
+    [<MONGOOSE CLI ARGS>]
 ```
 
 ### Debugging
@@ -120,7 +128,7 @@ and run:
 docker run \
     --network host \
     emcmongoose/<IMAGE>:debug \
-    [<ARGS>]
+    [<MONGOOSE CLI ARGS>]
 ```
 
 # Kubernetes

@@ -1,6 +1,6 @@
 # Get started 
 
-It's recommended to begin by exploring the **[basic terms](../design/architecture#1-basic-terms)** to better understand the documentation.
+It's recommended to begin by exploring the 👉 **[basic terms](../design/architecture#1-basic-terms)** 👈 to better understand the documentation.
 
 ## Simple deploy
 
@@ -97,7 +97,7 @@ docker run -d --network host  \
 > 📘 More about:
 > * **[Item sizes](../usage/item/types#11-size)**
 > * **[Scenarios](../usage/input/scenarios)**
-> * **[Load steps](../usage/load/steps)** and **[Load steps in scenarios](../usage/input/scenarios#21-load-step)**
+> * **[Load steps and Load types](../usage/load/steps)** and **[Load steps in scenarios](../usage/input/scenarios#21-load-step)**
 
 ## Documentation
 

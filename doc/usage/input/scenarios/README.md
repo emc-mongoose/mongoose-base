@@ -338,7 +338,7 @@ var resumedLoadStep = pausedLoadStep.start();
 ## 3. Examples
 
 The complete set of the example scenarios is available in the
-`<MONGOOSE_DIR>/example/scenario` directory. The scenarios are sorted by
+[`<MONGOOSE_DIR>/example/scenario`](/src/main/resources/example/scenario) directory. The scenarios are sorted by
 the language.
 
 ### 3.1. Javascript

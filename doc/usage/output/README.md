@@ -302,7 +302,7 @@ Console summary metrics output has YAML format for the better readability:
 
   ![alpha](http://i.piccy.info/i9/c211a78abdaeec65da61020c5dc83008/1485332899/627/722110/CodeCogsEqn.png)
 
-  and "t" is the configured *load-metrics-period* parameter.
+  and "t" is the configured *output-metrics-average-period* parameter.
 
 ### 2.2.2. Files
 
