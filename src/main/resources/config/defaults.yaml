@@ -104,10 +104,7 @@ storage:
       slice: false
 
 aliasing:
-# v3.0.0
-- name: "load-threads"
-  deprecated: true
-  target: "storage-driver-limit-concurrency"
+# common
 - name: "noop"
   target: "load-op-type=noop"
 - name: "create"
@@ -128,95 +125,7 @@ aliasing:
   target: "item-input-path"
 - name: "swift-output-container"
   target: "item-output-path"
-# v3.2.0
-- name: "socket-bindBacklogSize"
-  deprecated: true
-  target: "storage-net-bindBacklogSize"
-- name: "socket-interestOpQueued"
-  deprecated: true
-  target: "storage-net-interestOpQueued"
-- name: "socket-keepAlive"
-  deprecated: true
-  target: "storage-net-keepAlive"
-- name: "socket-linger"
-  deprecated: true
-  target: "storage-net-linger"
-- name: "socket-reuseAddr"
-  deprecated: true
-  target: "storage-net-reuseAddr"
-- name: "socket-rcvBuf"
-  deprecated: true
-  target: "storage-net-rcvBuf"
-- name: "socket-sndBuf"
-  deprecated: true
-  target: "storage-net-sndBuf"
-- name: "socket-tcpNoDelay"
-  deprecated: true
-  target: "storage-net-tcpNoDelay"
-- name: "socket-timeoutMilliSec"
-  deprecated: true
-  target: "storage-net-timeOutMilliSec"
-- name: "storage-ssl"
-  deprecated: true
-  target: "storage-net-ssl"
-- name: "storage-http-api"
-  deprecated: true
-  target: "storage-driver-type"
-- name: "socket-http-fsAccess"
-  deprecated: true
-  target: "storage-net-http-fsAccess"
-- name: "storage-http-headers"
-  deprecated: true
-  target: "storage-net-http-headers"
-- name: "storage-http-namespace"
-  deprecated: true
-  target: "storage-namespace"
-- name: "storage-http-versioning"
-  deprecated: true
-  target: "storage-net-http-versioning"
-- name: "storage-node-addrs"
-  deprecated: true
-  target: "storage-net-node-addrs"
-- name: "storage-node-port"
-  deprecated: true
-  target: "storage-net-node-port"
-- name: "storage-type"
-  deprecated: true
-  target: "storage-driver-type"
-- name: "storage-net-http-api"
-  deprecated: true
-  target: "storage-driver-type"
-# v3.3.0
-- name: "load-concurrency"
-  deprecated: true
-  target: "storage-driver-limit-concurrency"
-- name: "load-job-name"
-  deprecated: true
-  target: "load-step-id"
-- name: "load-limit-count"
-  deprecated: true
-  target: "load-op-limit-count"
-- name: "load-limit-size"
-  deprecated: true
-  target: "load-step-limit-size"
-- name: "load-limit-time"
-  deprecated: true
-  target: "load-step-limit-time"
-- name: "load-metrics-period"
-  deprecated: true
-  target: "output-metrics-average-period"
-- name: "load-metrics-precondition"
-  deprecated: true
-- name: "load-metrics-threshold"
-  deprecated: true
-  target: "output-metrics-threshold"
-- name: "storage-auth-id"
-  deprecated: true
-  target: "storage-auth-uid"
-# v3.4.0
-- name: "item-data-content-ringSize"
-  deprecated: true
-  target: "item-data-input-layer-size"
+
 # v3.5.0
 - name: "test-step-metrics-period"
   deprecated: true
