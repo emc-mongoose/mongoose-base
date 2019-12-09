@@ -111,7 +111,7 @@ The configuration parameters supporting the time type:
 
 The configuration parameters supporting the time type:
 
-* item-data-content-ring-size
+* item-data-input-layer-size
 * item-data-size
 * item-data-ranges-threshold
 * storage-net-rcvBuf
