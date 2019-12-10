@@ -85,7 +85,7 @@ client configuration. The functionality includes:
 
 ![Storage drivers](../../images/storage_drivers.png)
 
-The driver is a "layer" between the *Load generator* and the tested Storage. Since storages of different types have different interaction protocols, then the implementation of Storage driver depends on the storage type. Therefore, the base image of the mongoose has only the implementation of the **Mock Storage driver** which does nothing actually and useful only for **demo/testing** purposes.  
+The driver is a "layer" between the *Load generator* and the tested Storage. Since storages of different types have different interaction protocols, then the implementation of Storage driver depends on the storage type. Therefore, the base image of the mongoose only has the implementation of the **Mock Storage driver** which does nothing actually and useful only for **demo/testing** purposes.  
 
 Storage mock in a mongoose is called **Dummy Mock**.
 It is set by a parameter `--storage-driver-type=dummy-mock`.
