@@ -107,6 +107,6 @@ These examples describe only a small part of the functionality of the tool.
 
 * More complex scenarios can be viewed in the [`/src/main/resources/example/scenario/js`](/src/main/resources/example/scenario/js) directory.
 
-* Storage-specific options and examples can be found in the [SD driver repositories](https://github.com/emc-mongoose/mongoose#bundle-contents).
+* Storage-specific options and examples can be found in the [Storage driver repositories](https://github.com/emc-mongoose/mongoose#bundle-contents).
 
 * A description of all components, options, design, etc. can be found in the [full documentation](/doc#documentation).
