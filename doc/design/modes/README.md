@@ -8,7 +8,7 @@ Mongoose can be launched in 2 main modes:
 
 ![Standalone Mode](../../images/standalone_mode.png)
 
-This is the easiest way to use mongoose. In this case, one mongoose instance is launched and the load on the storage generated from it. This mode **does not require any additional parameters**.
+This is the easiest way to use mongoose. In this case, one mongoose instance is launched and the load on the storage generated from it. This mode **doesn't require additional parameters compared to additional parameters required for distributed mode**.
 
 ## Distributed mode
 
