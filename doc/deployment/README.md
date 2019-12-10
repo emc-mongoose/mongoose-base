@@ -140,7 +140,7 @@ Mongoose can be deployed in a [kubernetes](https://kubernetes.io/) cluster manua
 [Mongoose Melm chart doc](https://github.com/emc-mongoose/mongoose-helm-charts)
 
 ## Manual deployment
-Examples of yaml files are in the directory `ci/kubernetes`. The following describes a more detailed use of scripts:
+Examples of yaml files are in the directory [`doc/deployment/kubernetes`](kubernetes). The following describes a more detailed use of scripts:
 
 > * You need a ready-made cluster.
 > * The examples use the mongoose image with the `latest` tag. To use specifically the version you need to specify ` - image: emcmongoose/mongoose:<x.y.z>`
