@@ -5,7 +5,10 @@
 1. [Environment Requirements](#environment-requirements)<br/>
 2. [Jar](#jar)<br/>
 3. [Docker](#docker)<br/>
-	3.1. [Mount files](#mount-files)
+	3.1. [Standalone](#standalone)<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;3.1.1 [Mount files](#mount-files)<br/>
+	3.2. [Distributed Mode](#distributed-mode)<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;3.2.1 [Custom ports](#custom-ports)<br/>
 4. [Kubernetes](#kubernetes)<br/>
 	4.1.[Helm](#helm)<br/>
 	4.2.[Manual](#manual-deployment)<br/>
@@ -88,7 +91,7 @@ docker run \
     [<MONGOOSE CLI ARGS>]
 ```
 
-### Custom ports
+#### Custom ports
 
 **NOTE** 
 > Mongoose uses `1099` port for RMI between mongoose nodes and `9999` for REST API. If you run several mongoose nodes on the same host (in different docker containers, for example) or if the ports are used by another service, then ports can be redefined:
