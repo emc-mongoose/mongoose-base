@@ -164,7 +164,9 @@ Mongoose can be deployed in a [kubernetes](https://kubernetes.io/) cluster manua
 
 ## Helm
 
-[Mongoose Melm chart doc](https://github.com/emc-mongoose/mongoose-helm-charts)
+The only officially supported way to deploy Mongoose in Kubernetes is through Helm charts.
+
+[Mongoose Helm chart doc](https://github.com/emc-mongoose/mongoose-helm-charts)
 
 ## Manual deployment
 Examples of yaml files are in the directory [`doc/deployment/kubernetes`](kubernetes). The following describes a more detailed use of scripts:
