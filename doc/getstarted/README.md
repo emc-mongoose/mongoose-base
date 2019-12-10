@@ -42,6 +42,8 @@ docker run --network host emcmongoose/mongoose-base \
 
 ## Simple scenario
 
+Mongoose also supports input parameters using 'scenarios' - script files defining a workload.
+
 Create `scenario1.js` file on local machine:
 ```
 Load.run();
