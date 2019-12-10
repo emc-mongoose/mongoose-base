@@ -16,3 +16,11 @@ The command-line options are directly mapped to the **configuration** items. For
 `item-data-size` corresponds to the CLI argument `--item-data-size`.
 
 [More about configuration](../configuration)
+
+
+### Limitations
+
+It's not possible to use the command line to specify **map/dict** type options, a user should use the scenario file for this.
+
+* [Example for http header](https://github.com/emc-mongoose/mongoose-storage-driver-http#2-custom-http-headers)
+* [Example for object tagging](https://github.com/emc-mongoose/mongoose-storage-driver-s3#421-put-object-tags)
