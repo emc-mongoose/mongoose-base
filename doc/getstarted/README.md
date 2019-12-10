@@ -8,7 +8,7 @@ It's recommended to begin by exploring the 👉 **[basic terms](../design/archit
 docker run --network host emcmongoose/mongoose-base
 ```
 
-☝️ This command will launch mongoose in **standalone mode**, and the **storage mock** will be used as the tested [storage](../design/architecture#1-basic-terms).
+☝️ This command will launch mongoose in **standalone mode**, and the **storage mock** will be used as the tested storage.
 
 > 📘 More about:
 > * **[Modes](../design/modes)**
