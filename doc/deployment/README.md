@@ -65,33 +65,55 @@ docker run -d --network host  \
 
 #### Node
 
-First, it's necessary to start some node/peer services:
+First, it's necessary to start some node/peer services.
+
+Additional node run command:
 ```bash
 docker run \
     --network host \
     emcmongoose/mongoose[-<TYPE>] \
     --run-node 
 ```
-> NOTE: Mongoose uses `1099` port for RMI between mongoose nodes and `9999` for REST API. If you run several mongoose nodes on the same host (in different docker containers, for example) or if the ports are used by another service, then ports can be redefined:
-> ```bash
-> docker run \
->    --network host \
->    emcmongoose/mongoose[-<TYPE>] \
->    --run-node \
->    --load-step-node-port=<RMI PORT> \
->    --run-port=<HTTP PORT> 
-> ```
 
 #### Run
 
-To invoke the run in the distributed mode it's necessary to specify the additional node/peer addresses:
+To invoke the run in the distributed mode it's necessary to specify the additional node/peer addresses.
+
+Entry node run command:
 ```bash
 docker run \
     --network host \
     emcmongoose/mongoose[-<TYPE>] \
-    --load-step-node-addrs=<ADDR1,ADDR2:<CUSTOM RMI PORT>,ADDR3...> \
+    --load-step-node-addrs=<ADDR1,ADDR2:PORT,ADDR3...> \
     [<MONGOOSE CLI ARGS>]
 ```
+
+### Custom ports
+
+**NOTE** 
+> Mongoose uses `1099` port for RMI between mongoose nodes and `9999` for REST API. If you run several mongoose nodes on the same host (in different docker containers, for example) or if the ports are used by another service, then ports can be redefined:
+
+**Additional node:**
+```bash
+docker run \
+    --network host \
+    emcmongoose/mongoose[-<TYPE>] \
+    --run-node \
+    --load-step-node-port=<CUSTOM RMI PORT> \
+    --run-port=<CUSTOM HTTP PORT> 
+ ```
+
+**Entry node:**
+```bash
+docker run \
+    --network host \
+    emcmongoose/mongoose[-<TYPE>] \
+    --load-step-node-addrs=ADDR:<CUSTOM RMI PORT> \
+    [<MONGOOSE CLI ARGS>]
+```
+
+**NOTE** 
+> If port didn't specified, then `1099` will be used by default.
 
 ## Additional Notes
 
