@@ -20,7 +20,7 @@ byte ranges.
 ## 2. Configuration
 
 * Update/Read load type should be used to use the feature: `--update`/`--read` or
-    `--load-type=update`/`--load-type=read`
+    `--load-op-type=update`/`--load-op-type=read`
 
 * Fixed byte ranges may be specified using the `--item-data-ranges-fixed=<VALUE>` configuration parameter.
     Multiple byte ranges may be specified using the comma as ranges separator.

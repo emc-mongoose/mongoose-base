@@ -47,7 +47,7 @@ Load
     .run();
 ```
 
-For additional usage details refer to the [Copy Mode Specification](../../../../design/copy_mode).
+For additional usage details refer to the [Copy Mode Specification](../../../../design/modes/copy_mode).
 
 **Note**:
 > Not all storage driver implementations support the copy mode. For details refer to the particular storage driver
@@ -79,7 +79,7 @@ items have been updated (modified).
 java -jar mongoose-<VERSION>.jar --read --item-data-verify --item-input-file=items.csv ...
 ```
 
-An load operation is reported with the [status code](../../../../interfaces/output#232-files) 12 if the content verification fails.
+A load operation is reported with the [status code](../../../output#232-files) 12 if the content verification fails.
 
 ## 3. Update
 

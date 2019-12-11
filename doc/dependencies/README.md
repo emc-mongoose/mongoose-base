@@ -1,3 +1,5 @@
+# Dependencies
+
 | Group                      | Name                         | Version     | Linkage  | License                          | Purpose |
 |----------------------------|------------------------------|-------------|----------|----------------------------------|-------------------|
 | commons-codec              | commons-codec                | 1.11        | Dynamic  | Apache 2.0                       | Decode hexadecimal update mask

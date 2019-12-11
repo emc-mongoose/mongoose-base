@@ -1,3 +1,5 @@
+# Troubleshooting
+
 | # | Specific Condition | Symptom | Suggested Resolution |
 |---|--------------------|--------|----------------------|
 | 1 | High concurrency level configured | "Too many open files" error messages | Increase open files count limit, for example using the following shell command: <br/>`ulimit -n 1048576` |
