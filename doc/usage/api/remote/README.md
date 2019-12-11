@@ -4,22 +4,22 @@
 2. [Limitations](#2-limitations)<br/>
 3. [Requirements](#3-requirements)<br/>
 4. [Approach](#4-approach)<br/>
-4.1. [Integrations](#41-integrations)<br/>
-4.2. [API](#42-api)<br/>
-4.2.1. [Config](#421-config)<br/>
-4.2.2. [Run](#422-run)<br/>
-4.2.3. [Logs](#423-logs)<br/>
-4.2.3.1. [Available log names](#4231-available-log-names)<br/>
-4.2.3.2. [Get the log file from the beginning](#4232-get-the-log-file-from-the-beginning)<br/>
-4.2.3.3. [Get the specified log file part](#4233-get-the-specified-log-file-part)<br/>
-4.2.3.4. [Delete the log file](#4234-delete-the-log-file)<br/>
-4.2.3.5. []<br/>
-4.2.4. [Metrics](#424-metrics)<br/>
+&nbsp;&nbsp;4.1. [Integrations](#41-integrations)<br/>
+&nbsp;&nbsp;4.2. [API](#42-api)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;4.2.1. [Config](#421-config)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;4.2.2. [Run](#422-run)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;4.2.3. [Logs](#423-logs)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.3.1. [Available log names](#4231-available-log-names)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.3.2. [Get the log file from the beginning](#4232-get-the-log-file-from-the-beginning)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.3.3. [Get the specified log file part](#4233-get-the-specified-log-file-part)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.3.4. [Delete the log file](#4234-delete-the-log-file)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.3.5. []<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;4.2.4. [Metrics](#424-metrics)<br/>
 5. [Configuration](#5-configuration)<br/>
 6. [Output](#6-output)<br/>
-6.1. [Metrics](#61-metrics)<br/>
-6.1.1. [Custom quantiles](#611-custom-quantiles)<br/>
-6.1.2. [Labels](#612-labels)<br/>
+&nbsp;&nbsp;6.1. [Metrics](#61-metrics)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;6.1.1. [Custom quantiles](#611-custom-quantiles)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;6.1.2. [Labels](#612-labels)<br/>
 
 # 1. Introduction
 
