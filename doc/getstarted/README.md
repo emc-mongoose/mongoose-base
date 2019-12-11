@@ -17,6 +17,8 @@ docker run --network host emcmongoose/mongoose-base
 
 ## Simple load tuning
 
+Mongoose supports CRUD (Create/Read/Update/Delete) notation for **load operations**.
+
 ```
 docker run --network host emcmongoose/mongoose-base \
     --load-op-limit-count=10000 \
