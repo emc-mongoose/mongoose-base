@@ -90,7 +90,7 @@ Also, the partial defaults configuration may be supplied too:
 ```bash
 curl -v -X POST \
     -H "Content-Type:multipart/form-data" \
-    -F "defaults=storage:{driver:{type:dummy-mock}}};type=application/yaml" \
+    -F "defaults={storage:{driver:{type: dummy-mock}}};type=application/yaml" \
     http://localhost:9999/run
 ```
 > **Note**: use this example above as the most simple way to start via the remote API.
