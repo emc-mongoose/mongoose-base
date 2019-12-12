@@ -8,6 +8,8 @@
 &nbsp;&nbsp;4.2. [API](#42-api)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;4.2.1. [Config](#421-config)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;4.2.2. [Run](#422-run)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.2.1. [Standalone mode](#4221-standalone-mode)<br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.2.2. [Distributed mode](#4222-distributed-mode)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;4.2.3. [Logs](#423-logs)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.3.1. [Available log names](#4231-available-log-names)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.3.2. [Get the log file from the beginning](#4232-get-the-log-file-from-the-beginning)<br/>
@@ -72,6 +74,8 @@ curl GET http://localhost:9999/config/schema
 > The schema relates configuration parameters to the required types.
 
 ### 4.2.2. Run
+
+#### 4.2.2.1. Standalone mode
 
 Start a new scenario run:
 ```bash
@@ -139,6 +143,9 @@ curl -v -X DELETE -H "If-Match: 167514e6082" http://localhost:9999/run
 < Date: Mon, 26 Nov 2018 18:41:26 GMT
 < Content-Length: 0
 ```
+
+#### 4.2.2.2. Distributed mode
+TBD
 
 ### 4.2.3. Logs
 
