@@ -1,8 +1,17 @@
-[Environment Requirements](#environment-requirements)<br/>
-[Jar](#jar)<br/>
-[Docker](#docker)<br/>
-[Kubernetes](#kubernetes)<br/>
-[Helm](https://github.com/emc-mongoose/mongoose-helm-charts)<br/>
+# Deployment
+
+# Contents
+
+1. [Environment Requirements](#environment-requirements)<br/>
+2. [Jar](#jar)<br/>
+3. [Docker](#docker)<br/>
+	3.1. [Standalone](#standalone)<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;3.1.1 [Mount files](#mount-files)<br/>
+	3.2. [Distributed Mode](#distributed-mode)<br/>
+	&nbsp;&nbsp;&nbsp;&nbsp;3.2.1 [Custom ports](#custom-ports)<br/>
+4. [Kubernetes](#kubernetes)<br/>
+	4.1.[Helm](#helm)<br/>
+	4.2.[Manual](#manual-deployment)<br/>
 
 # Environment Requirements
 
@@ -20,6 +29,8 @@ High-load tests may allocate up to few GBs of the memory depending on the scenar
 Mongoose is distributed as a single jar file from:
 http://central.maven.org/maven2/com/github/emc-mongoose/mongoose-base/
 
+[About bundle jars](https://github.com/emc-mongoose/mongoose#backward-compatibility-notes)
+
 # Docker
 
 Mongoose images are stored in the [Docker Hub](https://hub.docker.com/u/emcmongoose/)
@@ -36,33 +47,76 @@ The base image may be used in the standalone mode:
 ```bash
 docker run \
     --network host \
-    emcmongoose/mongoose[-<TYPE>] [\
-    <ARGS>]
+    emcmongoose/mongoose[-<TYPE>] \
+    [<MONGOOSE CLI ARGS>]
 ```
+
+##### Mount files
+
+An example for mounting and using a scenario. Thus, files for input/output, configurations, logs and metrics can be mounted.
+
+```
+docker run -d --network host  \
+    -v /path/to/scenario.js:/opt/scenario.js \
+    emcmongoose/mongoose[-<TYPE>] \
+    --run-scenario=/opt/scenario.js
+``` 
+
+**Mounting** a volume **is the only right way** to save Mongoose logs in docker. Don't get confused by [`--output-file` option](../usage/output#127-item-list-files), it's not about docker.
 
 ### Distributed Mode
 
 #### Node
 
-First, it's necessary to start some node/peer services:
+First, it's necessary to start some node/peer services.
+
+Additional node run command:
 ```bash
 docker run \
     --network host \
     emcmongoose/mongoose[-<TYPE>] \
-    --run-node [\
-    --load-step-node-port=<PORT>]
+    --run-node 
 ```
 
 #### Run
 
-To invoke the run in the distributed mode it's necessary to specify the additional node/peer addresses:
+To invoke the run in the distributed mode it's necessary to specify the additional node/peer addresses.
+
+Entry node run command:
 ```bash
 docker run \
     --network host \
     emcmongoose/mongoose[-<TYPE>] \
-    --load-step-node-addrs=<ADDR1,ADDR2,...> [\
-    <ARGS>]
+    --load-step-node-addrs=<ADDR1,ADDR2:PORT,ADDR3...> \
+    [<MONGOOSE CLI ARGS>]
 ```
+
+#### Custom ports
+
+**NOTE** 
+> Mongoose uses `1099` port for RMI between mongoose nodes and `9999` for REST API. If you run several mongoose nodes on the same host (in different docker containers, for example) or if the ports are used by another service, then ports can be redefined:
+
+**Additional node:**
+```bash
+docker run \
+    --network host \
+    emcmongoose/mongoose[-<TYPE>] \
+    --run-node \
+    --load-step-node-port=<CUSTOM RMI PORT> \
+    --run-port=<CUSTOM HTTP PORT> 
+ ```
+
+**Entry node:**
+```bash
+docker run \
+    --network host \
+    emcmongoose/mongoose[-<TYPE>] \
+    --load-step-node-addrs=ADDR:<CUSTOM RMI PORT> \
+    [<MONGOOSE CLI ARGS>]
+```
+
+**NOTE** 
+> If port didn't specified, then `1099` will be used by default.
 
 ## Additional Notes
 
@@ -76,7 +130,7 @@ docker run \
     --network host \
     --mount type=bind,source="$(pwd)"/log,target=/root/.mongoose/<VERSION>/log
     emcmongoose/<IMAGE> \
-    [<ARGS>]
+    [<MONGOOSE CLI ARGS>]
 ```
 
 ### Debugging
@@ -101,7 +155,7 @@ and run:
 docker run \
     --network host \
     emcmongoose/<IMAGE>:debug \
-    [<ARGS>]
+    [<MONGOOSE CLI ARGS>]
 ```
 
 # Kubernetes
@@ -110,10 +164,12 @@ Mongoose can be deployed in a [kubernetes](https://kubernetes.io/) cluster manua
 
 ## Helm
 
-[Mongoose Melm chart doc](https://github.com/emc-mongoose/mongoose-helm-charts)
+The only officially supported way to deploy Mongoose in Kubernetes is through Helm charts.
+
+[Mongoose Helm chart doc](https://github.com/emc-mongoose/mongoose-helm-charts)
 
 ## Manual deployment
-Examples of yaml files are in the directory `ci/kubernetes`. The following describes a more detailed use of scripts:
+Examples of yaml files are in the directory [`doc/deployment/kubernetes`](kubernetes). The following describes a more detailed use of scripts:
 
 > * You need a ready-made cluster.
 > * The examples use the mongoose image with the `latest` tag. To use specifically the version you need to specify ` - image: emcmongoose/mongoose:<x.y.z>`

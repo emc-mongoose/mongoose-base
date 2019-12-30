@@ -10,57 +10,12 @@
 
 1. [Overview](#1-overview)
 2. [Features](#2-features)<br/>
-&nbsp;&nbsp;2.1. [Scalability](#21-scalability)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.1.1. [Vertical](#211-vertical)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.1.2. [Horizontal](#212-horizontal)<br/>
-&nbsp;&nbsp;2.2. [Customization](#22-customization)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.2.1. [Flexible Configuration](#221-flexible-configuration)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.2.2. [Load Generation Patterns](#222-load-generation-patterns)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.2.3. [Scenarios](#223-scenarios)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.2.4. [Metrics Reporting](#224-metrics-reporting)<br/>
-&nbsp;&nbsp;2.3. [Extension](#23-extension)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.3.1. [Load Steps](#231-load-steps)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.3.2. [Storage Drivers](#232-storage-drivers)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.3.3. [Scenario Engine](#233-scenario-engine)<br/>
-&nbsp;&nbsp;2.4. [Comparison With Similar Tools](#21-comparison-with-similar-tools)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.4.1. [General](#241-general)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.4.2. [Purpose](#242-purpose)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.4.3. [Scalability](#243-scalability)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.4.4. [Input](#244-input)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.4.5. [Output](#245-output)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.4.6. [Load Generation Patterns](#246-load-generation-patterns)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;2.4.7. [Storages Support](#247-storages-support)<br/>
-3. Documentation<br/>
-&nbsp;&nbsp;3.1. [Deployment](doc/deployment)<br/>
-&nbsp;&nbsp;3.2. [Usage](doc/usage)<br/>
-&nbsp;&nbsp;3.2. [Troubleshooting](doc/troubleshooting)<br/>
-&nbsp;&nbsp;3.3. Storage Drivers<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.3.2. [S3](storage/driver/coop/netty/http/s3)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.3.3. [Atmos](storage/driver/coop/netty/http/atmos)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.3.4. [Swift](storage/driver/coop/netty/http/swift)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.3.5. [FS](storage/driver/coop/nio/fs)<br/>
-&nbsp;&nbsp;3.4. [Dependencies](doc/dependencies)<br/>
-&nbsp;&nbsp;3.5. [Interfaces](doc/interfaces#interfaces)<br/>
-&nbsp;&nbsp;&nbsp;3.5.1 [Input](doc/interfaces/input)<br/>
-&nbsp;&nbsp;&nbsp;3.5.2 [Output](doc/interfaces/output)<br/>
-&nbsp;&nbsp;&nbsp;3.5.3 [Remote API](doc/interfaces/api/remote)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.5.3.1 [Config API](doc/interfaces/api/remote#config)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.5.3.2 [Runs API](doc/interfaces/api/remote#run)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.5.3.3 [Logs API](doc/interfaces/api/remote#logs)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.5.3.4 [Metrics API](doc/interfaces/api/remote#metrics)<br/>
-&nbsp;&nbsp;&nbsp;3.5.4 Extentions <br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.5.4.1 [Load Step Types](doc/interfaces/api/extensions/load_step)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.5.4.2 [Storage Drivers](doc/interfaces/api/extensions/storage_driver)<br/>
-&nbsp;&nbsp;3.6. Design<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.7.1. [Architecture](doc/design/architecture)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.7.2. [Distributed Mode](doc/design/distributed_mode)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.7.3. [Installer](src/main/java/com/emc/mongoose/base/env)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.7.4. [Recycle Mode](doc/design/recycle_mode)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.7.5. [Data Reentrancy](doc/design/data_reentrancy)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.7.6. [Byte Range Operations](doc/usage/load/operations/byte_ranges)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;3.7.7. [Copy Mode](doc/design/copy_mode)<br/>
-&nbsp;&nbsp;3.8. [Contributing](CONTRIBUTING.md)<br/>
-&nbsp;&nbsp;3.9. [Changelog](doc/changelog)<br/>
+3. [Bundles & Extenstions](#3-bundles-and-extenstions)
+4. [Get started](doc/getstarted) 🏁 <br/>
+5. [Comparison With Similar Tools](doc/comparision)<br/>
+6. [Documentation](doc) 📄 <br/>
+7. [Contributing](doc/contributing)<br/>
+8. [Changelog](doc/changelog)<br/>
 
 # 1. Overview
 
@@ -78,7 +33,7 @@ significant performance degradation.
 
 ### 2.1.2. Horizontal
 
-The [distributed mode](doc/design/distributed_mode) in Mongoose was designed as P2P network. Each peer/node performs
+The [distributed mode](doc/design/modes/distributed_mode) in Mongoose was designed as P2P network. Each peer/node performs
 independently as much as possible. This eliminates the excess network interaction between the nodes which may be a
 bottleneck.
 
@@ -88,11 +43,11 @@ bottleneck.
 
 * Safe: the configuration options are being checked against the schema
 * Extensible: Mongoose's plugins may come up with own configuration options making them available from the joint CLI and being checked against the schema 
-* [Expressions](doc/interfaces/input/configuration#124-expression) allow to specify the dynamically changing values 
+* [Expressions](doc/usage/input/configuration#124-expression) allow to specify the dynamically changing values 
 
 ### 2.2.2. Load Generation Patterns
 
-* CRUD operations and the extensions: Noop, [Copy](doc/design/copy_mode), etc
+* CRUD operations and the extensions: Noop, [Copy](doc/design/modes/copy_mode), etc
 
 * [Parial Operations](doc/usage/load/operations/byte_ranges)
 
@@ -101,7 +56,7 @@ bottleneck.
 * Complex Load Steps
     * [Pipeline Load](https://github.com/emc-mongoose/mongoose-load-step-pipeline)
     * [Weighted Load](https://github.com/emc-mongoose/mongoose-load-step-weighted)
-* [Recycle Mode](doc/design/recycle_mode)
+* [Recycle Mode](doc/design/modes/recycle_mode)
 
 * [Data Reentrancy](doc/design/data_reentrancy)
 
@@ -110,11 +65,11 @@ bottleneck.
 
 * Custom Payload Data
 
-### 2.2.3. [Scenarios](doc/interfaces/input/scenarios)
+### 2.2.3. [Scenarios](doc/usage/input/scenarios)
 
-Scenaruis allow to organize the load steps in the required order and reuse the complex performance tests
+Scenarios allow to organize the load steps in the required order and reuse the complex performance tests
 
-### 2.2.4. [Metrics Reporting](doc/interfaces/output#2-metrics)
+### 2.2.4. [Metrics Reporting](doc/usage/output#2-metrics)
 
 The metrics reported by Mongoose are designed to be most useful for the performance analysis. The following metrics are
 available:
@@ -171,57 +126,9 @@ which does nothing actually and useful only for demo/testing purposes. See the k
 Any Mongoose scenario may be written using any JSR-223 compliant scripting language. Javascript support is available
 out-of-the-box.
 
-## 2.4. Comparison With Similar Tools
+# 3. Bundles and Extenstions
 
-* [COSBench](https://github.com/intel-cloud/cosbench)
-* [LoadRunner](https://software.microfocus.com/en-us/products/loadrunner-load-testing/overview)
-* [Locust](https://locust.io/)
+This repo (`mongoose-base`) containts only base functionality. All extentions and additional mongoose tools located into the independent repos and the corresponding components. Each component has its own documentation, CI versioning.
 
-### 2.4.1. General
-|                   | Mongoose  | COSBench | LoadRunner         | Locust |
-| ---               | :---:     | :---:    | :---:              | :---:  |
-|**License**        |[MIT License](LICENSE)|[Apache 2.0](https://github.com/intel-cloud/cosbench/blob/master/LICENSE)|[Proprietary](https://en.wikipedia.org/wiki/LoadRunner)|[MIT License](https://github.com/locustio/locust/blob/master/LICENSE)|
-|**Open Source**    |:heavy_check_mark:|:heavy_check_mark:    |:x:|  :heavy_check_mark:|
+[List of all bundles and extentions](https://github.com/emc-mongoose/mongoose)
 
-### 2.4.2. Purpose
-|                   | Mongoose  | COSBench | LoadRunner | Locust |
-| ---               | :---:     | :---:    | :---:      | :---:  |
-|**[Load testing](https://en.wikipedia.org/wiki/Load_testing)** |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
-|**[Stress testing](https://en.wikipedia.org/wiki/Stress_testing)** |:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:| TBD |
-|**[Endurance testing](https://en.wikipedia.org/wiki/Soak_testing)**|:heavy_check_mark:| TBD |:heavy_check_mark:| TBD |
-
-### 2.4.3. Scalability
-|                                                    | Mongoose  | COSBench | LoadRunner | Locust |
-| ---                                                | :---:     | :---:    | :---:      | :---:  |
-|**Horizontal** (Distributed Mode)                 |:heavy_check_mark:|:heavy_check_mark:| TBD |:heavy_check_mark:|
-|**Vertical** (Max sustained concurrency per instance)| 1_048_576 |[1024](http://cosbench.1094679.n5.nabble.com/how-many-connections-users-can-cosbench-create-to-test-one-swift-storage-tp325p326.html)| TBD |[1_000_000](https://locust.io/)|
-
-### 2.4.4. Input
-|                  | Mongoose  | COSBench | LoadRunner | Locust |
-| ---              | :---:     | :---:    | :---:      | :---:  |
-|**GUI**           |:x:|:heavy_check_mark:|:heavy_check_mark:|:heavy_check_mark:|
-|**Parameterization**|:heavy_check_mark:| :heavy_check_mark: | TBD |:heavy_check_mark:(need to extend the functionality)|
-|**Script language**| Any [JSR-223](https://en.wikipedia.org/wiki/Scripting_for_the_Java_Platform) compatible |[XML](https://en.wikipedia.org/wiki/XML)|[ANSI C, Java, .Net, JS](https://en.wikipedia.org/wiki/LoadRunner)|[Python](https://en.wikipedia.org/wiki/Python)|
-
-### 2.4.5. Output
-|                                        | Mongoose  | COSBench | LoadRunner | Locust |
-| ---                                    | :---:     | :---:    | :---:      | :---:  |
-|**Highest-resolution (per each op) metrics**|:heavy_check_mark:|:x:| TBD |:x:|
-|**Saturation concurrency measurement**  |:heavy_check_mark:|:x:| TBD |:x:|
-
-### 2.4.6. Load Generation Patterns
-|                       | Mongoose  | COSBench | LoadRunner | Locust |
-| ---                   | :---:     | :---:    | :---:      | :---:  |
-|**[Weighted load](https://github.com/emc-mongoose/mongoose-load-step-weighted)**|:heavy_check_mark:| :heavy_check_mark:| TBD |:x:|
-|**[Pipeline load](https://github.com/emc-mongoose/mongoose-load-step-pipeline)**|:heavy_check_mark:| :x:| TBD |:x:|
-|**[Recycle mode](doc/design/recycle_mode)**|:heavy_check_mark: |:x:| TBD |:x:|
-
-### 2.4.7. Storages Support
-
-* **Note**: Locust and LoadRunner are not designed for the storage performance testing explicitly so they are excluded
-from the table below
-
-|                                            | Mongoose  | COSBench |
-| ---                                        | :---:     | :---:    |
-|**Supported storages**                      |<ul><li>Amazon S3</li><li>EMC Atmos</li><li>OpenStack Swift</li><li>Filesystem</li><li>HDFS</li><ul>|<ul><li>Amazon S3</li><li>Amplidata</li><li>OpenStack Swift</li><li>Scality</li><li>Ceph</li><li>Google Cloud Storage</li><li>Aliyun OSS</li><ul>|
-|**Extensible to support custom storage API**|  :heavy_check_mark:   | :heavy_check_mark: |
