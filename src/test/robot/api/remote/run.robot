@@ -38,6 +38,13 @@ Should Stop Running Scenario
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
     Should Be Equal As Strings  ${resp_stop.status_code}  200
 
+Should Stop Running Scenario In Distributed Mode
+    ${data} =  Make Start Request Payload For Distributed Mode
+    ${resp_start} =  Start Mongoose Scenario  ${data}
+    ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
+    ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
+    Should Be Equal As Strings  ${resp_stop.status_code}  200
+
 Should Not Stop Not Running Scenario
     ${data} =  Make Start Request Payload Full
     ${resp_start} =  Start Mongoose Scenario  ${data}
@@ -78,6 +85,11 @@ Make Start Request Payload Full
     ${defaults_data} =  Get Binary File  ${DATA_DIR}/aggregated_defaults.yaml
     ${scenario_data} =  Get Binary File  ${DATA_DIR}/scenario_dummy.js
     &{data} =  Create Dictionary  defaults=${defaults_data}  scenario=${scenario_data}
+    [Return]  ${data}
+
+Make Start Request Payload For Distributed Mode
+    ${defaults_data} =  Get Binary File  ${DATA_DIR}/distributed_defaults.yaml
+    &{data} =  Create Dictionary  defaults=${defaults_data}
     [Return]  ${data}
 
 Make Start Request Payload Invalid
