@@ -377,42 +377,45 @@ implements LoadStepClient {
 		});
 	}
 
-	@Override
-	public final boolean await(final long timeout, final TimeUnit timeUnit)
-	throws IllegalStateException, InterruptedException {
-		final var stepSliceCount = stepSlices.size();
-		try(final var logCtx = put(KEY_STEP_ID, loadStepId()).put(KEY_CLASS_NAME, getClass().getSimpleName())) {
-			if(0 == stepSliceCount) {
-				throw new IllegalStateException("No step slices are available");
-			}
-			Loggers.MSG.debug(
-				"{}: await for {} step slices for at most {} {}...", loadStepId(), stepSliceCount,
-				timeout, timeUnit.name().toLowerCase()
-			);
-			return stepSlices.parallelStream().map(stepSlice -> {
-				try {
-					final var invokeTimeMillis = System.currentTimeMillis();
-					final var timeOutMillis = timeUnit.toMillis(timeout);
-					var awaitResult = false;
-					while(timeOutMillis > System.currentTimeMillis() - invokeTimeMillis) {
-						if(Thread.currentThread().isInterrupted()) {
-							throwUnchecked(new InterruptedException());
-						}
-						awaitResult = stepSlice.await(1, TimeUnit.MILLISECONDS);
-					}
-					return awaitResult;
-				} catch(final InterruptedException e) {
-					throwUnchecked(e);
-				} catch(final RemoteException e) {
-					return false;
-				}
-				return false;
-			}).reduce((flag1, flag2) -> flag1 && flag2).orElse(false);
-		} finally {
-			Loggers.MSG.info("{}: await for {} step slices done", loadStepId(), stepSliceCount);
-			doStop();
-		}
-	}
+    @Override
+    public final boolean await(final long timeout, final TimeUnit timeUnit)
+            throws IllegalStateException, InterruptedException {
+        final var stepSliceCount = stepSlices.size();
+        try (final var logCtx = put(KEY_STEP_ID, loadStepId()).put(KEY_CLASS_NAME, getClass().getSimpleName())) {
+            if (0 == stepSliceCount) {
+                throw new IllegalStateException("No step slices are available");
+            }
+            Loggers.MSG.debug(
+                    "{}: await for {} step slices for at most {} {}...", loadStepId(), stepSliceCount,
+                    timeout, timeUnit.name().toLowerCase()
+            );
+            return stepSlices.parallelStream().map(stepSlice -> {
+                try {
+                    final var invokeTimeMillis = System.currentTimeMillis();
+                    final var timeOutMillis = timeUnit.toMillis(timeout);
+                    var awaitResult = false;
+                    while (timeOutMillis > System.currentTimeMillis() - invokeTimeMillis) {
+                        if (Thread.currentThread().isInterrupted()) {
+                            throwUnchecked(new InterruptedException());
+                        }
+                        awaitResult = stepSlice.await(1, TimeUnit.MILLISECONDS);
+                        if (awaitResult) { // awaitResult = (0 == countDown)
+                            break;
+                        }
+                    }
+                    return awaitResult;
+                } catch (final InterruptedException e) {
+                    throwUnchecked(e);
+                } catch (final RemoteException e) {
+                    return false;
+                }
+                return false;
+            }).reduce((flag1, flag2) -> flag1 && flag2).orElse(false);
+        } finally {
+            Loggers.MSG.info("{}: await for {} step slices done", loadStepId(), stepSliceCount);
+            doStop();
+        }
+    }
 
 	@Override
 	protected final void doStop() {
