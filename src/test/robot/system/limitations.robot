@@ -13,7 +13,6 @@ Library        String
 ${DATA_DIR}  src/test/robot/system/data
 ${MONGOOSE_CONFIG_URI_PATH}  /config
 ${MONGOOSE_CONFIG_SCHEMA_URI_PATH}  ${MONGOOSE_CONFIG_URI_PATH}/schema
-${STEP_ID}  count_limit
 ${COUNT_LIMIT}  1000
 ${LOGGER_NAME}  metrics.FileTotal
 
@@ -33,6 +32,6 @@ Should Stop After 1000 Operation
 
 *** Keywords ***
 Make Start Request Payload Without Scenario Part
-    ${defaults_data} =  Get Binary File  ${DATA_DIR}/${STEP_ID}.yaml
+    ${defaults_data} =  Get Binary File  ${DATA_DIR}/count_limit.yaml
     &{data} =  Create Dictionary  defaults=${defaults_data}
     [Return]  ${data}

@@ -7,8 +7,9 @@ Suite Setup  Start Mongoose Node
 Suite Teardown  Remove Mongoose Node
 
 *** Variables ***
-${MONGOOSE_IMAGE_NAME} =  emcmongoose/mongoose-base
-${MONGOOSE_NODE_PORT} =  9999
+${MONGOOSE_IMAGE_NAME}  emcmongoose/mongoose-base
+${MONGOOSE_NODE_PORT}  9999
+${STEP_ID}  robotest
 
 *** Keywords ***
 Start Mongoose Node
@@ -21,7 +22,7 @@ Start Mongoose Node
     ...  --name mongoose_node
     ...  --publish ${MONGOOSE_NODE_PORT}:${MONGOOSE_NODE_PORT}
     ...  ${MONGOOSE_IMAGE_NAME}:${image_version}
-    ...  --load-step-id=robotest --run-node
+    ...  --load-step-id=${STEP_ID} --run-node
     ${std_out} =  Run  ${cmd}
     Log  ${std_out}
     Create Session  mongoose_node  http://${service_host}:${MONGOOSE_NODE_PORT}  debug=1  timeout=1000  max_retries=10

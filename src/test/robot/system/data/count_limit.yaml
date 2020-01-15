@@ -1,6 +1,4 @@
 load:
-    step:
-        id: count_limit
     op:
         limit:
             count: 1000
