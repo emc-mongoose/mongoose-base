@@ -2,9 +2,10 @@
 Documentation  Commons Remoute API Keywords
 
 *** Variables ***
-${DATA_DIR} =  src/test/robot/api/remote/data
-${HEADER_ETAG} =  ETag
-${MONGOOSE_RUN_URI_PATH}=  /run
+${DATA_DIR}  src/test/robot/api/remote/data
+${HEADER_ETAG}  ETag
+${MONGOOSE_RUN_URI_PATH}  /run
+${STEP_ID}  robotest
 
 *** Keywords ***
 Start Mongoose Scenario

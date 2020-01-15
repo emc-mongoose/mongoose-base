@@ -1,5 +1,6 @@
 *** Settings ***
 Documentation  Mongoose Container Keywords
+Resource       Common.robot
 Library  OperatingSystem
 Library  RequestsLibrary
 
@@ -22,7 +23,7 @@ Start Mongoose Node
     ...  --name mongoose_node
     ...  --publish ${port}:${MONGOOSE_NODE_PORT}
     ...  ${MONGOOSE_IMAGE_NAME}:${image_version}
-    ...  --load-step-id=robotest --run-node
+    ...  --load-step-id=${STEP_ID} --run-node
     ${std_out} =  Run  ${cmd}
     Log  ${std_out}
     Create Session  ${session_name}  http://${service_host}:${port}  debug=1  timeout=1000  max_retries=10

@@ -9,7 +9,6 @@ Library        String
 
 
 *** Variables ***
-${STEP_ID}  robotest
 ${MESS_LOGGER_NAME}  Messages
 ${OP_TRACE_LOGGER_NAME}  OpTraces
 ${MONGOOSE_LOGS_URI_PATH}  /logs
