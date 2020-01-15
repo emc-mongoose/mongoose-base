@@ -20,7 +20,7 @@ ${LOGGER_NAME}  metrics.FileTotal
 Should Stop After 1000 Operation
     ${data} =  Make Start Request Payload Without Scenario Part
     ${resp_start} =  Start Mongoose Scenario  ${data}
-    Should Be Equal As Strings  ${resp_start.status_code}  200
+    Should Be Equal As Strings  ${resp_start.status_code}  202
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
     ${uri_path} =  Catenate  ${MONGOOSE_LOGS_URI_PATH}/${STEP_ID}/${LOGGER_NAME}
     Wait Until Keyword Succeeds  10x  1s  Should Return Status  ${uri_path}  200
