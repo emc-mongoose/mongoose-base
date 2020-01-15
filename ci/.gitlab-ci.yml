@@ -123,6 +123,12 @@ test_api_remote_run:
     SUITE: api.remote
     TEST: run
 
+test_system_limitations:
+  extends: .test_robot
+  variables:
+    SUITE: system
+    TEST: limitations
+
 release_to_maven_repo:
   stage: deploy
   script:
