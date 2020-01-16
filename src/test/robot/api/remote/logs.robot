@@ -64,10 +64,3 @@ Make Start Request Payload
     &{data} =  Create Dictionary  defaults=${defaults_data}  scenario=${scenario_data}
     [Return]  ${data}
 
-Should Have Lines
-    [Arguments]  ${result}  ${pattern}
-    ${lines} =    Get Lines Matching Pattern    ${result}    ${pattern}
-    ${count} =  Get Line Count  ${lines}
-    Should Be True  ${count}>0
-
-

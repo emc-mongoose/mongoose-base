@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation  Commons Remoute API Keywords
+Documentation  Commons Keywords
 
 
 
@@ -35,3 +35,9 @@ Should Return Status
     [Arguments]  ${uri_path}  ${expected_status}
     ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
     Should Be Equal As Strings  ${resp.status_code}  ${expected_status}
+
+Should Have Lines
+    [Arguments]  ${result}  ${pattern}
+    ${lines} =    Get Lines Matching Pattern    ${result}    ${pattern}
+    ${count} =  Get Line Count  ${lines}
+    Should Be True  ${count}>0
