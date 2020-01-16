@@ -47,7 +47,7 @@ Start Mongoose Node
     ...  --load-step-id=${STEP_ID} --run-node
     ${std_out} =  Run  ${cmd}
     Log  ${std_out}
-    Create Session  ${session_name}  http://${service_host}:${port}  debug=1  timeout=1000  max_retries=10
+    Create Session  ${session_name}  http://${service_host}:${rest_port}  debug=1  timeout=1000  max_retries=10
 
 Execute Mongoose Scenario
     [Arguments]  ${shared_data_dir}  ${env}  ${args}
