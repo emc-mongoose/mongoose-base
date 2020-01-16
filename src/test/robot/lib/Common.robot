@@ -21,3 +21,7 @@ Stop Mongoose Scenario Run
     Log  ${resp.status_code}
     [Return]  ${resp}
 
+Should Return Status
+    [Arguments]  ${uri_path}  ${expected_status}
+    ${resp} =  Get Request  mongoose_node  ${uri_path}
+    Should Be Equal As Strings  ${resp.status_code}  ${expected_status}

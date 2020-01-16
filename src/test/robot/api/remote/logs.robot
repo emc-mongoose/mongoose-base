@@ -66,8 +66,4 @@ Should Have Lines
     ${count} =  Get Line Count  ${lines}
     Should Be True  ${count}>0
 
-Should Return Status
-    [Arguments]  ${uri_path}  ${expected_status}
-    ${resp} =  Get Request  mongoose_node  ${uri_path}
-    Should Be Equal As Strings  ${resp.status_code}  ${expected_status}
 
