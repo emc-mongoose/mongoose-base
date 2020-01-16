@@ -94,8 +94,11 @@ Make Start Request Payload Full
     [Return]  ${data}
 
 Make Start Request Payload For Distributed Mode
-    ${service_host} =  Get Environment Variable  SERVICE_HOST
-    ${defaults_data} =  Catenate  load:{step:{node:{addr:${service_host}}}}};type=application/yaml
+#    ${service_host} =  Get Environment Variable  SERVICE_HOST
+#    ${defaults_data} =  Catenate  load:{step:{node:{addr:${service_host}}}}};type=application/yaml
+#    &{data} =  Create Dictionary  defaults=${defaults_data}
+#    [Return]  ${data}
+    ${defaults_data} =  Get Binary File  ${DATA_DIR}/distributed_defaults.yaml
     &{data} =  Create Dictionary  defaults=${defaults_data}
     [Return]  ${data}
 
