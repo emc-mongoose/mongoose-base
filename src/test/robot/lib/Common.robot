@@ -36,7 +36,7 @@ Should Return Status
     ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
     Should Be Equal As Strings  ${resp.status_code}  ${expected_status}
 
-Should Have Lines
+Should Include String
     [Arguments]  ${result}  ${pattern}
     ${lines} =    Get Lines Matching Pattern    ${result}    ${pattern}
     ${count} =  Get Line Count  ${lines}

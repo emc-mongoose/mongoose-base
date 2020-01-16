@@ -30,7 +30,9 @@ Should Stop After 1000 Operation
     Sleep  5m  Wait for ${LOGGER_NAME} will be available...
     ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
     Should Be Equal As Strings  ${resp.status_code}  200
-    Should Have Lines  ${resp.text}  ${COUNT_LIMIT}
+    Log  ${resp.text}
+    Log  ${resp}
+    Should Include String  ${resp.text}  ${COUNT_LIMIT}
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
 
 

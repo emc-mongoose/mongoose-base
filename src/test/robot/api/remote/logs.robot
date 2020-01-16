@@ -24,7 +24,7 @@ Should Respond Message Logs
     Wait Until Keyword Succeeds  10x  1s  Should Return Status  ${uri_path}  200
     ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
     Should Be Equal As Strings  ${resp.status_code}  200
-    Should Have Lines  ${resp.text}  *| INFO |*
+    Should Include String  ${resp.text}  *| INFO |*
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
 
 Should Respond Operation Trace Logs
@@ -35,7 +35,7 @@ Should Respond Operation Trace Logs
     Wait Until Keyword Succeeds  10x  1s  Should Return Status  ${uri_path}  200
     ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
     Should Be Equal As Strings  ${resp.status_code}  200
-    Should Have Lines  ${resp.text}  *
+    Should Include String  ${resp.text}  *
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
 
 Should Delete Logs
