@@ -1,13 +1,17 @@
 *** Settings ***
-Documentation  Mongoose Run API tests
-Force Tags  Run
-Resource   Common.robot
-Library  Collections
-Library  OperatingSystem
-Library  RequestsLibrary
+Documentation   Mongoose Run API tests
+Force Tags      Run
+Resource        Common.robot
+Library         Collections
+Library         OperatingSystem
+Library         RequestsLibrary
+
+
 
 *** Variables ***
-${HEADER_IF_MATCH} =  If-Match
+${HEADER_IF_MATCH}   If-Match
+
+
 
 *** Test Cases ***
 Should Start Scenario
@@ -80,6 +84,8 @@ Should Return Scenario Run State
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
     Wait Until Keyword Succeeds  10x  1s  Should Return Mongoose Scenario Run State  ${resp_etag_header}  204
 
+
+
 *** Keywords ***
 Make Start Request Payload Full
     ${defaults_data} =  Get Binary File  ${DATA_DIR}/aggregated_defaults.yaml
@@ -88,7 +94,8 @@ Make Start Request Payload Full
     [Return]  ${data}
 
 Make Start Request Payload For Distributed Mode
-    ${defaults_data} =  Get Binary File  ${DATA_DIR}/distributed_defaults.yaml
+    ${service_host} =  Get Environment Variable  SERVICE_HOST
+    ${defaults_data} =  Concatinate  load:{step:{node:{addr:${service_host}}}}};type=application/yaml
     &{data} =  Create Dictionary  defaults=${defaults_data}
     [Return]  ${data}
 
@@ -114,14 +121,14 @@ Should Return Mongoose Scenario Run State
     Should Be Equal As Strings  ${resp_state.status_code}  ${expected_status_code}
 
 Get Mongoose Node Status
-    ${resp} =  Head Request  mongoose_node  ${MONGOOSE_RUN_URI_PATH}
+    ${resp} =  Head Request  ${SESSION_NAME}  ${MONGOOSE_RUN_URI_PATH}
     Log  ${resp.status_code}
     [Return]  ${resp}
 
 Get Mongoose Scenario Run State
     [Arguments]  ${etag}
     &{req_headers} =  Create Dictionary  If-Match=${etag}
-    ${resp} =  Get Request  mongoose_node  ${MONGOOSE_RUN_URI_PATH}  headers=${req_headers}
+    ${resp} =  Get Request  ${SESSION_NAME}  ${MONGOOSE_RUN_URI_PATH}  headers=${req_headers}
     Log  ${resp.status_code}
     [Return]  ${resp}
 
