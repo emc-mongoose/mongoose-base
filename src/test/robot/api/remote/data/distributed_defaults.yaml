@@ -1,5 +1,5 @@
 load:
   step:
     node:
-      addr:
-        - localhost:1099
+      addrs:
+      - docker:1099
