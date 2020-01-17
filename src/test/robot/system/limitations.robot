@@ -32,7 +32,7 @@ Should Stop After 1000 Operation
     Should Be Equal As Strings  ${resp.status_code}  200
     Log  ${resp.text}
     Log  ${resp}
-    Should Include String  ${resp.text}  ${COUNT_LIMIT}
+    Should Include String  ${resp.text}  *CREATE,1,1,0,0.0,${COUNT_LIMIT}*
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
 
 
