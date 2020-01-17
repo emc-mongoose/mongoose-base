@@ -48,6 +48,7 @@ Should Stop Running Scenario In Distributed Mode
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
     Sleep  30s
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
+    Log  ${resp_stop.text}
     Should Be Equal As Strings  ${resp_stop.status_code}  200
     Should Not Export Metrics More Then 30s
 
