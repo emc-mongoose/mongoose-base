@@ -48,6 +48,7 @@ Should Stop Running Scenario In Distributed Mode
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
     Should Be Equal As Strings  ${resp_stop.status_code}  200
+    Should Not Export Metrics More Then 30s
 
 Should Not Stop Not Running Scenario
     ${data} =  Make Start Request Payload Full
@@ -62,6 +63,12 @@ Should Not Start Scenario With Invalid Defaults
     ${data} =  Make Start Request Payload Invalid
     ${resp_start} =  Start Mongoose Scenario  ${data}
     Should Be Equal As Strings  ${resp_start.status_code}  400
+
+Should Not Start Scenario With Invalid Defaults In Distributed Mode
+    ${data} =  Make Start Request Payload Invalid For Distributed Mode
+    ${resp_start} =  Start Mongoose Scenario  ${data}
+    Should Be Equal As Strings  ${resp_start.status_code}  400
+    Should Not Export Metrics More Then 30s
 
 Should Return The Node State
     ${data} =  Make Start Request Payload Full
@@ -94,11 +101,12 @@ Make Start Request Payload Full
     [Return]  ${data}
 
 Make Start Request Payload For Distributed Mode
-#    ${service_host} =  Get Environment Variable  SERVICE_HOST
-#    ${defaults_data} =  Catenate  load:{step:{node:{addr:${service_host}}}}};type=application/yaml
-#    &{data} =  Create Dictionary  defaults=${defaults_data}
-#    [Return]  ${data}
     ${defaults_data} =  Get Binary File  ${DATA_DIR}/distributed_defaults.yaml
+    &{data} =  Create Dictionary  defaults=${defaults_data}
+    [Return]  ${data}
+
+Make Start Request Payload Invalid For Distributed Mode
+    ${defaults_data} =  Get Binary File  ${DATA_DIR}/distributed_defaults_invalid.yaml
     &{data} =  Create Dictionary  defaults=${defaults_data}
     [Return]  ${data}
 
@@ -135,3 +143,16 @@ Get Mongoose Scenario Run State
     Log  ${resp.status_code}
     [Return]  ${resp}
 
+Should Not Export Metrics More Then ${time}
+    ${text1}   Get Metrics File Content
+    Sleep  ${time}
+    ${text2}   Get Metrics File Content
+    Should Be Equal As Strings  ${text1}  ${text2}
+
+
+Get Metrics File Content
+    ${uri_path} =  Catenate  ${MONGOOSE_LOGS_URI_PATH}/${STEP_ID}/metrics.File
+    Wait Until Keyword Succeeds  10x  1s  Should Return Status  ${uri_path}  200
+    ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
+    Should Be Equal As Strings  ${resp.status_code}  200
+    [Return]  ${resp.text}
