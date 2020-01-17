@@ -151,7 +151,7 @@ Should Not Export Metrics More Then ${time}
 
 
 Get Metrics File Content
-    ${uri_path} =  Catenate  logs/${STEP_ID}/metrics.File
+    ${uri_path} =  Catenate  /logs/${STEP_ID}/metrics.File
     Wait Until Keyword Succeeds  10x  1s  Should Return Status  ${uri_path}  200
     ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
     Should Be Equal As Strings  ${resp.status_code}  200
