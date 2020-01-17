@@ -46,6 +46,7 @@ Should Stop Running Scenario In Distributed Mode
     ${data} =  Make Start Request Payload For Distributed Mode
     ${resp_start} =  Start Mongoose Scenario  ${data}
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
+    Sleep  30s
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
     Should Be Equal As Strings  ${resp_stop.status_code}  200
     Should Not Export Metrics More Then 30s
@@ -53,7 +54,7 @@ Should Stop Running Scenario In Distributed Mode
 Should Stop Running Scenario After Error In Distributed Mode
     ${data} =  Make Start Request Payload Invalid For Distributed Mode
     ${resp_start} =  Start Mongoose Scenario  ${data}
-    Should Be Equal As Strings  ${resp_start.status_code}  200
+    Should Be Equal As Strings  ${resp_start.status_code}  202
     Should Not Export Metrics More Then 30s
 
 Should Not Stop Not Running Scenario
