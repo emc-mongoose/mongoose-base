@@ -50,6 +50,12 @@ Should Stop Running Scenario In Distributed Mode
     Should Be Equal As Strings  ${resp_stop.status_code}  200
     Should Not Export Metrics More Then 30s
 
+Should Stop Running Scenario After Error In Distributed Mode
+    ${data} =  Make Start Request Payload Invalid For Distributed Mode
+    ${resp_start} =  Start Mongoose Scenario  ${data}
+    Should Be Equal As Strings  ${resp_start.status_code}  200
+    Should Not Export Metrics More Then 30s
+
 Should Not Stop Not Running Scenario
     ${data} =  Make Start Request Payload Full
     ${resp_start} =  Start Mongoose Scenario  ${data}
@@ -63,12 +69,6 @@ Should Not Start Scenario With Invalid Defaults
     ${data} =  Make Start Request Payload Invalid
     ${resp_start} =  Start Mongoose Scenario  ${data}
     Should Be Equal As Strings  ${resp_start.status_code}  400
-
-Should Not Start Scenario With Invalid Defaults In Distributed Mode
-    ${data} =  Make Start Request Payload Invalid For Distributed Mode
-    ${resp_start} =  Start Mongoose Scenario  ${data}
-    Should Be Equal As Strings  ${resp_start.status_code}  400
-    Should Not Export Metrics More Then 30s
 
 Should Return The Node State
     ${data} =  Make Start Request Payload Full
@@ -151,7 +151,7 @@ Should Not Export Metrics More Then ${time}
 
 
 Get Metrics File Content
-    ${uri_path} =  Catenate  ${MONGOOSE_LOGS_URI_PATH}/${STEP_ID}/metrics.File
+    ${uri_path} =  Catenate  logs/${STEP_ID}/metrics.File
     Wait Until Keyword Succeeds  10x  1s  Should Return Status  ${uri_path}  200
     ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
     Should Be Equal As Strings  ${resp.status_code}  200
