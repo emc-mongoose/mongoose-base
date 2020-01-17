@@ -27,11 +27,8 @@ Should Stop After 1000 Operation
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
     ${uri_path} =  Catenate  ${MONGOOSE_LOGS_URI_PATH}/${STEP_ID}/${LOGGER_NAME}
     Wait Until Keyword Succeeds  10x  1s  Should Return Status  ${uri_path}  200
-    Sleep  5m  Wait for ${LOGGER_NAME} will be available...
     ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
     Should Be Equal As Strings  ${resp.status_code}  200
-    Log  ${resp.text}
-    Log  ${resp}
     Should Include String  ${resp.text}  *CREATE,1,1,0,0.0,${COUNT_LIMIT}*
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
 
