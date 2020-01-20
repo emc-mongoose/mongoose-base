@@ -2,6 +2,7 @@
 Documentation   Mongoose Run API tests
 Force Tags      Run
 Resource        Common.robot
+Resource        MongooseContainer.robot
 Library         Collections
 Library         OperatingSystem
 Library         RequestsLibrary
