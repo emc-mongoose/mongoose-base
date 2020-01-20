@@ -72,6 +72,10 @@ Execute Mongoose Scenario
 
 
 Get Docker Logs From Container With Name ${name}
+     ${cmd} =  Catenate  docker ps
+     ${std_out} =  Run  ${cmd}
+     Log  ${std_out}
+
      ${cmd} =  Catenate  docker logs ${name}
      ${std_out} =  Run  ${cmd}
      Log  ${std_out}
