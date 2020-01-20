@@ -2,4 +2,4 @@ load:
   step:
     node:
       addrs:
-      - docker:1090
+      - localhost:1090
