@@ -9,7 +9,7 @@ ${MONGOOSE_RUN_URI_PATH}   /run
 ${MONGOOSE_REST_PORT}      9999
 ${MONGOOSE_RMI_PORT}       1099
 ${MONGOOSE_ADD_REST_PORT}  9990
-${MONGOOSE_ADD_RMI_PORT}   1090
+${MONGOOSE_ADD_RMI_PORT}   1098
 ${SESSION_NAME}            mongoose_node
 ${ADD_SESSION_NAME}        mongoose_add_node
 ${STEP_ID}                 robotest
