@@ -72,7 +72,7 @@ Execute Mongoose Scenario
 
 
 Get Docker Logs From Container With Name ${name}
-     ${cmd} =  Catenate  docker inspect -f '{{range ,NetworkSettings.Network}}{{.IPAddress}}{{end}}' ${name}
+     ${cmd} =  Catenate  docker inspect -f '{{range .NetworkSettings.Network}}{{.IPAddress}}{{end}}' ${name}
      ${std_out} =  Run  ${cmd}
      Log  ${std_out}
 
