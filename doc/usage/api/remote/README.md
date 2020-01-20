@@ -153,7 +153,7 @@ And one using port 1098:
 
 ```docker run -p 1098:1099 emcmongoose/mongoose-base:4.2.17 --run-node```
 
-Notice that we use --network host on the first node only. As both nodes run on the same machine in this example, it's important to remember not to use the same ports for different nodes. As Mongoose expects REST calls on 9999 port by default and we only open this port for the first node, this will be the node we send requests to.
+Notice that we use `--network host` on the first node only. As both nodes run on the same machine in this example, it's important to remember not to use the same ports for different nodes. As Mongoose expects REST calls on 9999 port by default and we only open this port for the first node, this will be the node we send requests to.
 
 Then in the `defaults.yaml` that you pass to the node you need to specify additional node address as usual (see [distributed mode docs](../../../design/modes/distributed_mode)):
 
