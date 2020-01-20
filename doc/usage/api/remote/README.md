@@ -15,7 +15,6 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.3.2. [Get the log file from the beginning](#4232-get-the-log-file-from-the-beginning)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.3.3. [Get the specified log file part](#4233-get-the-specified-log-file-part)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.3.4. [Delete the log file](#4234-delete-the-log-file)<br/>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;4.2.3.5. []<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;4.2.4. [Metrics](#424-metrics)<br/>
 5. [Configuration](#5-configuration)<br/>
 6. [Output](#6-output)<br/>
