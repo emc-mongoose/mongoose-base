@@ -43,14 +43,20 @@ Should Stop Running Scenario
     Should Be Equal As Strings  ${resp_stop.status_code}  200
 
 Should Stop Running Scenario In Distributed Mode
+    Get Docker Logs From Container With Name ${SESSION_NAME}
+    Get Docker Logs From Container With Name ${ADD_SESSION_NAME}
     ${data} =  Make Start Request Payload For Distributed Mode
     ${resp_start} =  Start Mongoose Scenario  ${data}
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
     Sleep  30s
+    Get Docker Logs From Container With Name ${SESSION_NAME}
+    Get Docker Logs From Container With Name ${ADD_SESSION_NAME}
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
     Log  ${resp_stop.text}
     Should Be Equal As Strings  ${resp_stop.status_code}  200
     Should Not Export Metrics More Then 30s
+    Get Docker Logs From Container With Name ${SESSION_NAME}
+    Get Docker Logs From Container With Name ${ADD_SESSION_NAME}
 
 Should Stop Running Scenario After Error In Distributed Mode
     ${data} =  Make Start Request Payload Invalid For Distributed Mode

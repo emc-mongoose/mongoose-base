@@ -48,9 +48,7 @@ Start Mongoose Node
     ${std_out} =  Run  ${cmd}
     Log  ${std_out}
     Create Session  ${session_name}  http://${service_host}:${rest_port}  debug=1  timeout=1000  max_retries=10
-    ${cmd} =  Catenate  docker logs ${std_out}
-    ${std_out} =  Run  ${cmd}
-    Log  ${std_out}
+    Get Docker Logs From Container With Name ${session_name}
 
 
 Execute Mongoose Scenario
@@ -71,3 +69,9 @@ Execute Mongoose Scenario
     ...  ${args}
     ${std_out} =  Run  ${cmd}
     [Return]  ${std_out}
+
+
+Get Docker Logs From Container With Name ${name}
+     ${cmd} =  Catenate  docker logs ${name}
+     ${std_out} =  Run  ${cmd}
+     Log  ${std_out}
