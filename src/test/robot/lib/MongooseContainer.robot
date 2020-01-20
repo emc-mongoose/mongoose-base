@@ -48,6 +48,10 @@ Start Mongoose Node
     ${std_out} =  Run  ${cmd}
     Log  ${std_out}
     Create Session  ${session_name}  http://${service_host}:${rest_port}  debug=1  timeout=1000  max_retries=10
+    ${cmd} =  Catenate  docker logs ${std_out}
+    ${std_out} =  Run  ${cmd}
+    Log  ${std_out}
+
 
 Execute Mongoose Scenario
     [Arguments]  ${shared_data_dir}  ${env}  ${args}
