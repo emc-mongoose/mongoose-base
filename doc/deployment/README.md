@@ -118,6 +118,14 @@ docker run \
 **NOTE** 
 > If port didn't specified, then `1099` will be used by default.
 
+#### 2 docker containers on 1 machine
+> Note: E = Entry node, A = Additional node, D = Address used in defaults.yaml
+
+| It works | It doesn't work |
+| --- | --- |
+| E: --network host <br></br> A: -p rest:rest -p rmi:rmi <br></br> D:| E: --network host <br></br> A: --network host <br></br> D:|
+| E:
+
 ## Additional Notes
 
 ### Logs Sharing
