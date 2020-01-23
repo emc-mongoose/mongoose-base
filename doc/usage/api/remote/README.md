@@ -89,7 +89,6 @@ curl -v -X POST http://localhost:9999/run
 Also, the partial defaults configuration may be supplied too:
 ```bash
 curl -v -X POST \
-    -H "Content-Type:multipart/form-data" \
     -F "defaults=storage:{driver:{type:dummy-mock}}};type=application/yaml" \
     http://localhost:9999/run
 ```
