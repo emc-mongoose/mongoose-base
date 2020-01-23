@@ -2,6 +2,9 @@
 
 # Contents
 
+## 2020
+* [4.2.18](#4218) TODO
+
 ## 2019
 * [4.2.17](#4217) 2019-11-18
 * [4.2.16](#4216) 2019-10-16
@@ -70,6 +73,15 @@
 * [0.1.5](#015) 09/22/14
 * [0.1.4](#014) 09/17/14
 * [0.1.3](#013) 08/15/14
+
+# 4.2.18
+
+## Fixed Bugs
+
+| Id | Description |
+|----|-------------|
+| [BASE-1391](https://mongoose-issues.atlassian.net/browse/BASE-1391)| Mongoose doesn't stop at the count limit |
+| [BASE-1389](https://mongoose-issues.atlassian.net/browse/BASE-1389)| Update whole documentation |
 
 # 4.2.17
 
