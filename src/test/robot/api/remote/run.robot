@@ -111,12 +111,12 @@ Make Start Request Payload Full
 
 Make Start Request Payload For Distributed Mode
     [Arguments]  ${add_addr}
-    ${defaults_data} =  Catenate  load:{step:{node:{addrs:[${add_addr}]}}}};type=application/yaml
-    &{data} =  Create Dictionary  defaults=${defaults_data}
-    [Return]  ${data}
-#    ${defaults_data} =  Get Binary File  ${DATA_DIR}/distributed_defaults.yaml
+#    ${defaults_data} =  Catenate  load:{step:{node:{addrs:[${add_addr}]}}}};type=application/yaml
 #    &{data} =  Create Dictionary  defaults=${defaults_data}
 #    [Return]  ${data}
+    ${defaults_data} =  Get Binary File  ${DATA_DIR}/distributed_defaults.yaml
+    &{data} =  Create Dictionary  defaults=${defaults_data}
+    [Return]  ${data}
 
 Make Start Request Payload Invalid For Distributed Mode
     ${defaults_data} =  Get Binary File  ${DATA_DIR}/distributed_defaults_invalid.yaml

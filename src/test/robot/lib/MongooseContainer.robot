@@ -20,10 +20,12 @@ Start Mongoose Nodes
     Start Additional Mongoose Node
 
 Start Entry Mongoose Node
-    Start Mongoose Node  ${SESSION_NAME}  ${MONGOOSE_REST_PORT}  ${MONGOOSE_RMI_PORT}
+    ${network} =  Catenate  --network host
+    Start Mongoose Node  ${SESSION_NAME}  ${MONGOOSE_REST_PORT}  ${network}
 
 Start Additional Mongoose Node
-    Start Mongoose Node  ${ADD_SESSION_NAME}  ${MONGOOSE_ADD_REST_PORT}  ${MONGOOSE_ADD_RMI_PORT}
+    ${network} =  Catenate  -p ${MONGOOSE_ADD_RMI_PORT}:${MONGOOSE_RMI_PORT} -p ${MONGOOSE_ADD_REST_PORT}:${MONGOOSE_REST_PORT}
+    Start Mongoose Node  ${ADD_SESSION_NAME}  ${MONGOOSE_ADD_REST_PORT}  ${network}
 
 Remove Mongoose Nodes
     Delete All Sessions
@@ -33,7 +35,7 @@ Remove Mongoose Nodes
     Run  docker rm ${ADD_SESSION_NAME}
 
 Start Mongoose Node
-    [Arguments]  ${session_name}  ${rest_port}  ${rmi_port}
+    [Arguments]  ${session_name}  ${rest_port}  ${network}
     ${image_version} =  Get Environment Variable  MONGOOSE_IMAGE_VERSION
     # ${service_host} should be used instead of the "localhost" in GL CI
     ${service_host} =  Get Environment Variable  SERVICE_HOST
@@ -41,7 +43,7 @@ Start Mongoose Node
     ...  docker run
     ...  --detach
     ...  --name ${session_name}
-    ...  --publish ${rest_port}:${MONGOOSE_REST_PORT}
+    ...  ${network}
     ...  ${MONGOOSE_IMAGE_NAME}:${image_version}
     ...  --load-step-id=${STEP_ID}
     ...  --run-node
@@ -49,7 +51,6 @@ Start Mongoose Node
     Log  ${std_out}
     Create Session  ${session_name}  http://${service_host}:${rest_port}  debug=1  timeout=1000  max_retries=10
     Get Docker Logs From Container With Name ${session_name}
-
 
 Execute Mongoose Scenario
     [Arguments]  ${shared_data_dir}  ${env}  ${args}
