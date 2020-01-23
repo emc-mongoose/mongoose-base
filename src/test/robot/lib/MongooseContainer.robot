@@ -42,9 +42,9 @@ Start Mongoose Node
     ...  --detach
     ...  --name ${session_name}
     ...  --publish ${rest_port}:${MONGOOSE_REST_PORT}
-    ...  --publish ${rmi_port}:${MONGOOSE_RMI_PORT}
     ...  ${MONGOOSE_IMAGE_NAME}:${image_version}
-    ...  --load-step-id=${STEP_ID} --run-node
+    ...  --load-step-id=${STEP_ID}
+    ...  --run-node
     ${std_out} =  Run  ${cmd}
     Log  ${std_out}
     Create Session  ${session_name}  http://${service_host}:${rest_port}  debug=1  timeout=1000  max_retries=10
@@ -72,9 +72,6 @@ Execute Mongoose Scenario
 
 
 Get Docker Logs From Container With Name ${name}
-     ${std_out} =  Get Internal IP Of Docker Container With Name ${name}
-     Log  ${std_out}
-
      ${cmd} =  Catenate  docker logs ${name}
      ${std_out} =  Run  ${cmd}
      Log  ${std_out}

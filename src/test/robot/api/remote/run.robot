@@ -44,10 +44,10 @@ Should Stop Running Scenario
     Should Be Equal As Strings  ${resp_stop.status_code}  200
 
 Should Stop Running Scenario In Distributed Mode
-    Get Docker Logs From Container With Name ${ADD_SESSION_NAME}
     ${add_addr} =  Get Internal IP Of Docker Container With Name ${ADD_SESSION_NAME}
-    ${data} =  Make Start Request Payload For Distributed Mode  ${add_addr}:${MONGOOSE_RMI_PORT}
+    ${data} =  Make Start Request Payload For Distributed Mode  ${add_addr}
     ${resp_start} =  Start Mongoose Scenario  ${data}
+    Get Docker Logs From Container With Name ${SESSION_NAME}
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
     Sleep  30s
     Get Docker Logs From Container With Name ${SESSION_NAME}
