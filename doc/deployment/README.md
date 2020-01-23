@@ -120,6 +120,7 @@ docker run \
 
 #### 2 docker containers on 1 machine
 > Note 1: E = Entry node, A = Additional node, D = Address used in defaults.yaml
+
 > Note 2: To get Internal IP of container: `docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' [DOCKER ID/NAME]`
 
 | It works | It doesn't work |
