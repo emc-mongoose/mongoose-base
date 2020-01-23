@@ -44,14 +44,10 @@ Should Stop Running Scenario
     Should Be Equal As Strings  ${resp_stop.status_code}  200
 
 Should Stop Running Scenario In Distributed Mode
-    ${add_addr} =  Get Internal IP Of Docker Container With Name ${ADD_SESSION_NAME}
-    ${data} =  Make Start Request Payload For Distributed Mode  ${add_addr}
+    ${data} =  Make Start Request Payload For Distributed Mode
     ${resp_start} =  Start Mongoose Scenario  ${data}
     Get Docker Logs From Container With Name ${SESSION_NAME}
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
-    Sleep  30s
-    Get Docker Logs From Container With Name ${SESSION_NAME}
-    Get Docker Logs From Container With Name ${ADD_SESSION_NAME}
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
     Log  ${resp_stop.text}
     Should Be Equal As Strings  ${resp_stop.status_code}  200
@@ -110,10 +106,6 @@ Make Start Request Payload Full
     [Return]  ${data}
 
 Make Start Request Payload For Distributed Mode
-    [Arguments]  ${add_addr}
-#    ${defaults_data} =  Catenate  load:{step:{node:{addrs:[${add_addr}]}}}};type=application/yaml
-#    &{data} =  Create Dictionary  defaults=${defaults_data}
-#    [Return]  ${data}
     ${defaults_data} =  Get Binary File  ${DATA_DIR}/distributed_defaults.yaml
     &{data} =  Create Dictionary  defaults=${defaults_data}
     [Return]  ${data}
