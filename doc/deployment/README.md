@@ -119,12 +119,15 @@ docker run \
 > If port didn't specified, then `1099` will be used by default.
 
 #### 2 docker containers on 1 machine
-> Note: E = Entry node, A = Additional node, D = Address used in defaults.yaml
+> Note 1: E = Entry node, A = Additional node, D = Address used in defaults.yaml
+> Note 2: To get Internal IP of container: `docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' [DOCKER ID/NAME]`
 
 | It works | It doesn't work |
 | --- | --- |
-| E: --network host <br></br> A: -p rest:rest -p rmi:rmi <br></br> D:| E: --network host <br></br> A: --network host <br></br> D:|
-| E:
+| E: `--network host` <br></br> A: `-p rest2:rest -p rmi2:rmi` <br></br> D: `localhost:rmi2`| E: `--network host` <br></br> A: `--network host` <br></br> D: `localhost:rmi`|
+| E: `--network host` <br></br> A: `None (used docker bridge)` <br></br> D: `Internal IP`| E: `-p rest1:rest -p rmi1:rmi` <br></br> A: `-p rest2:rest -p rmi2:rmi` <br></br> D: `localhost:rmi2`|
+| E: `-p rest1:rest` <br></br> A: `None (used docker bridge)` <br></br> D: `Internal IP`| |
+| E: `-p rest1:rest` <br></br> A: `-p rest2:rest` <br></br> D: `Internal IP`| |
 
 ## Additional Notes
 
