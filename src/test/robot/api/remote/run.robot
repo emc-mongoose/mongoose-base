@@ -48,6 +48,7 @@ Should Stop Running Scenario In Distributed Mode
     ${resp_start} =  Start Mongoose Scenario  ${data}
     Get Docker Logs From Container With Name ${SESSION_NAME}
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
+    Sleep  30s
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
     Log  ${resp_stop.text}
     Should Be Equal As Strings  ${resp_stop.status_code}  200
