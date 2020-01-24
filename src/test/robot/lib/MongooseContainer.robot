@@ -72,10 +72,14 @@ Execute Mongoose Scenario
 
 
 Get Docker Logs From Container With Name ${name}
-     ${cmd} =  Catenate  docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${name}
-     ${std_out} =  Run  ${cmd}
+     ${std_out} =  Get Internal IP Of Docker Container With Name ${name}
      Log  ${std_out}
 
      ${cmd} =  Catenate  docker logs ${name}
      ${std_out} =  Run  ${cmd}
      Log  ${std_out}
+
+Get Internal IP Of Docker Container With Name ${name}
+    ${cmd} =  Catenate  docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${name}
+    ${std_out} =  Run  ${cmd}
+    [Return]  ${std_out}
