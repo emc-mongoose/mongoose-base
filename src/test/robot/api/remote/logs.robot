@@ -1,18 +1,19 @@
 *** Settings ***
-Documentation  Mongoose Logs API tests
-Force Tags     Logs
-Resource       Common.robot
-Library        Collections
-Library        OperatingSystem
-Library        RequestsLibrary
-Library        String
+Documentation   Mongoose Logs API tests
+Force Tags      Logs
+Resource        Common.robot
+Library         Collections
+Library         OperatingSystem
+Library         RequestsLibrary
+Library         String
 
 
 *** Variables ***
-${STEP_ID}  robotest
-${MESS_LOGGER_NAME}  Messages
-${OP_TRACE_LOGGER_NAME}  OpTraces
-${MONGOOSE_LOGS_URI_PATH}  /logs
+${MESS_LOGGER_NAME}         Messages
+${OP_TRACE_LOGGER_NAME}     OpTraces
+${MONGOOSE_LOGS_URI_PATH}   /logs
+
+
 
 *** Test Cases ***
 Should Respond Message Logs
@@ -21,9 +22,9 @@ Should Respond Message Logs
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
     ${uri_path} =  Catenate  ${MONGOOSE_LOGS_URI_PATH}/${STEP_ID}/${MESS_LOGGER_NAME}
     Wait Until Keyword Succeeds  10x  1s  Should Return Status  ${uri_path}  200
-    ${resp} =  Get Request  mongoose_node  ${uri_path}
+    ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
     Should Be Equal As Strings  ${resp.status_code}  200
-    Should Have Lines  ${resp.text}  *| INFO |*
+    Should Include String  ${resp.text}  *| INFO |*
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
 
 Should Respond Operation Trace Logs
@@ -32,9 +33,9 @@ Should Respond Operation Trace Logs
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
     ${uri_path} =  Catenate  ${MONGOOSE_LOGS_URI_PATH}/${STEP_ID}/${OP_TRACE_LOGGER_NAME}
     Wait Until Keyword Succeeds  10x  1s  Should Return Status  ${uri_path}  200
-    ${resp} =  Get Request  mongoose_node  ${uri_path}
+    ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
     Should Be Equal As Strings  ${resp.status_code}  200
-    Should Have Lines  ${resp.text}  *
+    Should Include String  ${resp.text}  *
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
 
 Should Delete Logs
@@ -43,16 +44,18 @@ Should Delete Logs
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
     ${uri_path} =  Catenate  ${MONGOOSE_LOGS_URI_PATH}/${STEP_ID}/${MESS_LOGGER_NAME}
     Wait Until Keyword Succeeds  10x  1s  Should Return Status  ${uri_path}  200
-    Delete Request  mongoose_node  ${uri_path}
-    ${resp} =  Get Request  mongoose_node  ${uri_path}
+    Delete Request  ${SESSION_NAME}  ${uri_path}
+    ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
     Should Be Equal As Strings  ${resp.status_code}  404
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
 
 Should Respond Loggers
     ${expected_text} =  Get File  ${DATA_DIR}/loggers.json
-    ${resp} =  Get Request  mongoose_node  ${MONGOOSE_LOGS_URI_PATH}
+    ${resp} =  Get Request  ${SESSION_NAME}  ${MONGOOSE_LOGS_URI_PATH}
     Should Be Equal As Strings  ${resp.status_code}  200
     Should Be Equal  ${expected_text}  ${resp.text}
+
+
 
 *** Keywords ***
 Make Start Request Payload
@@ -60,15 +63,4 @@ Make Start Request Payload
     ${scenario_data} =  Get Binary File  ${DATA_DIR}/scenario_dummy.js
     &{data} =  Create Dictionary  defaults=${defaults_data}  scenario=${scenario_data}
     [Return]  ${data}
-
-Should Have Lines
-    [Arguments]  ${result}  ${pattern}
-    ${lines} =    Get Lines Matching Pattern    ${result}    ${pattern}
-    ${count} =  Get Line Count  ${lines}
-    Should Be True  ${count}>0
-
-Should Return Status
-    [Arguments]  ${uri_path}  ${expected_status}
-    ${resp} =  Get Request  mongoose_node  ${uri_path}
-    Should Be Equal As Strings  ${resp.status_code}  ${expected_status}
 

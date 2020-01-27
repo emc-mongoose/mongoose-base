@@ -1,31 +1,56 @@
 *** Settings ***
 Documentation  Mongoose Container Keywords
-Library  OperatingSystem
-Library  RequestsLibrary
+Resource       Common.robot
+Library        OperatingSystem
+Library        RequestsLibrary
+
+
 
 *** Variables ***
-${LOG_DIR} =  build/log
-${MONGOOSE_CONTAINER_DATA_DIR} =  /data
-${MONGOOSE_CONTAINER_NAME} =  mongoose
-${MONGOOSE_IMAGE_NAME} =  emcmongoose/mongoose-base
-${MONGOOSE_NODE_PORT} =  9999
+${LOG_DIR}                      build/log
+${MONGOOSE_CONTAINER_DATA_DIR}  /data
+${MONGOOSE_CONTAINER_NAME}      mongoose
+${MONGOOSE_IMAGE_NAME}          emcmongoose/mongoose-base
+
+
 
 *** Keywords ***
+Start Mongoose Nodes
+    Start Entry Mongoose Node
+    Start Additional Mongoose Node
+
+Start Entry Mongoose Node
+    ${network} =  Catenate  --network host
+    Start Mongoose Node  ${SESSION_NAME}  ${MONGOOSE_REST_PORT}  ${network}
+
+Start Additional Mongoose Node
+    ${network} =  Catenate  -p ${MONGOOSE_ADD_RMI_PORT}:${MONGOOSE_RMI_PORT} -p ${MONGOOSE_ADD_REST_PORT}:${MONGOOSE_REST_PORT}
+    Start Mongoose Node  ${ADD_SESSION_NAME}  ${MONGOOSE_ADD_REST_PORT}  ${network}
+
+Remove Mongoose Nodes
+    Delete All Sessions
+    Run  docker stop ${SESSION_NAME}
+    Run  docker rm ${SESSION_NAME}
+    Run  docker stop ${ADD_SESSION_NAME}
+    Run  docker rm ${ADD_SESSION_NAME}
+
 Start Mongoose Node
+    [Arguments]  ${session_name}  ${rest_port}  ${network}
     ${image_version} =  Get Environment Variable  MONGOOSE_IMAGE_VERSION
     # ${service_host} should be used instead of the "localhost" in GL CI
     ${service_host} =  Get Environment Variable  SERVICE_HOST
     ${cmd} =  Catenate  SEPARATOR= \\\n\t
     ...  docker run
     ...  --detach
-    ...  --name ${MONGOOSE_CONTAINER_NAME}
-    ...  --publish ${MONGOOSE_NODE_PORT}:${MONGOOSE_NODE_PORT}
+    ...  --name ${session_name}
+    ...  ${network}
     ...  ${MONGOOSE_IMAGE_NAME}:${image_version}
-    ...  --load-step-id=robotest
+    ...  --load-step-id=${STEP_ID}
     ...  --run-node
     ${std_out} =  Run  ${cmd}
     Log  ${std_out}
-    Create Session  mongoose_node  http://${service_host}:${MONGOOSE_NODE_PORT}  debug=1  timeout=1000  max_retries=10
+    Create Session  ${session_name}  http://${service_host}:${rest_port}  debug=1  timeout=1000  max_retries=10
+    Get Docker Logs From Container With Name ${session_name}
 
 Execute Mongoose Scenario
     [Arguments]  ${shared_data_dir}  ${env}  ${args}
@@ -46,10 +71,13 @@ Execute Mongoose Scenario
     ${std_out} =  Run  ${cmd}
     [Return]  ${std_out}
 
-Remove Mongoose Node
-    Delete All Sessions
-    Run  docker stop ${MONGOOSE_CONTAINER_NAME}
-    Remove Mongoose Container
 
-Remove Mongoose Container
-    Run  docker rm ${MONGOOSE_CONTAINER_NAME}
+Get Docker Logs From Container With Name ${name}
+     ${cmd} =  Catenate  docker logs ${name}
+     ${std_out} =  Run  ${cmd}
+     Log  ${std_out}
+
+Get Internal IP Of Docker Container With Name ${name}
+    ${cmd} =  Catenate  docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${name}
+    ${std_out} =  Run  ${cmd}
+    [Return]  ${std_out}
