@@ -1,13 +1,18 @@
 *** Settings ***
-Documentation  Mongoose Run API tests
-Force Tags  Run
-Resource   Common.robot
-Library  Collections
-Library  OperatingSystem
-Library  RequestsLibrary
+Documentation   Mongoose Run API tests
+Force Tags      Run
+Resource        Common.robot
+Resource        MongooseContainer.robot
+Library         Collections
+Library         OperatingSystem
+Library         RequestsLibrary
+
+
 
 *** Variables ***
-${HEADER_IF_MATCH} =  If-Match
+${HEADER_IF_MATCH}   If-Match
+
+
 
 *** Test Cases ***
 Should Start Scenario
@@ -37,6 +42,25 @@ Should Stop Running Scenario
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
     Should Be Equal As Strings  ${resp_stop.status_code}  200
+
+Should Stop Running Scenario In Distributed Mode
+    ${data} =  Make Start Request Payload For Distributed Mode
+    ${resp_start} =  Start Mongoose Scenario  ${data}
+    Get Docker Logs From Container With Name ${SESSION_NAME}
+    ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
+    Sleep  30s
+    ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
+    Log  ${resp_stop.text}
+    Should Be Equal As Strings  ${resp_stop.status_code}  200
+    Should Not Export Metrics More Then 30s
+    Get Docker Logs From Container With Name ${SESSION_NAME}
+    Get Docker Logs From Container With Name ${ADD_SESSION_NAME}
+
+Should Stop Running Scenario After Error In Distributed Mode
+    ${data} =  Make Start Request Payload Invalid For Distributed Mode
+    ${resp_start} =  Start Mongoose Scenario  ${data}
+    Should Be Equal As Strings  ${resp_start.status_code}  202
+    Should Not Export Metrics More Then 30s
 
 Should Not Stop Not Running Scenario
     ${data} =  Make Start Request Payload Full
@@ -73,11 +97,23 @@ Should Return Scenario Run State
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
     Wait Until Keyword Succeeds  10x  1s  Should Return Mongoose Scenario Run State  ${resp_etag_header}  204
 
+
+
 *** Keywords ***
 Make Start Request Payload Full
     ${defaults_data} =  Get Binary File  ${DATA_DIR}/aggregated_defaults.yaml
     ${scenario_data} =  Get Binary File  ${DATA_DIR}/scenario_dummy.js
     &{data} =  Create Dictionary  defaults=${defaults_data}  scenario=${scenario_data}
+    [Return]  ${data}
+
+Make Start Request Payload For Distributed Mode
+    ${defaults_data} =  Get Binary File  ${DATA_DIR}/distributed_defaults.yaml
+    &{data} =  Create Dictionary  defaults=${defaults_data}
+    [Return]  ${data}
+
+Make Start Request Payload Invalid For Distributed Mode
+    ${defaults_data} =  Get Binary File  ${DATA_DIR}/distributed_defaults_invalid.yaml
+    &{data} =  Create Dictionary  defaults=${defaults_data}
     [Return]  ${data}
 
 Make Start Request Payload Invalid
@@ -102,14 +138,27 @@ Should Return Mongoose Scenario Run State
     Should Be Equal As Strings  ${resp_state.status_code}  ${expected_status_code}
 
 Get Mongoose Node Status
-    ${resp} =  Head Request  mongoose_node  ${MONGOOSE_RUN_URI_PATH}
+    ${resp} =  Head Request  ${SESSION_NAME}  ${MONGOOSE_RUN_URI_PATH}
     Log  ${resp.status_code}
     [Return]  ${resp}
 
 Get Mongoose Scenario Run State
     [Arguments]  ${etag}
     &{req_headers} =  Create Dictionary  If-Match=${etag}
-    ${resp} =  Get Request  mongoose_node  ${MONGOOSE_RUN_URI_PATH}  headers=${req_headers}
+    ${resp} =  Get Request  ${SESSION_NAME}  ${MONGOOSE_RUN_URI_PATH}  headers=${req_headers}
     Log  ${resp.status_code}
     [Return]  ${resp}
 
+Should Not Export Metrics More Then ${time}
+    ${text1}   Get Metrics File Content
+    Sleep  ${time}
+    ${text2}   Get Metrics File Content
+    Should Be Equal As Strings  ${text1}  ${text2}
+
+
+Get Metrics File Content
+    ${uri_path} =  Catenate  /logs/${STEP_ID}/metrics.File
+    Wait Until Keyword Succeeds  10x  1s  Should Return Status  ${uri_path}  200
+    ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
+    Should Be Equal As Strings  ${resp.status_code}  200
+    [Return]  ${resp.text}

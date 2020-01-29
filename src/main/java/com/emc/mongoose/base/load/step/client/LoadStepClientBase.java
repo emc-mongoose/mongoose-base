@@ -399,6 +399,9 @@ implements LoadStepClient {
 							throwUnchecked(new InterruptedException());
 						}
 						awaitResult = stepSlice.await(1, TimeUnit.MILLISECONDS);
+						if (awaitResult) { // awaitResult = (0 == countDown)
+							break;
+						}
 					}
 					return awaitResult;
 				} catch(final InterruptedException e) {
