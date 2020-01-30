@@ -80,6 +80,7 @@
 
 | Id | Description |
 |----|-------------|
+| [BASE-1397](https://mongoose-issues.atlassian.net/browse/BASE-1397)| Mongoose log appends when using the same load-step-id and adds a first weird line that is not yaml |
 | [BASE-1391](https://mongoose-issues.atlassian.net/browse/BASE-1391)| Mongoose doesn't stop at the count limit |
 | [BASE-1389](https://mongoose-issues.atlassian.net/browse/BASE-1389)| Update whole documentation |
 
