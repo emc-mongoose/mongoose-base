@@ -101,26 +101,26 @@ Configuration:
       PatternLayout:
         pattern: "%m"
     - name: cliFile
+      append: "false"
       fileName: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}${ctx:step_id}${sys:file.separator}cli.args.log"
       filePattern: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}$${ctx:step_id}${sys:file.separator}cli.args.log"
       Policies:
         StepIdTriggeringPolicy: {}
       DirectWriteRolloverStrategy: {}
-      SyslogLayout: {}
     - name: cfgFile
+      append: "false"
       fileName: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}${ctx:step_id}${sys:file.separator}config.yaml"
       filePattern: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}$${ctx:step_id}${sys:file.separator}config.yaml"
       Policies:
         StepIdTriggeringPolicy: {}
       DirectWriteRolloverStrategy: {}
-      SyslogLayout: {}
     - name: scenarioFile
+      append: "false"
       fileName: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}${ctx:step_id}${sys:file.separator}scenario.txt"
       filePattern: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}$${ctx:step_id}${sys:file.separator}scenario.txt"
       Policies:
         StepIdTriggeringPolicy: {}
       DirectWriteRolloverStrategy: {}
-      SyslogLayout: {}
     - name: partsUploadFile
       fileName: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}${ctx:step_id}${sys:file.separator}parts.upload.csv"
       filePattern: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}$${ctx:step_id}${sys:file.separator}parts.upload.csv"
