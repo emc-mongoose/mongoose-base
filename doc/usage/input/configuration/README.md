@@ -32,7 +32,7 @@ reference.
 | item-data-ranges-threshold                     | Size | 0                        | The size threshold to enable the multipart upload if supported by the configured storage driver |
 | item-data-size                                 | Size | 1MB                      | The size of the data items to process. Doesn't have any effect if item.type=container |
 | item-data-verify                               | Flag | false                    | Specifies whether to verify the content while reading the data items or not. Doesn't have any effect if load-op-type != read |
-| item-input-file                                | Path | null                     | The source file for the items to process. If null the behavior depends on the load type. |
+| item-input-file                                | Path | null                     | The source file for the items to process. If null the behavior depends on the load type. File has a specific format. The best way to create one - use item-output-file when doing a create workload |
 | item-input-path                                | String | null                   | The source path which may be used as items input if not "item-input-file" is specified. Also used for the copy mode as the path containing the items to be copied into the output path. |
 | item-naming-length                             | Integer > 0 | 12                | The name length for the new items. Has effect only in the case of create (if not partial) load
 | item-naming-seed                               | Integer or Expression | %{math:xor(<br/>int64:reverse(time:millisSinceEpoch()),<br/>int64:reverseBytes(time:nanos())<br/>)} | The initial id for the new item ids
