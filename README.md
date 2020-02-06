@@ -16,6 +16,7 @@
 6. [Documentation](doc) 📄 <br/>
 7. [Contributing](doc/contributing)<br/>
 8. [Changelog](doc/changelog)<br/>
+9. [FAQ](doc/faq)<br/>
 
 # 1. Overview
 
