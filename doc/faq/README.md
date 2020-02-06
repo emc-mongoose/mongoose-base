@@ -15,3 +15,7 @@ D = mongoose get the last byte of response from storage; operation finish
 **Latency = C-B** : this value is measured in nanoseconds and shows how much time passed since mongoose sent first byte to storage till first byte  from storage was returned. This value depends on object size in case of Create or Update, and doesn't in case of Read and Delete.
 
 **Duration = D-A** : total operation time (this value is measured in nanoseconds).
+
+## What is *concurrency*?
+
+**Concurrency level** = count of concurrently executed load operations/ the number of open connections at any moment of time ( in terms of the [netty driver](https://github.com/emc-mongoose/mongoose-storage-driver-netty) and its ["child" drivers](https://github.com/emc-mongoose/mongoose#dependency)).
