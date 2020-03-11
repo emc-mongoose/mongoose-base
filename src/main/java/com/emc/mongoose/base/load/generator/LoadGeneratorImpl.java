@@ -24,8 +24,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.concurrent.locks.Lock;
@@ -81,7 +81,7 @@ public class LoadGeneratorImpl<I extends Item, O extends Operation<I>> extends F
 		this.opOutput = opOutput;
 		this.batchSize = batchSize;
 		this.countLimit = countLimit > 0 ? countLimit : Long.MAX_VALUE;
-		this.recycleQueue = new ArrayBlockingQueue<>(recycleQueueSize, true);
+		this.recycleQueue = new LinkedBlockingQueue<>(recycleQueueSize);
 		this.recycleFlag = recycleFlag;
 		this.shuffleFlag = shuffleFlag;
 		this.rnd = shuffleFlag ? new Random() : null;
