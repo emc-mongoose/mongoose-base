@@ -3,6 +3,7 @@
 # Contents
 
 ## 2020
+* [4.2.19](#4219) TODO
 * [4.2.18](#4218) 2020-01-30
 
 ## 2019
@@ -73,6 +74,14 @@
 * [0.1.5](#015) 09/22/14
 * [0.1.4](#014) 09/17/14
 * [0.1.3](#013) 08/15/14
+
+# 4.2.19
+
+## Fixed Bugs
+
+| Id | Description |
+|----|-------------|
+| [BASE-1402](https://mongoose-issues.atlassian.net/browse/BASE-1402)| Mongoose metrics.output log shows BW in b/s instead of Mb/s |
 
 # 4.2.18
 
