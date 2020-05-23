@@ -1,0 +1,40 @@
+version: '2'
+
+services:
+
+  mongoose1:
+    image: emcmongoose/mongoose:4.2.13
+    container_name: mongoose1
+    command: ["--run-node"]
+  mongoose2:
+    image: emcmongoose/mongoose:4.2.13
+    container_name: mongoose2
+    command: ["--run-node"]
+  mongoose3:
+    image: emcmongoose/mongoose:4.2.13
+    container_name: mongoose3
+    command: ["--run-node"]
+
+  mongoose:
+    image: emcmongoose/mongoose:4.2.13
+    container_name: mongoose
+    volumes:
+      - "mongoose:/opt/volume/"
+    command: ["--storage-auth-uid=user1",
+              "--storage-auth-secret=secretKey1",
+              "--storage-net-node-addrs=10.199.196.20",
+              "--load-step-node-addrs=mongoose1,mongoose2,mongoose3",
+              "--run-scenario=/opt/volume/max.s3.4.nvme.10KB.js",
+              "--item-output-path=bucket1"]
+    links:
+      - mongoose1
+      - mongoose2
+      - mongoose3
+    depends_on:
+      - mongoose1
+      - mongoose2
+      - mongoose3
+
+volumes:
+  mongoose:
+    external: true
