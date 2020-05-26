@@ -170,6 +170,17 @@ docker run \
     [<MONGOOSE CLI ARGS>]
 ```
 
+## Docker-compose 
+
+TODO
+```bash
+docker-compose up -d --scale mongoose-node=3
+```
+
+## Docker-swarm
+
+TODO
+
 # Kubernetes
 
 Mongoose can be deployed in a [kubernetes](https://kubernetes.io/) cluster manually or with Helm. 
