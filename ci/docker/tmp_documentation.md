@@ -36,6 +36,16 @@ docker run -d --network host --name mongoose2 emcmongoose/mongoose:4.2.13  --run
 docker run -d --network host --name mongoose3 emcmongoose/mongoose:4.2.13  --run-node
 
 
+docker run -d --name s3_server \
+        -p 9000:9000 \
+        --env MINIO_ACCESS_KEY=user1 \
+        --env MINIO_SECRET_KEY=secretKey1  \
+        minio/minio:latest \
+        server /data
+
+docker-compose  -f docker-compose-minio.yaml up -d
+
+
 10.199.197.119
 docker swarm init
 echo "user1" | docker secret create access_key -

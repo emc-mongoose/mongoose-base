@@ -5,6 +5,8 @@ services:
   mongoose-node:
     image: $IMAGE_NAME:$IMAGE_TAG
     command: ["--run-node"]
+    container_name: mongoose-node
+    hostname: mongoose-node
     ports:
       - "1090-1098:1099"
       - "9990-9998:9999"
@@ -20,8 +22,9 @@ services:
     command: ["--storage-auth-uid=${STORAGE_AUTH_UID}",
               "--storage-auth-secret=${STORAGE_AUTH_SECRET}",
               "--storage-net-node-addrs=${STORAGE_NET_NODE_ADDRS}",
+              "--storage-net-node-port=${STORAGE_NET_NODE_PORT}",
               "--load-step-node-addrs=${LOAD_STEP_NODE_ADDRS}",
-              "--run-scenario=/opt/volume/scenario.js",
+#              "--run-scenario=/opt/volume/scenario.js",
               "--item-output-path=${ITEM_OUTPUT_PATH}"]
     links:
       - mongoose-node
