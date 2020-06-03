@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk11:alpine
+FROM adoptopenjdk/openjdk11:jdk-11.0.3.7-alpine
 
 ADD src ./src/
 ADD gradle ./gradle/
@@ -7,7 +7,7 @@ ADD gradlew ./gradlew
 ADD settings.gradle ./settings.gradle
 RUN ./gradlew clean jre
 
-FROM alpine:3.8
+FROM alpine:3.8.4
 
 RUN apk --update add --no-cache ca-certificates curl openssl binutils xz \
     && GLIBC_VER="2.28-r0" \

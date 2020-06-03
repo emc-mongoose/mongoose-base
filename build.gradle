@@ -24,7 +24,8 @@ plugins {
 }
 
 repositories {
-	jcenter()
+	maven { url "https://maven.google.com" }
+	jcenter { url "https://jcenter.bintray.com/"}
 	mavenCentral()
 }
 
