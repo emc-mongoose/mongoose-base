@@ -179,7 +179,12 @@ docker-compose up -d --scale mongoose-node=3
 
 ## Docker-swarm
 
-TODO
+### Deploy mongoose nodes
+
+```
+docker stack deploy --compose-file docker-compose-nodes.yaml mongoose-nodes
+```
+
 
 # Kubernetes
 

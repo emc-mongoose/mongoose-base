@@ -1,12 +1,16 @@
-version: '2'
+version: '3.8'
 
 services:
 
   mongoose-node:
-    image: $IMAGE_NAME:$IMAGE_TAG
+    image: emcmongoose/mongoose-base:4.2.16
     command: ["--run-node"]
     container_name: mongoose-node
     hostname: mongoose-node
     ports:
       - "1099:1099"
       - "9999:9999"
+    deploy:
+      replicas: 1
+      placement:
+        max_replicas_per_node: 1
