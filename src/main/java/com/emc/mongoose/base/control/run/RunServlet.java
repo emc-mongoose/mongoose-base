@@ -147,7 +147,7 @@ public class RunServlet extends HttpServlet {
 			final var activeRun = (Run) activeTask;
 			action.accept(activeRun, resp);
 		} else if (activeService != null) {
-			final var activeRun = new RunImpl("", "",null, activeService.runId());
+			final var activeRun = new RunImpl("", "", null, activeService.runId());
 			action.accept(activeRun, resp);
 		} else {
 			Loggers.ERR.warn("The scenario executor runs an alien task: {}", activeTask);
