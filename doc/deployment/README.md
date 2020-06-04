@@ -179,13 +179,48 @@ docker-compose up -d --scale mongoose-node=3
 
 ## Docker-swarm
 
+> **Create docker swarm cluster**:
+> 
+> *prerequisites*: node1(ip1), node2(ip2), node3(ip3)
+>
+> ssh to node1:
+> ```
+> docker swarm init
+> ### to display token
+> docker swarm join-token -q worker
+> ```
+> ssh to node2, node2
+> ```
+> docker swarm join --token <some token> <ip1>:2377
+> ```
+
 ### Deploy mongoose nodes
 
 ```
 docker stack deploy --compose-file docker-compose-nodes.yaml mongoose-nodes
 ```
+```
+$ docker stack ps mongoose-nodes
+ ID                  NAME                       IMAGE                              NODE                DESIRED STATE       CURRENT STATE           ERROR               PORTS
+ sy6krxo9vnj3        mongoose-nodes_mongoose-node.1   emcmongoose/mongoose-base:4.2.16   node5               Running             Running 1 second ago
 
+$ curl -I node5:9999/run
+HTTP/1.1 204 No Content
+...
+```
+change mongoose replicas count:
+```
+export REPLICAS=3; docker stack deploy --compose-file docker-compose-nodes.yaml mongoose-nodes
+```
+```
+$ docker stack ps mongoose-nodes
+ID                  NAME                       IMAGE                              NODE                DESIRED STATE       CURRENT STATE           ERROR               PORTS
+sy6krxo9vnj3        mongoose-nodes_mongoose-node.1   emcmongoose/mongoose-base:4.2.16   node5               Running             Running 1 second ago
+6m9d04e75ybd        mongoose-nodes_mongoose-node.2   emcmongoose/mongoose-base:4.2.16   node4               Running             Running 3 seconds ago
+x7euup6ihumb        mongoose-nodes_mongoose-node.3   emcmongoose/mongoose-base:4.2.16   node6               Running             Running 2 seconds ago
+```
 
+also you can specify `IMAGE` and `TAG` to use custom mongoose docker image:tag
 # Kubernetes
 
 Mongoose can be deployed in a [kubernetes](https://kubernetes.io/) cluster manually or with Helm. 
