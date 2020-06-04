@@ -24,9 +24,14 @@ services:
               "--storage-net-node-addrs=${STORAGE_NET_NODE_ADDRS}",
               "--storage-net-node-port=${STORAGE_NET_NODE_PORT}",
               "--load-step-node-addrs=${LOAD_STEP_NODE_ADDRS}",
-#              "--run-scenario=/opt/volume/scenario.js",
-              "--item-output-path=${ITEM_OUTPUT_PATH}"]
-    links:
-      - mongoose-node
-    depends_on:
-      - mongoose-node
+#              "--load-op-recycle=true",
+              "--item-data-size=100KB-1MB",
+              "--storage-driver-limit-concurrency=10",
+              "--load-op-limit-count=10000",
+              "--run-scenario=/opt/volume/scenario.js"
+#              "--item-input-path=${ITEM_OUTPUT_PATH}"
+    ]
+#    links:
+#      - mongoose-node
+#    depends_on:
+#      - mongoose-node
