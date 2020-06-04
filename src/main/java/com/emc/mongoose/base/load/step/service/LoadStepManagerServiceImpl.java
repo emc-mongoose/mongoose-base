@@ -18,6 +18,7 @@ public final class LoadStepManagerServiceImpl extends ServiceBase
 
 	private final List<Extension> extensions;
 	private final MetricsManager metricsMgr;
+	private LoadStepService stepSvc = null;
 
 	public LoadStepManagerServiceImpl(
 					final int port, final List<Extension> extensions, final MetricsManager metricsMgr) {
@@ -44,10 +45,15 @@ public final class LoadStepManagerServiceImpl extends ServiceBase
 	}
 
 	@Override
-	public final String getStepService(
-					final String stepType, final Config config, final List<Config> ctxConfigs)
-					throws RemoteException {
-		final LoadStepService stepSvc = new LoadStepServiceImpl(port, extensions, stepType, config, ctxConfigs, metricsMgr);
+	public final LoadStepService getStepService() {
+		return stepSvc;
+	}
+
+	@Override
+	public final String newStepService(
+			final String stepType, final Config config, final List<Config> ctxConfigs)
+			throws RemoteException {
+		stepSvc = new LoadStepServiceImpl(port, extensions, stepType, config, ctxConfigs, metricsMgr);
 		Loggers.MSG.info("New step service started @ port #{}: {}", port, stepSvc.name());
 		return stepSvc.name();
 	}

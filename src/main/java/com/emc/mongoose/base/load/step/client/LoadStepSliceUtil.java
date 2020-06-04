@@ -41,7 +41,7 @@ public interface LoadStepSliceUtil {
 
 		final String stepSvcName;
 		try {
-			stepSvcName = stepMgrSvc.getStepService(stepTypeName, configSlice, ctxConfigs);
+			stepSvcName = stepMgrSvc.newStepService(stepTypeName, configSlice, ctxConfigs);
 		} catch (final Exception e) {
 			throwUncheckedIfInterrupted(e);
 			LogUtil.exception(
