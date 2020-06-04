@@ -91,7 +91,7 @@ build_docker_image:
     - pip install -U requests
     - pip install -U robotframework
     - pip install -U robotframework-requests
-    - pip install -U robotframework-csvlibrary
+    - pip install -U robotframework-csvlib
   script:
     - export MONGOOSE_VERSION=$(cat src/main/resources/config/defaults.yaml | grep version | sed -n 's/.*\([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/p')
     - export MONGOOSE_IMAGE_VERSION=${CI_COMMIT_SHA}
