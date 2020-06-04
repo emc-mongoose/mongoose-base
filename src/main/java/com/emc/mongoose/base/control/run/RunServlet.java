@@ -77,7 +77,10 @@ public class RunServlet extends HttpServlet {
 	@Override
 	protected final void doPost(final HttpServletRequest req, final HttpServletResponse resp)
 					throws IOException, ServletException {
-
+		if (scenarioStepSvc.getStepService() != null) {
+			resp.setStatus(HttpServletResponse.SC_CONFLICT);
+			return;
+		}
 		final Part defaultsPart;
 		final Part scenarioPart;
 		final var contentTypeHeaderValue = req.getHeader(HttpHeader.CONTENT_TYPE.toString());
