@@ -1,0 +1,12 @@
+version: '2'
+
+services:
+
+  mongoose-node:
+    image: $IMAGE_NAME:$IMAGE_TAG
+    command: ["--run-node"]
+    container_name: mongoose-node
+    hostname: mongoose-node
+    ports:
+      - "1099:1099"
+      - "9999:9999"
