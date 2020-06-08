@@ -174,9 +174,38 @@ docker run \
 
 > *Checked with Docker version: 19.03.8*
 
-TODO
+### Deploy only mongoose nodes
 ```bash
 docker-compose up -d --scale mongoose-node=3
+```
+Check:
+```bash
+# docker ps
+CONTAINER ID        IMAGE                                      COMMAND                  CREATED             STATUS              PORTS                                            NAMES
+6e3ec1f837c8        emcmongoose/mongoose-base:latest           "/opt/mongoose/entry…"   14 seconds ago      Up 12 seconds       0.0.0.0:1091->1099/tcp, 0.0.0.0:9991->9999/tcp   root_mongoose-node_3
+f671b77ffd27        emcmongoose/mongoose-base:latest           "/opt/mongoose/entry…"   14 seconds ago      Up 12 seconds       0.0.0.0:1093->1099/tcp, 0.0.0.0:9993->9999/tcp   root_mongoose-node_2
+40255c0a91d9        emcmongoose/mongoose-base:latest           "/opt/mongoose/entry…"   14 seconds ago      Up 12 seconds       0.0.0.0:1092->1099/tcp, 0.0.0.0:9992->9999/tcp   root_mongoose-node_1
+...
+```
+
+Start entry-node (or with [REST API](doc/interfaces/api/remote)):
+```bash
+docker run -d --name mongoose \
+              --network host \
+              emcmongoose/mongoose-base:latest \
+            --load-step-node-addrs=localhost:1091,localhost:1092,localhost:1093
+```
+
+### Deploy mongoose nodes with entry node
+
+```bash
+docker-compose up -d --scale mongoose-node=3
+```
+
+## Destroy mongoose-nodes
+
+```bash
+docker-compose down
 ```
 
 ## Docker-swarm
@@ -206,7 +235,7 @@ docker stack deploy --compose-file docker-swarm-nodes.yaml mongoose-nodes
 ```
 $ docker stack ps mongoose-nodes
  ID                  NAME                       IMAGE                              NODE                DESIRED STATE       CURRENT STATE           ERROR               PORTS
- sy6krxo9vnj3        mongoose-nodes_mongoose-node.1   emcmongoose/mongoose-base:4.2.16   node5               Running             Running 1 second ago
+ sy6krxo9vnj3        mongoose-nodes_mongoose-node.1   emcmongoose/mongoose-base:latest   node5               Running             Running 1 second ago
 
 $ curl -I node5:9999/run
 HTTP/1.1 204 No Content
@@ -219,14 +248,14 @@ export REPLICAS=3; docker stack deploy --compose-file docker-swarm-nodes.yaml mo
 ```
 $ docker stack ps mongoose-nodes
 ID                  NAME                       IMAGE                              NODE                DESIRED STATE       CURRENT STATE           ERROR               PORTS
-sy6krxo9vnj3        mongoose-nodes_mongoose-node.1   emcmongoose/mongoose-base:4.2.16   node5               Running             Running 1 second ago
-6m9d04e75ybd        mongoose-nodes_mongoose-node.2   emcmongoose/mongoose-base:4.2.16   node4               Running             Running 3 seconds ago
-x7euup6ihumb        mongoose-nodes_mongoose-node.3   emcmongoose/mongoose-base:4.2.16   node6               Running             Running 2 seconds ago
+sy6krxo9vnj3        mongoose-nodes_mongoose-node.1   emcmongoose/mongoose-base:latest   node5               Running             Running 1 second ago
+6m9d04e75ybd        mongoose-nodes_mongoose-node.2   emcmongoose/mongoose-base:latest   node4               Running             Running 3 seconds ago
+x7euup6ihumb        mongoose-nodes_mongoose-node.3   emcmongoose/mongoose-base:latest   node6               Running             Running 2 seconds ago
 ```
 
 also you can specify `IMAGE` and `TAG` to use custom mongoose docker image:tag
 
-### Remove mongoose nodes
+### Destroy mongoose nodes
 
 ```bash
 docker stack rm mongoose-nodes
