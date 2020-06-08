@@ -172,6 +172,8 @@ docker run \
 
 ## Docker-compose 
 
+> *Checked with Docker version: 19.03.8*
+
 TODO
 ```bash
 docker-compose up -d --scale mongoose-node=3
@@ -179,25 +181,27 @@ docker-compose up -d --scale mongoose-node=3
 
 ## Docker-swarm
 
-> **Create docker swarm cluster**:
-> 
-> *prerequisites*: node1(ip1), node2(ip2), node3(ip3)
->
-> ssh to node1:
-> ```
-> docker swarm init
-> ### to display token
-> docker swarm join-token -q worker
-> ```
-> ssh to node2, node2
-> ```
-> docker swarm join --token <some token> <ip1>:2377
-> ```
+> *Checked with Docker version: 19.03.8*
+
+### Create docker swarm cluster
+
+*prerequisites*: node1(ip1), node2(ip2), node3(ip3)
+
+ssh to node1:
+```
+docker swarm init
+### to display token
+docker swarm join-token -q worker
+```
+ssh to node2, node2
+```
+docker swarm join --token <some token> <ip1>:2377
+```
 
 ### Deploy mongoose nodes
 
 ```
-docker stack deploy --compose-file docker-compose-nodes.yaml mongoose-nodes
+docker stack deploy --compose-file docker-swarm-nodes.yaml mongoose-nodes
 ```
 ```
 $ docker stack ps mongoose-nodes
@@ -210,7 +214,7 @@ HTTP/1.1 204 No Content
 ```
 change mongoose replicas count:
 ```
-export REPLICAS=3; docker stack deploy --compose-file docker-compose-nodes.yaml mongoose-nodes
+export REPLICAS=3; docker stack deploy --compose-file docker-swarm-nodes.yaml mongoose-nodes
 ```
 ```
 $ docker stack ps mongoose-nodes
@@ -221,6 +225,13 @@ x7euup6ihumb        mongoose-nodes_mongoose-node.3   emcmongoose/mongoose-base:4
 ```
 
 also you can specify `IMAGE` and `TAG` to use custom mongoose docker image:tag
+
+### Remove mongoose nodes
+
+```bash
+docker stack rm mongoose-nodes
+```
+
 # Kubernetes
 
 Mongoose can be deployed in a [kubernetes](https://kubernetes.io/) cluster manually or with Helm. 
