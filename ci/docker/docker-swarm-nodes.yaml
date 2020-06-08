@@ -3,7 +3,7 @@ version: '3.8'
 services:
 
   mongoose-node:
-    image: ${IMAGE:-emcmongoose/mongoose-base}:${TAG:-4.2.16}
+    image: ${IMAGE:-emcmongoose/mongoose-base}:${TAG:-latest}
     command: ["--run-node"]
     container_name: mongoose-node
     hostname: mongoose-node

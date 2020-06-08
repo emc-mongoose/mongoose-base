@@ -3,7 +3,7 @@ version: '3'
 services:
 
   mongoose-node:
-    image: $IMAGE_NAME:$IMAGE_TAG
+    image: ${IMAGE:-emcmongoose/mongoose-base}:${TAG:-latest}
     command: ["--run-node"]
     hostname: mongoose-node
     ports:
@@ -11,7 +11,7 @@ services:
       - "9990-9998:9999"
 
   mongoose:
-    image: $IMAGE_NAME:$IMAGE_TAG
+    image: ${IMAGE:-emcmongoose/mongoose-base}:${TAG:-latest}
     container_name: mongoose
     ports:
       - "1099:1099"
@@ -26,3 +26,7 @@ services:
               "--storage-net-node-port=${STORAGE_NET_NODE_PORT}",
               "--load-step-node-addrs=${LOAD_STEP_NODE_ADDRS}"
     ]
+    depends_on:
+      - mongoose-node
+    links:
+      - mongoose-node

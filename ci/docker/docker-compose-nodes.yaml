@@ -2,7 +2,7 @@ version: '3'
 
 services:
   mongoose-node:
-    image: $IMAGE_NAME:$IMAGE_TAG
+    image: ${IMAGE:-emcmongoose/mongoose-base}:${TAG:-latest}
     command: ["--run-node"]
     hostname: mongoose-node
     ports:
