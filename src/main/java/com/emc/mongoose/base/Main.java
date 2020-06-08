@@ -19,8 +19,10 @@ import com.emc.mongoose.base.control.run.RunImpl;
 import com.emc.mongoose.base.control.run.RunServlet;
 import com.emc.mongoose.base.env.CoreResourcesToInstall;
 import com.emc.mongoose.base.env.Extension;
+import com.emc.mongoose.base.load.step.LoadStepManagerService;
 import com.emc.mongoose.base.load.step.ScenarioUtil;
 import com.emc.mongoose.base.load.step.service.LoadStepManagerServiceImpl;
+import com.emc.mongoose.base.load.step.service.LoadStepService;
 import com.emc.mongoose.base.load.step.service.file.FileManagerServiceImpl;
 import com.emc.mongoose.base.logging.LogUtil;
 import com.emc.mongoose.base.logging.Loggers;
@@ -192,19 +194,19 @@ public final class Main {
 		context.addServlet(new ServletHolder(new ConfigServlet(fullDefaultConfig)), "/config/*");
 		context.addServlet(new ServletHolder(new LogServlet()), "/logs/*");
 		context.addServlet(new ServletHolder(new MetricsServlet()), "/metrics");
-		final var runServletHolder = new ServletHolder(
-						new RunServlet(extClsLoader, extensions, metricsMgr, fullDefaultConfig, appHomePath));
-		runServletHolder
-						.getRegistration()
-						.setMultipartConfig(new MultipartConfigElement("", 16 * MIB, 16 * MIB, 16 * MIB));
-		context.addServlet(runServletHolder, "/run/*");
 		try {
 			server.start();
 			Loggers.MSG.info("Started to serve the remote API @ port # " + port);
 			final var listenPort = fullDefaultConfig.intVal("load-step-node-port");
 			try (final Service fileMgrSvc = new FileManagerServiceImpl(listenPort);
-							final Service scenarioStepSvc = new LoadStepManagerServiceImpl(listenPort, extensions, metricsMgr)) {
+							final LoadStepManagerService scenarioStepSvc = new LoadStepManagerServiceImpl(listenPort, extensions, metricsMgr)) {
 				fileMgrSvc.start();
+				final var runServletHolder = new ServletHolder(
+						new RunServlet(extClsLoader, extensions, metricsMgr, fullDefaultConfig, appHomePath, scenarioStepSvc));
+				runServletHolder
+						.getRegistration()
+						.setMultipartConfig(new MultipartConfigElement("", 16 * MIB, 16 * MIB, 16 * MIB));
+				context.addServlet(runServletHolder, "/run/*");
 				scenarioStepSvc.start();
 				scenarioStepSvc.await();
 			} catch (final InterruptedException e) {
