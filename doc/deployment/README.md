@@ -175,6 +175,7 @@ docker run \
 > *Checked with Docker version: 19.03.8*
 
 ### Deploy only mongoose nodes
+Change `.env` file to configure image and project name.
 ```bash
 docker-compose up -d --scale mongoose-node=3
 ```
@@ -182,9 +183,9 @@ Check:
 ```bash
 # docker ps
 CONTAINER ID        IMAGE                                      COMMAND                  CREATED             STATUS              PORTS                                            NAMES
-6e3ec1f837c8        emcmongoose/mongoose-base:latest           "/opt/mongoose/entry…"   14 seconds ago      Up 12 seconds       0.0.0.0:1091->1099/tcp, 0.0.0.0:9991->9999/tcp   root_mongoose-node_3
-f671b77ffd27        emcmongoose/mongoose-base:latest           "/opt/mongoose/entry…"   14 seconds ago      Up 12 seconds       0.0.0.0:1093->1099/tcp, 0.0.0.0:9993->9999/tcp   root_mongoose-node_2
-40255c0a91d9        emcmongoose/mongoose-base:latest           "/opt/mongoose/entry…"   14 seconds ago      Up 12 seconds       0.0.0.0:1092->1099/tcp, 0.0.0.0:9992->9999/tcp   root_mongoose-node_1
+6e3ec1f837c8        emcmongoose/mongoose-base:latest           "/opt/mongoose/entry…"   14 seconds ago      Up 12 seconds       0.0.0.0:1091->1099/tcp, 0.0.0.0:9991->9999/tcp   mongoose_mongoose-node_3
+f671b77ffd27        emcmongoose/mongoose-base:latest           "/opt/mongoose/entry…"   14 seconds ago      Up 12 seconds       0.0.0.0:1093->1099/tcp, 0.0.0.0:9993->9999/tcp   mongoose_mongoose-node_2
+40255c0a91d9        emcmongoose/mongoose-base:latest           "/opt/mongoose/entry…"   14 seconds ago      Up 12 seconds       0.0.0.0:1092->1099/tcp, 0.0.0.0:9992->9999/tcp   mongoose_mongoose-node_1
 ...
 ```
 
@@ -196,11 +197,14 @@ docker run -d --name mongoose \
             --load-step-node-addrs=localhost:1091,localhost:1092,localhost:1093
 ```
 
-### Deploy mongoose nodes with entry node
-
+or with created network `mongoose_default`:
 ```bash
-docker-compose up -d --scale mongoose-node=3
+docker run -d --name mongoose \
+              --network mongoose_default \
+              emcmongoose/mongoose-base:latest \
+            --load-step-node-addrs=mongoose_mongoose-node_1,mongoose_mongoose-node_2,mongoose_mongoose-node_3
 ```
+
 
 ## Destroy mongoose-nodes
 
@@ -228,9 +232,9 @@ docker swarm join --token <some token> <ip1>:2377
 ```
 
 ### Deploy mongoose nodes
-
+Change `.env` file to configure image and project name.
 ```
-docker stack deploy --compose-file docker-swarm-nodes.yaml mongoose-nodes
+docker stack deploy --compose-file docker-swarm.yaml mongoose-nodes
 ```
 ```
 $ docker stack ps mongoose-nodes
@@ -243,7 +247,7 @@ HTTP/1.1 204 No Content
 ```
 change mongoose replicas count:
 ```
-export REPLICAS=3; docker stack deploy --compose-file docker-swarm-nodes.yaml mongoose-nodes
+export REPLICAS=3; docker stack deploy --compose-file docker-swarm.yaml mongoose-nodes
 ```
 ```
 $ docker stack ps mongoose-nodes
