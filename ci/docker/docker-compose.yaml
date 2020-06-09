@@ -27,5 +27,3 @@ services:
     ]
     depends_on:
       - mongoose-node
-    links:
-      - mongoose-node
