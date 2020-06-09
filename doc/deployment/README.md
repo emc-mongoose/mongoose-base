@@ -1,17 +1,22 @@
 # Deployment
 
-# Contents
-
 1. [Environment Requirements](#environment-requirements)<br/>
 2. [Jar](#jar)<br/>
 3. [Docker](#docker)<br/>
-	3.1. [Standalone](#standalone)<br/>
-	&nbsp;&nbsp;&nbsp;&nbsp;3.1.1 [Mount files](#mount-files)<br/>
-	3.2. [Distributed Mode](#distributed-mode)<br/>
-	&nbsp;&nbsp;&nbsp;&nbsp;3.2.1 [Custom ports](#custom-ports)<br/>
+    3.1. [Standalone](#standalone)<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;3.1.1 [Mount files](#mount-files)<br/>
+    3.2. [Distributed Mode](#distributed-mode)<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;3.2.1 [Custom ports](#custom-ports)<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;3.2.2 [2 docker containers on 1 machine](#2-docker-containers-on-1-machine)<br/>
+    3.3 [Additional Notes](#additional-notes)<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;3.3.1 [Logs Sharing](#logs-sharing)<br/>
+    &nbsp;&nbsp;&nbsp;&nbsp;3.3.2 [Debugging](#debugging)<br/>
+    3.4. [Docker-compose](#docker-compose)<br/>
+    3.5. [Docker-swarm](#docker-swarm)<br/>
 4. [Kubernetes](#kubernetes)<br/>
-	4.1.[Helm](#helm)<br/>
-	4.2.[Manual](#manual-deployment)<br/>
+  1. [Helm](#helm)<br/>
+
+---
 
 # Environment Requirements
 
@@ -24,6 +29,8 @@ High-load tests may allocate up to few GBs of the memory depending on the scenar
 * (Distributed Mode) Connectivity with the additional/remote nodes via port #1099 (RMI)
 * (Remote Monitoring) Connectivity with the nodes via port #9010 (JMX)
 
+---
+
 # Jar
 
 Mongoose is distributed as a single jar file from:
@@ -31,19 +38,21 @@ http://central.maven.org/maven2/com/github/emc-mongoose/mongoose-base/
 
 [About bundle jars](https://github.com/emc-mongoose/mongoose#backward-compatibility-notes)
 
+---
+
 # Docker
 
 Mongoose images are stored in the [Docker Hub](https://hub.docker.com/u/emcmongoose/)
 
-## Base
+## Base image
 
 **Note**
 > The base image doesn't contain any additonal load step types neither additional storage drivers. Please use one of the
 > specific images either consider using the [backward compatibility bundle](https://github.com/emc-mongoose/mongoose)
 
-### Standalone
+## Standalone
 
-The base image may be used in the standalone mode:
+The image may be used in the standalone mode:
 ```bash
 docker run \
     --network host \
@@ -51,7 +60,7 @@ docker run \
     [<MONGOOSE CLI ARGS>]
 ```
 
-##### Mount files
+### Mount files
 
 An example for mounting and using a scenario. Thus, files for input/output, configurations, logs and metrics can be mounted.
 
@@ -64,7 +73,7 @@ docker run -d --network host  \
 
 **Mounting** a volume **is the only right way** to save Mongoose logs in docker. Don't get confused by [`--output-file` option](../usage/output#127-item-list-files), it's not about docker.
 
-### Distributed Mode
+## Distributed Mode
 
 #### Node
 
@@ -132,7 +141,7 @@ docker run \
 
 ## Additional Notes
 
-### Logs Sharing
+#### Logs Sharing
 
 The example below mounts the host's directory `./log` to the container's
 `/root/.mongoose/<VERSION>/log` (where mongoose holds its log files).
@@ -145,7 +154,7 @@ docker run \
     [<MONGOOSE CLI ARGS>]
 ```
 
-### Debugging
+#### Debugging
 
 The example below starts the Mongoose in the container with remote
 debugging capability via the port #5005.
@@ -174,7 +183,7 @@ docker run \
 
 > *Checked with Docker version: 19.03.8*
 
-### Deploy only mongoose nodes
+#### Deploy only mongoose nodes
 Change `.env` file to configure image and project name.
 ```bash
 docker-compose up -d --scale mongoose-node=3
@@ -189,7 +198,7 @@ f671b77ffd27        emcmongoose/mongoose-base:latest           "/opt/mongoose/en
 ...
 ```
 
-Start entry-node (or with [REST API](doc/interfaces/api/remote)):
+#### Start entry-node (or with [REST API](doc/interfaces/api/remote)):
 ```bash
 docker run -d --name mongoose \
               --network host \
@@ -205,18 +214,11 @@ docker run -d --name mongoose \
             --load-step-node-addrs=mongoose_mongoose-node_1,mongoose_mongoose-node_2,mongoose_mongoose-node_3
 ```
 
-
-## Destroy mongoose-nodes
-
-```bash
-docker-compose down
-```
-
 ## Docker-swarm
 
 > *Checked with Docker version: 19.03.8*
 
-### Create docker swarm cluster
+#### Create docker swarm cluster
 
 *prerequisites*: node1(ip1), node2(ip2), node3(ip3)
 
@@ -231,7 +233,7 @@ ssh to node2, node2
 docker swarm join --token <some token> <ip1>:2377
 ```
 
-### Deploy mongoose nodes
+#### Deploy mongoose nodes
 Change `.env` file to configure image and project name.
 ```
 docker stack deploy --compose-file docker-swarm.yaml mongoose-nodes
@@ -259,11 +261,12 @@ x7euup6ihumb        mongoose-nodes_mongoose-node.3   emcmongoose/mongoose-base:l
 
 also you can specify `IMAGE` and `TAG` to use custom mongoose docker image:tag
 
-### Destroy mongoose nodes
+#### Destroy mongoose nodes
 
 ```bash
 docker stack rm mongoose-nodes
 ```
+---
 
 # Kubernetes
 
@@ -275,40 +278,7 @@ The only officially supported way to deploy Mongoose in Kubernetes is through He
 
 [Mongoose Helm chart doc](https://github.com/emc-mongoose/mongoose-helm-charts)
 
-## Manual deployment
-Examples of yaml files are in the directory [`doc/deployment/kubernetes`](kubernetes). The following describes a more detailed use of scripts:
-
-> * You need a ready-made cluster.
-> * The examples use the mongoose image with the `latest` tag. To use specifically the version you need to specify ` - image: emcmongoose/mongoose:<x.y.z>`
-> * All of the following configurations use `mongoose` namespace. Therefore, it is necessary to first create a namespace:
-> ```bash
-> kubectl create namespace mongoose
-> ```
-
-### Standalone
-
-Run Mongoose in standalone mode:
-```bash
-kubectl apply -f kuberenetes/standalone.yaml 
-```
-CLI args can be added in following lines:
-```yaml
-...
-      args:
-        - --load-step-limit-time=1m
-          --storage-driver-type=dummy-mock
-```
-
-#### Deployment & Pod
-
-There are 2 options to start the mongoose: as separately `Pod` resource and as `Deployment` resource-controller (see more details in Kubernetes doc). In the first case, when the scenario completes, pod goes into status `Completed` before it is deleted. In the second case, after the completion deployment will restart mongoose pod infinitely many times.
-
-Run Mongoose in standalone mode as deployment:
-```bash
-kubectl apply -f kuberenetes/standalone-deployment.yaml 
-```
-
-##### Logs
+## Logs
 
 With command `kubectl logs -n mongoose <resource name>` you can see logs into container. For example:
 
@@ -326,66 +296,10 @@ $ kubectl logs -n mongoose mongoose
 ...
 ```
 
-### Distributed Mode
-
-Run Mongoose in distributed mode:
-```bash
-kubectl apply -f kuberenetes/distributed.yaml 
-```
-
-> `---` - separates configurations for different resources. Each resource can be launched separately as in the previous examples with command `kubectl apply ...`
-
-The number of replicas means the number of mongoose nodes (`StatefulSet`).
-```
-...
-spec:
-  replicas: 4
-...
-```
-
-Separate `Pod` plays the role of the entry node.
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: mongoose
-  namespace: mongoose
-...
-   --load-step-node-addrs=mongoose-node-0.mongoose-node,mongoose-node-1.mongoose-node,mongoose-node-2.mongoose-node,mongoose-node-3.mongoose-node
-...
-```
-
-With command `kubectl get -n mongoose pods` you can see information about running pods. In this example:
-
-| NAME | READY | STATUS | RESTARTS | AGE |
-| --- | --- | --- | --- | --- |
-| mongoose          | 1/1     |Running   |0          |5s
-| mongoose-node-0   | 1/1     |Running   |0          |19m
-| mongoose-node-1   | 1/1     |Running   |0          |19m
-| mongoose-node-2   | 1/1     |Running   |0          |19m
-| mongoose-node-3   | 1/1     |Running   |0          |19m
-
-### REST API
-
-Run Mongoose nodes:
-```bash
-kubectl apply -f kuberenetes/additional-node.yaml 
-```
-With command `kubectl get -n mongoose services` you can see inforamtion about running services. For this example:
-
-|NAME            |TYPE           |CLUSTER-IP      |EXTERNAL-IP                   |PORT(S)          |AGE
-| --- | --- | --- | --- | --- | ---
-|mongoose-node   |LoadBalancer   |a.b.c.d   |**x.y.z.j**  |9999:31687/TCP   |25m
-
-We are interested in external ip **x.y.z.j** . We can send HTTP-requests to it [(see Remote API)](doc/interfaces/api/remote). For example:
-```
-curl -v -X POST http://x.y.z.j:9999/run
-```
-
-### Deleting kubernetes resources
+## Deleting kubernetes resources
 
 There are several ways to delete kubernetes resources:
+* delete helm release `helm uninstall mongoose`
 * delete by configuration `kubectl delete -f <filename>.yaml`
 * manual removal `kubectl delete -n mongoose pod NAME`
 * removal of all resources in namespace `kubectl delete -n mongoose pod --all`
