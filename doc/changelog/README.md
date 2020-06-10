@@ -82,6 +82,7 @@
 | Id | Description |
 |----|-------------|
 | [BASE-1401](https://mongoose-issues.atlassian.net/browse/BASE-1401)| RemoteException in docker image |
+| [BASE-1402](https://mongoose-issues.atlassian.net/browse/BASE-1402)| Mongoose metrics.output log shows BW in b/s instead of Mb/s |
 
 # 4.2.18
 
