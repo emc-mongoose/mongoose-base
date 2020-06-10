@@ -11,7 +11,9 @@ import com.emc.mongoose.base.concurrent.SingleTaskExecutorImpl;
 import com.emc.mongoose.base.config.ConfigFormat;
 import com.emc.mongoose.base.config.ConfigUtil;
 import com.emc.mongoose.base.env.Extension;
+import com.emc.mongoose.base.load.step.LoadStepManagerService;
 import com.emc.mongoose.base.load.step.ScenarioUtil;
+import com.emc.mongoose.base.load.step.service.LoadStepService;
 import com.emc.mongoose.base.logging.LogUtil;
 import com.emc.mongoose.base.logging.Loggers;
 import com.emc.mongoose.base.metrics.MetricsManager;
@@ -23,6 +25,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Path;
+import java.rmi.RemoteException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -54,24 +57,30 @@ public class RunServlet extends HttpServlet {
 	private final Config aggregatedConfigWithArgs;
 	private final Path appHomePath;
 	private final SingleTaskExecutor scenarioExecutor = new SingleTaskExecutorImpl();
+	private final LoadStepManagerService scenarioStepSvc;
 
 	public RunServlet(
 					final ClassLoader clsLoader,
 					final List<Extension> extensions,
 					final MetricsManager metricsMgr,
 					final Config aggregatedConfigWithArgs,
-					final Path appHomePath) {
+					final Path appHomePath,
+					final LoadStepManagerService scenarioStepSvc) {
 		this.scriptEngine = ScenarioUtil.scriptEngineByDefault(clsLoader);
 		this.extensions = extensions;
 		this.metricsMgr = metricsMgr;
 		this.aggregatedConfigWithArgs = aggregatedConfigWithArgs;
 		this.appHomePath = appHomePath;
+		this.scenarioStepSvc = scenarioStepSvc;
 	}
 
 	@Override
 	protected final void doPost(final HttpServletRequest req, final HttpServletResponse resp)
 					throws IOException, ServletException {
-
+		if (scenarioStepSvc.getStepService() != null) {
+			resp.setStatus(HttpServletResponse.SC_CONFLICT);
+			return;
+		}
 		final Part defaultsPart;
 		final Part scenarioPart;
 		final var contentTypeHeaderValue = req.getHeader(HttpHeader.CONTENT_TYPE.toString());
@@ -107,7 +116,7 @@ public class RunServlet extends HttpServlet {
 	}
 
 	@Override
-	protected final void doHead(final HttpServletRequest req, final HttpServletResponse resp) {
+	protected final void doHead(final HttpServletRequest req, final HttpServletResponse resp) throws RemoteException {
 		applyForActiveRunIfAny(resp, RunServlet::setRunExistsResponse);
 	}
 
@@ -132,12 +141,16 @@ public class RunServlet extends HttpServlet {
 	}
 
 	void applyForActiveRunIfAny(
-					final HttpServletResponse resp, final BiConsumer<Run, HttpServletResponse> action) {
+					final HttpServletResponse resp, final BiConsumer<Run, HttpServletResponse> action) throws RemoteException {
 		final var activeTask = scenarioExecutor.task();
-		if (null == activeTask) {
+		final var activeService = scenarioStepSvc.getStepService();
+		if (null == activeTask && activeService == null) {
 			resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
 		} else if (activeTask instanceof Run) {
 			final var activeRun = (Run) activeTask;
+			action.accept(activeRun, resp);
+		} else if (activeService != null) {
+			final var activeRun = new RunImpl("", "", null, activeService.runId());
 			action.accept(activeRun, resp);
 		} else {
 			Loggers.ERR.warn("The scenario executor runs an alien task: {}", activeTask);
