@@ -303,9 +303,13 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 				counterResults.increment();
 			}
 		} else if (Status.PENDING.equals(status)) {
-			//in case driver cannot finish operation due to storage API issues or of some other sort, we need
-			//to set the operation status to Pending, so that we don't count it in the metrics and recycle the operation
+			// in case driver cannot finish operation due to storage API issues or of some other sort, we need
+			// to set the operation status to Pending, so that we don't count it in the metrics and recycle the operation
 			generator.recycle(opResult);
+			counterResults.increment();
+		} else if (Status.OMIT.equals(status)) {
+			// operation status is set to Pending in case we want an operation to complete, but not to register
+			// in the metrics in any way
 			counterResults.increment();
 		} else {
 			if (recycleFlag) {
@@ -384,9 +388,13 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 					counterResults.increment();
 				}
 			} else if (Status.PENDING.equals(status)) {
-				//in case driver cannot finish operation due to storage API issues or of some other sort, we need
-				//to set the operation status to Pending, so that we don't count it in the metrics and recycle the operation
+				// in case driver cannot finish operation due to storage API issues or of some other sort, we need
+				// to set the operation status to Pending, so that we don't count it in the metrics and recycle the operation
 				generator.recycle(opResult);
+				counterResults.increment();
+			} else if (Status.OMIT.equals(status)) {
+				// operation status is set to Pending in case we want an operation to complete, but not to register
+				// in the metrics in any way
 				counterResults.increment();
 			} else {
 				if (recycleFlag) {
