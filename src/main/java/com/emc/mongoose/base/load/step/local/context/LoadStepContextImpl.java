@@ -280,33 +280,20 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 					latestSuccOpResultByItem.put(opResult.item(), opResult);
 					generator.recycle(opResult);
 				} else {
-					final var opsResultsOutput = this.opsResultsOutput;
-					if (opsResultsOutput != null) {
-						try {
-							if (!opsResultsOutput.put(opResult)) {
-								Loggers.ERR.warn("Failed to output the I/O result");
-							}
-						} catch (final Exception e) {
-							throwUncheckedIfInterrupted(e);
-							if (e instanceof EOFException) {
-								LogUtil.exception(Level.DEBUG, e, "Load operations results destination end of input");
-							} else if (e instanceof IOException) {
-								LogUtil.exception(
-									Level.WARN, e, "Failed to put the load operation to the destination");
-							} else {
-								throw e;
-							}
-						}
-					}
+					outputResults(opResult);
 				}
 				metricsCtx.markSucc(countBytesDone, reqDuration, respLatency);
 				counterResults.increment();
 			}
 		} else if (Status.PENDING.equals(status)) {
-			//in case driver cannot finish operation due to storage API issues or of some other sort, we need
-			//to set the operation status to Pending, so that we don't count it in the metrics and recycle the operation
+			// in case driver cannot finish operation due to storage API issues or of some other sort, we need
+			// to set the operation status to Pending, so that we don't count it in the metrics and recycle the operation
 			generator.recycle(opResult);
 			counterResults.increment();
+		} else if (Status.OMIT.equals(status)) {
+			// operation status is set to Omit in case we want an operation to complete, but not to register
+			// in the metrics in any way
+			outputResults(opResult);
 		} else {
 			if (recycleFlag) {
 				latestSuccOpResultByItem.remove(opResult.item());
@@ -360,34 +347,20 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 						latestSuccOpResultByItem.put(opResult.item(), opResult);
 						generator.recycle(opResult);
 					} else {
-						final var opsResultsOutput = this.opsResultsOutput;
-						if (opsResultsOutput != null) {
-							try {
-								if (!opsResultsOutput.put(opResult)) {
-									Loggers.ERR.warn("Failed to output the op result");
-								}
-							} catch (final Exception e) {
-								throwUncheckedIfInterrupted(e);
-								if (e instanceof EOFException) {
-									LogUtil.exception(
-										Level.DEBUG, e, "Load operations results destination end of input");
-								} else if (e instanceof IOException) {
-									LogUtil.exception(
-										Level.WARN, e, "Failed to put the load operation result to the destination");
-								} else {
-									throw e;
-								}
-							}
-						}
+						outputResults(opResult);
 					}
 					metricsCtx.markSucc(countBytesDone, reqDuration, respLatency);
 					counterResults.increment();
 				}
 			} else if (Status.PENDING.equals(status)) {
-				//in case driver cannot finish operation due to storage API issues or of some other sort, we need
-				//to set the operation status to Pending, so that we don't count it in the metrics and recycle the operation
+				// in case driver cannot finish operation due to storage API issues or of some other sort, we need
+				// to set the operation status to Pending, so that we don't count it in the metrics and recycle the operation
 				generator.recycle(opResult);
 				counterResults.increment();
+			} else if (Status.OMIT.equals(status)) {
+				// operation status is set to Omit in case we want an operation to complete, but not to register
+				// in the metrics in any way
+				outputResults(opResult);
 			} else {
 				if (recycleFlag) {
 					latestSuccOpResultByItem.remove(opResult.item());
@@ -423,6 +396,26 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 		} catch (final RemoteException ignored) {} catch (final IllegalStateException e) {
 			LogUtil.exception(
 							Level.WARN, e, "{}: failed to start the load generator \"{}\"", id, generator);
+		}
+	}
+	private void outputResults(final O opResult) {
+		final var opsResultsOutput = this.opsResultsOutput;
+		if (opsResultsOutput != null) {
+			try {
+				if (!opsResultsOutput.put(opResult)) {
+					Loggers.ERR.warn("Failed to output the I/O result");
+				}
+			} catch (final Exception e) {
+				throwUncheckedIfInterrupted(e);
+				if (e instanceof EOFException) {
+					LogUtil.exception(Level.DEBUG, e, "Load operations results destination end of input");
+				} else if (e instanceof IOException) {
+					LogUtil.exception(
+							Level.WARN, e, "Failed to put the load operation to the destination");
+				} else {
+					throw e;
+				}
+			}
 		}
 	}
 
