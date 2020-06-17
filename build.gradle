@@ -140,7 +140,7 @@ ext {
 }
 
 wrapper {
-	gradleVersion = "6.4.0"
+	gradleVersion = "6.4"
 }
 
 configurations {
@@ -162,7 +162,7 @@ dependencies {
 	compileOnly("it.unimi.dsi:fastutil:${depVersion.fastutil}") {
 		transitive = false
 	}
-
+	annotationProcessor "org.apache.logging.log4j:log4j-core:${depVersion.log4j}"
 	provided(
 		"commons-codec:commons-codec:${depVersion.commonsCodec}",
 		"commons-lang:commons-lang:${depVersion.commonsLang}",
