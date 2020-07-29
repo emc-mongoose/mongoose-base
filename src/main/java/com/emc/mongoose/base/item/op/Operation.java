@@ -15,6 +15,12 @@ public interface Operation<I extends Item> {
 
 	int originIndex();
 
+	// PENDING is used to recycle an item which hasn't been successfully finished due to specifics of any API
+	// but is not counted as an error. So the item is recycled, but isn't counted either as succ or as error
+
+	// OMIT is used to complete an item for whatever purpose that shouldn't be registered anywhere in the metrics
+	// and affect them
+
 	enum Status {
 		PENDING, // 0
 		ACTIVE, // 1
@@ -23,13 +29,14 @@ public interface Operation<I extends Item> {
 		SUCC, // 4
 		FAIL_IO, // 5
 		FAIL_TIMEOUT, // 6
-		RESP_FAIL_UNKNOWN, // 7
-		RESP_FAIL_CLIENT, // 8
-		RESP_FAIL_SVC, // 9
-		RESP_FAIL_NOT_FOUND, // 10
-		RESP_FAIL_AUTH, // 11
-		RESP_FAIL_CORRUPT, // 12
-		RESP_FAIL_SPACE // 13
+		OMIT, // 7
+		RESP_FAIL_UNKNOWN, // 8
+		RESP_FAIL_CLIENT, // 9
+		RESP_FAIL_SVC, // 10
+		RESP_FAIL_NOT_FOUND, // 11
+		RESP_FAIL_AUTH, // 12
+		RESP_FAIL_CORRUPT, // 13
+		RESP_FAIL_SPACE, // 14
 	}
 
 	OpType type();

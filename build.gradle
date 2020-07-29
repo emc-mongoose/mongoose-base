@@ -17,7 +17,7 @@ plugins {
 	id "scala"
 	id "signing"
 	id "maven-publish"
-	id "com.bmuschko.docker-remote-api" version "4.0.5"
+	id "com.bmuschko.docker-remote-api" version "6.4.0"
 	id "com.diffplug.gradle.spotless" version "3.18.0"
 	id "io.codearte.nexus-staging" version "0.20.0"
 	id "de.marcphilipp.nexus-publish" version "0.2.0"
@@ -140,7 +140,7 @@ ext {
 }
 
 wrapper {
-	gradleVersion = "4.10.3"
+	gradleVersion = "6.4"
 }
 
 configurations {
@@ -162,7 +162,7 @@ dependencies {
 	compileOnly("it.unimi.dsi:fastutil:${depVersion.fastutil}") {
 		transitive = false
 	}
-
+	annotationProcessor "org.apache.logging.log4j:log4j-core:${depVersion.log4j}"
 	provided(
 		"commons-codec:commons-codec:${depVersion.commonsCodec}",
 		"commons-lang:commons-lang:${depVersion.commonsLang}",
@@ -488,21 +488,16 @@ import com.bmuschko.gradle.docker.tasks.container.*
 task dockerBuildImage(type: DockerBuildImage) {
 	inputDir = project.projectDir
 	dockerFile = project.file("ci${File.separator}docker${File.separator}Dockerfile")
-	imageId = "emcmongoose/${project.name}".toString()
-	tags = [
-		"emcmongoose/${project.name}:${version}",
-		"emcmongoose/${project.name}:testing",
-	]
+	images.add("emcmongoose/${project.name}:${version}")
+	images.add("emcmongoose/${project.name}:testing")
 }
 
 task dockerPushProductionImage(type: DockerPushImage, dependsOn: dockerBuildImage) {
-	imageName = "emcmongoose/${project.name}".toString()
-	tag = "emcmongoose/${project.name}:${version}".toString()
+	images.add("emcmongoose/${project.name}:${version}")
 }
 
 task dockerPushTestingImage(type: DockerPushImage, dependsOn: dockerBuildImage) {
-	imageName = "emcmongoose/${project.name}".toString()
-	tag = "emcmongoose/${project.name}:testing".toString()
+	images.add("emcmongoose/${project.name}:testing")
 }
 
 // Robot Framework /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -510,17 +505,14 @@ task dockerPushTestingImage(type: DockerPushImage, dependsOn: dockerBuildImage) 
 task dockerBuildImageRobotest(type: DockerBuildImage) {
 	inputDir = project.projectDir
 	dockerFile = project.file("ci${File.separator}docker${File.separator}Dockerfile.robotest")
-	imageId = "emcmongoose/${project.name}-robotest".toString()
-	tags = [
-		"emcmongoose/${project.name}-robotest:${version}",
-	]
+	images.add("emcmongoose/${project.name}-robotest:${version}")
 }
 
 task dockerCreateContainerRobotest(type: DockerCreateContainer, dependsOn: [dockerBuildImage, dockerBuildImageRobotest]) {
 	attachStderr = true
 	attachStdout = true
-	autoRemove = true
-	binds = [
+	hostConfig.autoRemove = true
+	hostConfig.binds = [
 		"${project.buildDir}": "/root/mongoose/build",
 		"/var/run/docker.sock": "/var/run/docker.sock",
 	]
@@ -533,7 +525,7 @@ task dockerCreateContainerRobotest(type: DockerCreateContainer, dependsOn: [dock
 		"TEST": System.getenv("TEST"),
 	]
 	imageId = dockerBuildImageRobotest.getImageId()
-	network = "host"
+	hostConfig.network = "host"
 	tty = true
 	doLast {
 		println "Created the container for the ${System.env.SUITE}.${System.env.TEST} test"
@@ -546,7 +538,7 @@ task dockerStartContainerRobotest(type: DockerStartContainer, dependsOn: dockerC
 
 task robotest(type: DockerWaitContainer, dependsOn: dockerStartContainerRobotest) {
 	targetContainerId dockerCreateContainerRobotest.getContainerId()
-	timeout = 600 // 10 min w/o output -> fail on Travis CI
+	awaitStatusTimeout = 600 // 10 min w/o output -> fail on Travis CI
 	doLast {
 		if(0 != exitCode) {
 			throw new GradleException("Some robotests FAILED")
