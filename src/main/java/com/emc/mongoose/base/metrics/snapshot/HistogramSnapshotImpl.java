@@ -12,7 +12,7 @@ public class HistogramSnapshotImpl implements HistogramSnapshot {
 
 	public HistogramSnapshotImpl(final long[] vals) {
 		this.sortedVals = vals;
-		Arrays.sort(this.sortedVals);
+        Arrays.sort(this.sortedVals);
 	}
 
 	public static HistogramSnapshot aggregate(final List<HistogramSnapshot> snapshots) {
@@ -22,16 +22,16 @@ public class HistogramSnapshotImpl implements HistogramSnapshot {
 			return snapshots.get(0);
 		} else {
 			int sizeSum = 0;
-			for (int i = 0; i < snapshots.size(); i++) {
-				sizeSum += snapshots.get(i).values().length;
+			for (HistogramSnapshot snapshot : snapshots) {
+				sizeSum += snapshot.values().length;
 			}
 			final long[] valuesToAggregate = new long[sizeSum];
 			int k = 0;
 			long[] values;
-			for (int i = 0; i < snapshots.size(); i++) {
-				values = snapshots.get(i).values();
-				for (int j = 0; j < values.length; j++) {
-					valuesToAggregate[k] = values[j];
+			for (HistogramSnapshot snapshot : snapshots) {
+				values = snapshot.values();
+				for (long value : values) {
+					valuesToAggregate[k] = value;
 					k++;
 				}
 			}
@@ -43,7 +43,8 @@ public class HistogramSnapshotImpl implements HistogramSnapshot {
 	public long quantile(final double quantile) {
 		if (0 == sortedVals.length) {
 			return 0;
-		} else if (quantile >= 0.0 || quantile < 1.0) {
+		}
+		if (quantile >= 0.0 || quantile < 1.0) {
 			return sortedVals[(int) (quantile * sortedVals.length)];
 		} else {
 			throw new IllegalArgumentException(quantile + " is not in range [0..1)");
