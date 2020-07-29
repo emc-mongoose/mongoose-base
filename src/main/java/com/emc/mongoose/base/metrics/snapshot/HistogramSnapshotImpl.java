@@ -1,22 +1,18 @@
 package com.emc.mongoose.base.metrics.snapshot;
 
-import org.apache.commons.lang.ArrayUtils;
-
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 /** @author veronika K. on 25.09.18 */
 public class HistogramSnapshotImpl implements HistogramSnapshot {
 
-	private static final HistogramSnapshotImpl EMPTY = new HistogramSnapshotImpl(new TreeSet<Long>());
+	private static final HistogramSnapshotImpl EMPTY = new HistogramSnapshotImpl(new long[0]);
 
-	private final TreeSet<Long> sortedVals;
-
-	public HistogramSnapshotImpl(final TreeSet<Long> vals) {
-		this.sortedVals = vals;
-	}
+	private final long[] sortedVals;
 
 	public HistogramSnapshotImpl(final long[] vals) {
-		this.sortedVals = new TreeSet<Long>(Arrays.asList(ArrayUtils.toObject(vals)));
+		this.sortedVals = vals;
+		Arrays.sort(this.sortedVals);
 	}
 
 	public static HistogramSnapshot aggregate(final List<HistogramSnapshot> snapshots) {
@@ -25,43 +21,42 @@ public class HistogramSnapshotImpl implements HistogramSnapshot {
 		} else if (1 == snapshots.size()) {
 			return snapshots.get(0);
 		} else {
-			final TreeSet<Long> valuesToAggregate = snapshots.get(0).values();
-			for (int i = 1; i < snapshots.size(); i++) {
-				valuesToAggregate.addAll(snapshots.get(i).values());
+			int sizeSum = 0;
+			for (int i = 0; i < snapshots.size(); i++) {
+				sizeSum += snapshots.get(i).values().length;
+			}
+			final long[] valuesToAggregate = new long[sizeSum];
+			int k = 0;
+			long[] values;
+			for (int i = 0; i < snapshots.size(); i++) {
+				values = snapshots.get(i).values();
+				for (int j = 0; j < values.length; j++) {
+					valuesToAggregate[k] = values[j];
+					k++;
+				}
 			}
 			return new HistogramSnapshotImpl(valuesToAggregate);
 		}
 	}
 
-	private long getFromTreeSet(final Iterator<Long> it, final long index){
-		int i = 0;
-		while(it.hasNext() && i < index) {
-			i++;
-		}
-		return it.next();
-	}
-
 	@Override
 	public long quantile(final double quantile) {
-		int size = sortedVals.size();
-		if (0 == size) {
+		if (0 == sortedVals.length) {
 			return 0;
-		} else if (quantile >= 0.5 || quantile < 1.0) {
-			return getFromTreeSet(sortedVals.descendingIterator(), size - (int) (quantile * size));
-		} else if (quantile >= 0.0 || quantile < 0.5) {
-			return getFromTreeSet(sortedVals.iterator(), (int) (quantile * size));
-		}  else {
+		} else if (quantile >= 0.0 || quantile < 1.0) {
+			return sortedVals[(int) (quantile * sortedVals.length)];
+		} else {
 			throw new IllegalArgumentException(quantile + " is not in range [0..1)");
 		}
 	}
 
 	@Override
-	public final TreeSet<Long> values() {
+	public final long[] values() {
 		return sortedVals;
 	}
 
 	@Override
 	public long last() {
-		return sortedVals.last();
+		return sortedVals[sortedVals.length - 1];
 	}
 }
