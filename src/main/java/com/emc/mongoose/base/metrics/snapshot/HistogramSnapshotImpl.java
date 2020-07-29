@@ -1,9 +1,8 @@
 package com.emc.mongoose.base.metrics.snapshot;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.TreeSet;
+import org.apache.commons.lang.ArrayUtils;
+
+import java.util.*;
 
 /** @author veronika K. on 25.09.18 */
 public class HistogramSnapshotImpl implements HistogramSnapshot {
@@ -14,6 +13,10 @@ public class HistogramSnapshotImpl implements HistogramSnapshot {
 
 	public HistogramSnapshotImpl(final TreeSet<Long> vals) {
 		this.sortedVals = vals;
+	}
+
+	public HistogramSnapshotImpl(final long[] vals) {
+		this.sortedVals = new TreeSet<Long>(Arrays.asList(ArrayUtils.toObject(vals)));
 	}
 
 	public static HistogramSnapshot aggregate(final List<HistogramSnapshot> snapshots) {
