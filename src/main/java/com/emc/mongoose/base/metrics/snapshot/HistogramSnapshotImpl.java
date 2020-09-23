@@ -16,27 +16,28 @@ public class HistogramSnapshotImpl implements HistogramSnapshot {
 	}
 
 	public static HistogramSnapshot aggregate(final List<HistogramSnapshot> snapshots) {
-		if (0 == snapshots.size()) {
+		int size = snapshots.size();
+		if (0 == size) {
 			return EMPTY;
-		} else if (1 == snapshots.size()) {
-			return snapshots.get(0);
-		} else {
-			int sizeSum = 0;
-			for (HistogramSnapshot snapshot : snapshots) {
-				sizeSum += snapshot.values().length;
-			}
-			final long[] valuesToAggregate = new long[sizeSum];
-			int k = 0;
-			long[] values;
-			for (HistogramSnapshot snapshot : snapshots) {
-				values = snapshot.values();
-				for (long value : values) {
-					valuesToAggregate[k] = value;
-					k++;
-				}
-			}
-			return new HistogramSnapshotImpl(valuesToAggregate);
 		}
+		if (1 == size) {
+			return snapshots.get(0);
+		}
+		int sizeSum = 0;
+		for (HistogramSnapshot snapshot : snapshots) {
+			sizeSum += snapshot.values().length;
+		}
+		final long[] valuesToAggregate = new long[sizeSum];
+		int k = 0;
+		long[] values;
+		for (HistogramSnapshot snapshot : snapshots) {
+			values = snapshot.values();
+			for (long value : values) {
+				valuesToAggregate[k] = value;
+				k++;
+			}
+		}
+		return new HistogramSnapshotImpl(valuesToAggregate);
 	}
 
 	@Override
@@ -44,11 +45,9 @@ public class HistogramSnapshotImpl implements HistogramSnapshot {
 		if (0 == sortedVals.length) {
 			return 0;
 		}
-		if (quantile >= 0.0 || quantile < 1.0) {
+		if (quantile >= 0.0 || quantile < 1.0)
 			return sortedVals[(int) (quantile * sortedVals.length)];
-		} else {
-			throw new IllegalArgumentException(quantile + " is not in range [0..1)");
-		}
+		throw new IllegalArgumentException(quantile + " is not in range [0..1)");
 	}
 
 	@Override
