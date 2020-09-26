@@ -20,7 +20,7 @@ public class HistogramImplTest {
 				56, 112, 280, 192, 160, 48, 108, 98, 192, 144, 49, 40, 60, 160, 45, 300, 48, 14, 144, 168,
 				96,
 		};
-		final LongMeter<HistogramSnapshot> histogram = new HistogramImpl(new ConcurrentSlidingWindowLongReservoir(100));
+		final LongMeter<HistogramSnapshot> histogram = new HistogramImpl();
 		LongStream.of(srcData).forEach(histogram::update);
 		final HistogramSnapshot snapshot = histogram.snapshot();
 		assertEquals(5, snapshot.quantile(0.0)); // -> minimum

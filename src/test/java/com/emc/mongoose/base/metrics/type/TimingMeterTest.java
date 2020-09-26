@@ -13,7 +13,7 @@ public class TimingMeterTest {
 	@Test
 	public void test() {
 		final LongMeter<TimingMetricSnapshot> meter = new TimingMeterImpl(
-						new HistogramImpl(new ConcurrentSlidingWindowLongReservoir()), "SOME_METRIC");
+						new HistogramImpl(), "SOME_METRIC");
 		int sum = 0;
 		for (int i = 0; i < INTERVALS; ++i) {
 			meter.update(i);

@@ -54,12 +54,12 @@ public class MetricsContextImpl<S extends AllMetricsSnapshotImpl> extends Metric
 						TimeUnit.SECONDS.toMillis(updateIntervalSec));
 		//
 		respLatency = new TimingMeterImpl(
-						new HistogramImpl(new ConcurrentSlidingWindowLongReservoir(DEFAULT_RESERVOIR_SIZE)),
+						new HistogramImpl(),
 						MetricsConstants.METRIC_NAME_LAT);
 		respLatSnapshot = respLatency.snapshot();
 		//
 		reqDuration = new TimingMeterImpl(
-						new HistogramImpl(new ConcurrentSlidingWindowLongReservoir(DEFAULT_RESERVOIR_SIZE)),
+						new HistogramImpl(),
 						MetricsConstants.METRIC_NAME_DUR);
 		reqDurSnapshot = reqDuration.snapshot();
 		//

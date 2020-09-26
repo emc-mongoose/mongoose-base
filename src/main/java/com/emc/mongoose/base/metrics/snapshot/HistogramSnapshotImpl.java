@@ -1,62 +1,61 @@
 package com.emc.mongoose.base.metrics.snapshot;
 
-import java.util.Arrays;
-import java.util.List;
+import org.HdrHistogram.ConcurrentHistogram;
+import org.HdrHistogram.Histogram;
+import org.HdrHistogram.SynchronizedHistogram;
 
-/** @author veronika K. on 25.09.18 */
+import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
+
+/**
+ * @author veronika K. on 25.09.18
+ */
 public class HistogramSnapshotImpl implements HistogramSnapshot {
 
-	private static final HistogramSnapshotImpl EMPTY = new HistogramSnapshotImpl(new long[0]);
+	// try with autoresizing
+	private static final ConcurrentHistogram histogram = new ConcurrentHistogram(0);
+	private static AtomicLong lastValue = new AtomicLong();
+    private static final HistogramSnapshotImpl EMPTY = new HistogramSnapshotImpl();
 
-	private final long[] sortedVals;
+	public HistogramSnapshotImpl(final Histogram histogram, final long lastValue) {
+		this.histogram.add(histogram);
+		this.lastValue.set(lastValue);
+	}
 
-	public HistogramSnapshotImpl(final long[] vals) {
-		this.sortedVals = vals;
-        Arrays.sort(this.sortedVals);
+	public HistogramSnapshotImpl() {
 	}
 
 	public static HistogramSnapshot aggregate(final List<HistogramSnapshot> snapshots) {
-		int size = snapshots.size();
-		if (0 == size) {
-			return EMPTY;
-		}
-		if (1 == size) {
-			return snapshots.get(0);
-		}
-		int sizeSum = 0;
-		for (HistogramSnapshot snapshot : snapshots) {
-			sizeSum += snapshot.values().length;
-		}
-		final long[] valuesToAggregate = new long[sizeSum];
-		int k = 0;
-		long[] values;
-		for (HistogramSnapshot snapshot : snapshots) {
-			values = snapshot.values();
-			for (long value : values) {
-				valuesToAggregate[k] = value;
-				k++;
-			}
-		}
-		return new HistogramSnapshotImpl(valuesToAggregate);
-	}
+        int size = snapshots.size();
+        if (0 == size) {
+            return EMPTY;
+        }
+        if (1 == size) {
+            return snapshots.get(0);
+        }
+        final AtomicLong sumLastValue = new AtomicLong();
+        for (HistogramSnapshot snapshot : snapshots) {
+            histogram.add(snapshot.histogram());
+            sumLastValue.addAndGet(snapshot.last());
+        }
+        final long meanLastValue = sumLastValue.longValue() / size;
+		return new HistogramSnapshotImpl(histogram, meanLastValue);
+    }
 
-	@Override
-	public long quantile(final double quantile) {
-		if (0 == sortedVals.length) {
-			return 0;
-		}
-		if (quantile >= 0.0 || quantile < 1.0)
-			return sortedVals[(int) (quantile * sortedVals.length)];
-		throw new IllegalArgumentException(quantile + " is not in range [0..1)");
-	}
+    @Override
+    public long quantile(final double quantile) {
+        if (quantile >= 0.0 || quantile < 1.0)
+            return histogram.getValueAtPercentile(quantile);
+        throw new IllegalArgumentException(quantile + " is not in range [0..1)");
+    }
 
-	@Override
-	public final long[] values() {
-		return sortedVals;
-	}
+    @Override
+    public long last() {
+        return lastValue.get();
+    }
 
-	@Override
-	public long last() {
-		return sortedVals[sortedVals.length - 1];
+    @Override
+    public Histogram histogram(){
+    	return histogram;
 	}
 }

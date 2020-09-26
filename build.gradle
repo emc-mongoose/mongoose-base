@@ -57,6 +57,7 @@ ext {
 		slf4j              : "1.7.25",
 		log4j              : "2.8.2",
 		prometheus         : "0.6.0",
+		hdrHistogram	   : "2.1.12"
 	]
 	log4j2PluginsDatPath = Paths.get(
 		"META-INF", "org", "apache", "logging", "log4j", "core", "config", "plugins", "Log4j2Plugins.dat",
@@ -187,6 +188,7 @@ dependencies {
 		"org.apache.logging.log4j:log4j-jul:${depVersion.log4j}",
 		"org.apache.logging.log4j:log4j-slf4j-impl:${depVersion.log4j}",
 		"org.slf4j:slf4j-api:${depVersion.slf4j}",
+		 "org.hdrhistogram:HdrHistogram:${depVersion.hdrHistogram}"
 	)
 
 	testCompile(
