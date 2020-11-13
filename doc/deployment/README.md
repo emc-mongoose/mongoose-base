@@ -20,7 +20,7 @@
 
 # Environment Requirements
 
-* Java 11+ or Docker
+* Java 11-14 (except 11.0.8 - has an issue with RMI) or Docker
 * OS open files limit is at least a bit higher than specified concurrency level
 * Few gigabytes of free memory.
 
