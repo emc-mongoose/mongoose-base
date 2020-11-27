@@ -55,21 +55,29 @@ public class FileManagerImpl implements FileManager {
 			final int buffSize = (int) Math.min(REUSABLE_BUFF_SIZE_MAX, remainingSize);
 			if (buffSize > 0) {
 				final ByteBuffer bb = ByteBuffer.allocate(buffSize);
-				int doneSize = 0;
-				int n;
-				while (doneSize < buffSize) {
-					n = fileChannel.read(bb);
-					if (n < 0) {
+				int readBytesTotal;
+				int newLineCharacterCode = '\n';  //  == 10
+				byte[] resultingBuffer;
+					readBytesTotal = fileChannel.read(bb);
+					int lastReadItemIndex = readBytesTotal-1;
+					if (readBytesTotal < 0) {
 						// unexpected but possible: the file is shorter than was estimated before
 						final byte[] buff = new byte[bb.position()];
 						bb.rewind();
 						bb.get(buff);
 						return buff;
+					} else if (bb.get(lastReadItemIndex) != newLineCharacterCode) {
+						int lastNewLineCharacterIndex = lastReadItemIndex;
+						while (bb.get(lastNewLineCharacterIndex) != newLineCharacterCode) {
+							lastNewLineCharacterIndex--;
+						}
+						resultingBuffer = new byte[lastNewLineCharacterIndex+1];
+						bb.rewind();
+						bb.get(resultingBuffer,0,lastNewLineCharacterIndex+1);
 					} else {
-						doneSize += n;
+						resultingBuffer = bb.array();
 					}
-				}
-				return bb.array();
+				return resultingBuffer;
 			} else {
 				return EMPTY;
 			}
