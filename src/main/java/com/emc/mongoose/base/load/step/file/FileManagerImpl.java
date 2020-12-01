@@ -56,20 +56,37 @@ public class FileManagerImpl implements FileManager {
 			if (buffSize > 0) {
 				final ByteBuffer bb = ByteBuffer.allocate(buffSize);
 				int doneSize = 0;
-				int n;
+				int readBytesTotal;
+				final int newLineCharacterCode = '\n';  //  == 10
+				byte[] resultingBuffer = new byte[0];
 				while (doneSize < buffSize) {
-					n = fileChannel.read(bb);
-					if (n < 0) {
+					readBytesTotal = fileChannel.read(bb);
+					final int lastReadItemIndex = readBytesTotal - 1;
+					if (readBytesTotal < 0) {
 						// unexpected but possible: the file is shorter than was estimated before
 						final byte[] buff = new byte[bb.position()];
 						bb.rewind();
 						bb.get(buff);
 						return buff;
+					} else if (bb.get(lastReadItemIndex) != newLineCharacterCode) {
+						int lastNewLineCharacterIndex = lastReadItemIndex;
+						while (bb.get(lastNewLineCharacterIndex) != newLineCharacterCode) {
+							lastNewLineCharacterIndex--;
+						}
+						resultingBuffer = new byte[lastNewLineCharacterIndex + 1];
+						bb.rewind();
+						bb.get(resultingBuffer, 0, lastNewLineCharacterIndex + 1);
+						// we add readBytesTotal to doneSize as we consider all the read bytes handled in spite of
+						// rejecting part of the ByteBuffer. doneSize is only needed to finish the while loop. And the
+						// position for the next readFromFile() is set via offset which is determined by the size of
+						// the resultingBuffer.
+						doneSize += readBytesTotal;
 					} else {
-						doneSize += n;
+						resultingBuffer = bb.array();
+						doneSize += readBytesTotal;
 					}
 				}
-				return bb.array();
+				return resultingBuffer;
 			} else {
 				return EMPTY;
 			}
