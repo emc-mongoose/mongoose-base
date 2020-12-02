@@ -86,10 +86,11 @@ build_docker_image:
     MONGOOSE_IMAGE_VERSION: ${CI_COMMIT_SHA}
     PYTHONPATH: ${PYTHONPATH}:/usr/lib/python3.8/site-packages:src/test/robot/lib
   before_script:
-    # since 20.0.26 version virtualenv uses distlib 3.0.1 instead of 3.0.0. If apk --update is done first then
+    # since 20.0.26 version virtualenv uses distlib 3.0.1 instead of 3.0.0. If apk --update python3 is done first then
     # issue rises with 3.0.0 not being able to upgrade to 3.0.1
+    - apk add --no-cache --update py-pip
     - pip install virtualenv
-    - apk add --no-cache --update python3 py-pip
+    - apk add --no-cache --update python3
     - pip install -U requests
     - pip install -U robotframework
     - pip install -U robotframework-requests
