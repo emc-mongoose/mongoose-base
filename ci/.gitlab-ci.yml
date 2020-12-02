@@ -89,11 +89,11 @@ build_docker_image:
     # since 20.0.26 version virtualenv uses distlib 0.3.1 instead of 0.3.0. If apk --update is done first then
     # issue rises with 3.0.0 not being able to upgrade to 3.0.1. So we ignore 0.3.0
     - apk add --no-cache --update python3 py-pip
-    - pip install virtualenv==20.0.23 --ignore-installed distlib
+    - pip install virtualenv==20.0.23 #--ignore-installed distlib
     - pip install -U requests==2.24.0
-    - pip install -U robotframework
-    - pip install -U robotframework-requests
-    - pip install -U robotframework-csvlib
+    - pip install -U robotframework==3.2.1
+    - pip install -U robotframework-requests==0.7.0
+    - pip install -U robotframework-csvlib==1.0.1
   script:
     - export MONGOOSE_VERSION=$(cat src/main/resources/config/defaults.yaml | grep version | sed -n 's/.*\([0-9]\+\.[0-9]\+\.[0-9]\+\).*/\1/p')
     - export MONGOOSE_IMAGE_VERSION=${CI_COMMIT_SHA}
