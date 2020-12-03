@@ -14,7 +14,7 @@ services:
 
 stages:
   - build
-  - test # unit/integration tests
+#  - test # unit/integration tests
   - build_docker_image
   - test_functional # functional containerized tests
   - deploy
@@ -56,19 +56,19 @@ build:
     paths:
       - build/libs/mongoose-*.jar
 
-test_unit:
-  stage: test
-  script:
-    - ./gradlew test
-
-test_integration:
-  stage: test
-  script:
-    - ./gradlew integrationTest
-  artifacts:
-    paths:
-      - build/reports/tests/integrationTest/*
-    when: on_failure
+#test_unit:
+#  stage: test
+#  script:
+#    - ./gradlew test
+#
+#test_integration:
+#  stage: test
+#  script:
+#    - ./gradlew integrationTest
+#  artifacts:
+#    paths:
+#      - build/reports/tests/integrationTest/*
+#    when: on_failure
 
 build_docker_image:
   stage: build_docker_image
