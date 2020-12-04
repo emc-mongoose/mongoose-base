@@ -26,7 +26,7 @@ Should Stop After 1000 Operation
     Should Be Equal As Strings  ${resp_start.status_code}  202
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
     ${uri_path} =  Catenate  ${MONGOOSE_LOGS_URI_PATH}/${STEP_ID}/${LOGGER_NAME}
-    Wait Until Keyword Succeeds  10x  5s  Should Return Status  ${uri_path}  200
+    Wait Until Keyword Succeeds  10x  7s  Should Return Status  ${uri_path}  200
     ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
     Should Be Equal As Strings  ${resp.status_code}  200
     Should Include String  ${resp.text}  *CREATE,1,1,0,0.0,${COUNT_LIMIT}*

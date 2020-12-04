@@ -95,7 +95,7 @@ Should Return Scenario Run State
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
     Should Return Mongoose Scenario Run State  ${resp_etag_header}  200
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
-    Wait Until Keyword Succeeds  10x  5s  Should Return Mongoose Scenario Run State  ${resp_etag_header}  204
+    Wait Until Keyword Succeeds  10x  7s  Should Return Mongoose Scenario Run State  ${resp_etag_header}  204
 
 
 
@@ -158,7 +158,7 @@ Should Not Export Metrics More Then ${time}
 
 Get Metrics File Content
     ${uri_path} =  Catenate  /logs/${STEP_ID}/metrics.File
-    Wait Until Keyword Succeeds  10x  5s  Should Return Status  ${uri_path}  200
+    Wait Until Keyword Succeeds  10x  7s  Should Return Status  ${uri_path}  200
     ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
     Should Be Equal As Strings  ${resp.status_code}  200
     [Return]  ${resp.text}
