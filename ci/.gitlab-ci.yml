@@ -89,7 +89,7 @@ build_docker_image:
     # issue rises with 3.0.0 not being able to upgrade to 3.0.1. So we ignore 0.3.0
     - apk add --no-cache --update python3 py-pip
     - pip install virtualenv==20.0.23 --ignore-installed distlib
-    - pip install -U requests==2.24.0
+    - pip install -U requests==2.24.0 --ignore-installed urllib3
     - pip install -U robotframework
     - pip install -U robotframework-requests
     - pip install -U robotframework-csvlib
