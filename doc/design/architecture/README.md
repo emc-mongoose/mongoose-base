@@ -119,13 +119,13 @@ component. Many load step contexts may be associated with the single metrics man
 ## 2.5. After-test data aggregation
 
 This chapter describes how data is aggregated after Mongoose has finished aload step. 
-In standalone mode there is nothing to be done as we write in the file specified by `--output-fiie` as we go.
-when distributed mode finishes it aggregates data from local temporary files from worker nodes. It happens when --item-output-file or --output-metrics-trace-persist are specified (or both). We read it by 16Mb chunks (if there is enough data) and we synchronously put it in the local aggregated file. But we aggregate data in parallel, so when one chunk is read from worker and written into local file, we release the lock and another thread appends to previous file. But 16Mb chunk isn't guaranteed to finish at the end of the line.
-
-Resolution:
-After we've read the chunk, we check whether we stopped at a newline character. If we didn't we iterate through the ByteBuffer until we reach \n character and then copy it to a byte[] array that is a return value.
-
-Also I'd like to notice that I've first removed the while loop from the method as it doesn't make any sense, because we get the chunk of the necessary size from the first try. But then I've put it back since maybe it's needed in case of network instability.
+In standalone mode there is nothing to be done as we synchronously write in the file specified by `--output-fiie` as we go.
+But with distributed mode we aggregates data from local temporary files from worker nodes as soon as worload is done. 
+It happens when `--item-output-file` or `--output-metrics-trace-persist` are specified (or both). 
+We read it by ~16Mb chunks (if there is enough data) and we synchronously put it in the aggregated file on the controller 
+node. But as we aggregate data in parallel from workers, each chunk can be a bit less than 16Mb so that chunk finishes 
+at the end of line, so we don't mix lines from different workers. But 16Mb chunk isn't guaranteed to finish at the end 
+of the line.
 
 # 3. Concurrency
 
