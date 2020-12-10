@@ -1,7 +1,8 @@
 image: docker:18.09.7
 variables:
-  DOCKER_HOST: tcp://docker:2375
+  #DOCKER_HOST: tcp://docker:2375
   DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
   IMAGE_NAME: emcmongoose/mongoose-base
   IMAGE_FILE_NAME: build/mongoose-base.tar
   JAVA_HOME: /opt/jdk-11.0.2+9
@@ -9,7 +10,9 @@ variables:
   SERVICE_HOST: docker # should be used instead of the "localhost"/"127.0.0.1" in GL CI
 
 services:
-  - docker:18.09.7-dind
+  - name: docker:18.09.7-dind
+    entrypoint: ["env", "-u", "DOCKER_HOST"]
+    command: ["dockerd-entrypoint.sh"]
 
 stages:
   - build
