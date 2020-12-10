@@ -1,11 +1,11 @@
 FROM docker:dind
 
-RUN apk add --no-cache --update python py-pip \
-    && pip install -U virtualenv \
+RUN apk add --no-cache --update python3 py-pip \
+    && pip install -U virtualenv --ignore-installed distlib\
     && pip install -U requests \
     && pip install -U robotframework \
     && pip install -U robotframework-requests \
-    && pip install -U robotframework-csvlibrary
+    && pip install -U robotframework-csvlib
 
 ENV PYTHONPATH=$PYTHONPATH:/usr/lib/python2.7/site-packages:/root/mongoose/base/src/test/robot/lib
 

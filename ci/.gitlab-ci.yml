@@ -1,8 +1,8 @@
-image: docker:stable
-
+image: docker:18.09.7
 variables:
   DOCKER_HOST: tcp://docker:2375
   DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
   IMAGE_NAME: emcmongoose/mongoose-base
   IMAGE_FILE_NAME: build/mongoose-base.tar
   JAVA_HOME: /opt/jdk-11.0.2+9
@@ -10,7 +10,7 @@ variables:
   SERVICE_HOST: docker # should be used instead of the "localhost"/"127.0.0.1" in GL CI
 
 services:
-  - docker:dind
+  - docker:18.09.7-dind
 
 stages:
   - build
@@ -86,9 +86,11 @@ build_docker_image:
     MONGOOSE_IMAGE_VERSION: ${CI_COMMIT_SHA}
     PYTHONPATH: ${PYTHONPATH}:/usr/lib/python3.8/site-packages:src/test/robot/lib
   before_script:
+    # since 20.0.26 version virtualenv uses distlib 0.3.1 instead of 0.3.0. If apk --update is done first then
+    # issue rises with 3.0.0 not being able to upgrade to 3.0.1. So we ignore 0.3.0
     - apk add --no-cache --update python3 py-pip
-    - pip install -U virtualenv
-    - pip install -U requests
+    - pip install virtualenv==20.0.23 --ignore-installed distlib
+    - pip install -U requests==2.24.0 --ignore-installed urllib3
     - pip install -U robotframework
     - pip install -U robotframework-requests
     - pip install -U robotframework-csvlib
