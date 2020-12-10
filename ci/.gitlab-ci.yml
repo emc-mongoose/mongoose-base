@@ -1,4 +1,4 @@
-image: docker:stable
+image: docker:18.09.7
 variables:
   DOCKER_HOST: tcp://docker:2375
   DOCKER_DRIVER: overlay2
@@ -9,7 +9,7 @@ variables:
   SERVICE_HOST: docker # should be used instead of the "localhost"/"127.0.0.1" in GL CI
 
 services:
-  - docker:dind
+  - docker:18.09.7-dind
 
 stages:
   - build
