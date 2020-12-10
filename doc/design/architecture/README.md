@@ -8,6 +8,7 @@
 2.2. [Load Generator](#22-load-generator)<br/>
 2.3. [Load Step Context](#23-load-step-context)<br/>
 2.4. [Metrics Manager](#24-metrics-manager)<br/>
+2.5. [After-test data aggregation](#25-after-test-data-aggregation)<br/>   
 3. [Concurrency](#3-concurrency)<br/>
 3.1. [Service Tasks](#31-service-tasks)<br/>
 3.2. [Tuning](#32-tuning)<br/>
@@ -114,6 +115,17 @@ A load step context is an unit of test step control. Functionality:
 
 Metrics aggregation and representation. The component is a singleton which was differentiated from the Load Step Context
 component. Many load step contexts may be associated with the single metrics manager.
+
+## 2.5. After-test data aggregation
+
+This chapter describes how data is aggregated after Mongoose has finished aload step. 
+In standalone mode there is nothing to be done as we write in the file specified by `--output-fiie` as we go.
+when distributed mode finishes it aggregates data from local temporary files from worker nodes. It happens when --item-output-file or --output-metrics-trace-persist are specified (or both). We read it by 16Mb chunks (if there is enough data) and we synchronously put it in the local aggregated file. But we aggregate data in parallel, so when one chunk is read from worker and written into local file, we release the lock and another thread appends to previous file. But 16Mb chunk isn't guaranteed to finish at the end of the line.
+
+Resolution:
+After we've read the chunk, we check whether we stopped at a newline character. If we didn't we iterate through the ByteBuffer until we reach \n character and then copy it to a byte[] array that is a return value.
+
+Also I'd like to notice that I've first removed the while loop from the method as it doesn't make any sense, because we get the chunk of the necessary size from the first try. But then I've put it back since maybe it's needed in case of network instability.
 
 # 3. Concurrency
 
