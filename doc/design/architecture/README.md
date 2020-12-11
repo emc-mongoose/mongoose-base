@@ -118,14 +118,14 @@ component. Many load step contexts may be associated with the single metrics man
 
 ## 2.5. After-test data aggregation
 
-This chapter describes how data is aggregated after Mongoose has finished aload step. 
+This chapter describes how data is aggregated after Mongoose has finished a load step. 
 In standalone mode there is nothing to be done as we synchronously write in the file specified by `--output-fiie` as we go.
-But with distributed mode we aggregates data from local temporary files from worker nodes as soon as worload is done. 
+But with [distributed mode](https://github.com/emc-mongoose/mongoose-base/tree/master/doc/design/modes/distributed_mode) 
+we aggregate data from local temporary files from worker nodes as soon as workload is done. 
 It happens when `--item-output-file` or `--output-metrics-trace-persist` are specified (or both). 
-We read it by ~16Mb chunks (if there is enough data) and we synchronously put it in the aggregated file on the controller 
+We read it by ~16Mb chunks (if there is enough data) and synchronously put it in the aggregated file on the controller 
 node. But as we aggregate data in parallel from workers, each chunk can be a bit less than 16Mb so that chunk finishes 
-at the end of line, so we don't mix lines from different workers. But 16Mb chunk isn't guaranteed to finish at the end 
-of the line.
+at the end of line, so we don't mix lines from different workers.
 
 # 3. Concurrency
 
