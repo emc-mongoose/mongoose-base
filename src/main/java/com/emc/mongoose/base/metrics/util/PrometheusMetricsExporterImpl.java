@@ -139,19 +139,19 @@ public class PrometheusMetricsExporterImpl extends Collector implements Promethe
 
 	private List<Sample> collect(final TimingMetricSnapshot metric) {
 		final List<Sample> samples = new ArrayList<>();
-		final HistogramSnapshot snapshot = metric.histogramSnapshot(); // for quantiles
+		//final HistogramSnapshot snapshot = metric.histogramSnapshot(); // for quantiles
 		final String metricName = metric.name();
 		samples.add(newSample(metricName, "count", metric.count()));
 		samples.add(newSample(metricName, "sum", metric.sum() / Constants.M));
 		samples.add(newSample(metricName, "mean", metric.mean() / Constants.M));
 		samples.add(newSample(metricName, "min", metric.min() / Constants.M));
-		for (int i = 0; i < quantileValues.size(); ++i) {
+		/*for (int i = 0; i < quantileValues.size(); ++i) {
 			samples.add(
 							newSample(
 											metricName,
 											"quantile_" + quantileValues.get(i).toString().replaceAll("\\.", "_"),
 											snapshot.quantile(quantileValues.get(i)) / Constants.M));
-		}
+		}*/
 		samples.add(newSample(metricName, "max", metric.max() / Constants.M));
 		return samples;
 	}

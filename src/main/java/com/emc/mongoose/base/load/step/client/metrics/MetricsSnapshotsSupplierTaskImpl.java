@@ -58,3 +58,9 @@ public final class MetricsSnapshotsSupplierTaskImpl extends ExclusiveFiberBase
 		}
 	}
 }
+
+//TODO: check how much this affects metrics and network traffic
+//  if (startTimeNanos-lastCalledTime > 1_000_000_000) {
+//				loadStep.metricsSnapshots();
+//						//}
+//						lastCalledTime = startTimeNanos;

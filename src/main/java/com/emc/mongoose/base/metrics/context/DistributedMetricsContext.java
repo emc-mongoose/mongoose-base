@@ -11,7 +11,7 @@ public interface DistributedMetricsContext<S extends DistributedAllMetricsSnapsh
 
 	List<String> nodeAddrs();
 
-	List<Double> quantileValues();
+	//List<Double> quantileValues();
 
 	S lastSnapshot();
 }

@@ -25,6 +25,13 @@ import com.github.akurilov.fiber4j.Fiber;
 import com.github.akurilov.fiber4j.FibersExecutor;
 import io.prometheus.client.Collector;
 import io.prometheus.client.CollectorRegistry;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Map;
@@ -138,7 +145,7 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 								distributedMetricsCtx,
 								new PrometheusMetricsExporterImpl(distributedMetricsCtx)
 												.labels(METRIC_LABELS, labelValues)
-												.quantiles(distributedMetricsCtx.quantileValues())
+												//.quantiles(distributedMetricsCtx.quantileValues())
 												.register());
 			}
 			Loggers.MSG.debug("Metrics context \"{}\" registered", metricsCtx);
@@ -150,6 +157,21 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 							"Failed to register the Prometheus Exporter for the metrics context \"{}\"",
 							metricsCtx.toString());
 		}
+	}
+
+	private void readArrayFromInputStream(InputStream inputStream, ArrayList<Integer> outputArray)
+			throws IOException {
+		StringBuilder resultStringBuilder = new StringBuilder();
+		try (BufferedReader br
+					 = new BufferedReader(new InputStreamReader(inputStream))) {
+			String line;
+			while ((line = br.readLine()) != null) {
+				outputArray.add(Integer.valueOf(line.split(" ")[0]));
+
+				//resultStringBuilder.append(line).append("\n");
+			}
+		}
+		//return resultStringBuilder.toString();
 	}
 
 	@Override
@@ -167,6 +189,11 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 					if (metricsCtx.thresholdStateEntered() && !metricsCtx.thresholdStateExited()) {
 						exitMetricsThresholdState(metricsCtx);
 					}
+					ArrayList<Integer> latencies = new ArrayList<>();
+					ClassLoader classLoader = getClass().getClassLoader();
+					String s = System.getProperty("java.io.tmpdir")+ "/mongoose/"+ "timingMetrics_" + metricsCtx.loadStepId();
+					var cl = new FileInputStream(s);//classLoader.getResourceAsStream(s);
+					readArrayFromInputStream(cl,latencies);
 					if (snapshot != null) {
 						// file output
 						if (metricsCtx.sumPersistEnabled()) {
@@ -187,7 +214,8 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 															metricsCtx.opType(),
 															metricsCtx.loadStepId(),
 															metricsCtx.concurrencyLimit(),
-															aggregSnapshot));
+															aggregSnapshot,
+															latencies));
 						}
 						final PrometheusMetricsExporter exporter = distributedMetrics.remove(distributedMetricsCtx);
 						if (exporter != null) {
@@ -196,6 +224,8 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 					}
 				} catch (final InterruptedException e) {
 					throwUnchecked(e);
+				} catch (IOException e) {
+					e.printStackTrace();
 				} finally {
 					try {
 						outputLock.unlock();

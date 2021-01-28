@@ -76,11 +76,11 @@ public final class MetricsCsvLogMessage extends LogMessageBase {
 						.append(',')
 						.append(durationSnapshot.min())
 						.append(',')
-						.append(durationSnapshot.histogramSnapshot().quantile(0.25))
+						.append('0')//durationSnapshot.histogramSnapshot().quantile(0.25))
 						.append(',')
-						.append(durationSnapshot.histogramSnapshot().quantile(0.5))
+						.append('0')//durationSnapshot.histogramSnapshot().quantile(0.5))
 						.append(',')
-						.append(durationSnapshot.histogramSnapshot().quantile(0.75))
+						.append('0')//durationSnapshot.histogramSnapshot().quantile(0.75))
 						.append(',')
 						.append(durationSnapshot.max())
 						.append(',')
@@ -88,12 +88,13 @@ public final class MetricsCsvLogMessage extends LogMessageBase {
 						.append(',')
 						.append(latencySnapshot.min())
 						.append(',')
-						.append(latencySnapshot.histogramSnapshot().quantile(0.25))
+						.append('0')//latencySnapshot.histogramSnapshot().quantile(0.25))
 						.append(',')
-						.append(latencySnapshot.histogramSnapshot().quantile(0.5))
+						.append('0')//latencySnapshot.histogramSnapshot().quantile(0.5))
 						.append(',')
-						.append(latencySnapshot.histogramSnapshot().quantile(0.75))
+						.append('0')//latencySnapshot.histogramSnapshot().quantile(0.75))
 						.append(',')
-						.append(latencySnapshot.max());
+						.append(latencySnapshot.max())
+		;
 	}
 }

@@ -34,7 +34,11 @@ import com.github.akurilov.confuse.SchemaProvider;
 import com.github.akurilov.confuse.exceptions.InvalidValuePathException;
 import com.github.akurilov.confuse.exceptions.InvalidValueTypeException;
 import io.prometheus.client.exporter.MetricsServlet;
+
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -60,6 +64,14 @@ public final class Main {
 		final var appHomePath = coreResources.appHomePath();
 		final var initialStepId = "none-" + LogUtil.getDateTimeStamp();
 		LogUtil.init(appHomePath.toString(), initialStepId);
+		/*PrintStream o = null;
+		try {
+			o = new PrintStream(new File("rmi_logs"));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		System.setErr(o);*/
+
 		try {
 			// install the core resources
 			coreResources.install(appHomePath);

@@ -57,6 +57,7 @@ implements LoadStepClient {
 	private final List<AutoCloseable> itemDataInputFileSlicers = new ArrayList<>();
 	private final List<AutoCloseable> itemInputFileSlicers = new ArrayList<>();
 	private final List<AutoCloseable> itemOutputFileAggregators = new ArrayList<>();
+	private final List<AutoCloseable> itemTimingMetricsOutputFileAggregators = new ArrayList<>();
 	private final List<AutoCloseable> opTraceLogFileAggregators = new ArrayList<>();
 	private final List<AutoCloseable> storageAuthFileSlicers = new ArrayList<>();
 
@@ -175,6 +176,22 @@ implements LoadStepClient {
 				new ItemOutputFileAggregator(loadStepId(), fileMgrs, configSlices, itemOutputFile));
 			Loggers.MSG.debug("{}: item output file aggregator initialized", loadStepId());
 		}
+		/*final var itemTimingMetricsOutputFilePath = config.stringVal("item-output-metrics-file");
+		final Input<String> itemTimingMetricsOutputFileInput;
+		if (itemTimingMetricsOutputFilePath.contains(ASYNC_MARKER) ||
+				itemTimingMetricsOutputFilePath.contains(SYNC_MARKER) ||
+				itemTimingMetricsOutputFilePath.contains(INIT_MARKER)) {
+			itemTimingMetricsOutputFileInput = CompositeExpressionInputBuilder.newInstance()
+					.expression(itemTimingMetricsOutputFilePath)
+					.build();
+		} else {
+			itemTimingMetricsOutputFileInput = new ConstantValueInputImpl<>(itemTimingMetricsOutputFilePath);
+		}*/
+
+		itemTimingMetricsOutputFileAggregators.add(
+				new ItemTimingMetricOutputFileAggregator(loadStepId(), fileMgrs, configSlices/*, itemTimingMetricsOutputFileInput.get()*/));
+		Loggers.MSG.debug("{}: item metrics output file aggregator initialized", loadStepId());
+
 		if(config.boolVal("output-metrics-trace-persist")) {
 			opTraceLogFileAggregators.add(new OpTraceLogFileAggregator(loadStepId(), fileMgrs));
 			Loggers.MSG.debug("{}: operation traces log file aggregator initialized", loadStepId());
@@ -344,7 +361,8 @@ implements LoadStepClient {
 			.stdOutColorFlag(outputColorFlag)
 			.avgPersistFlag(metricsAvgPersistFlag)
 			.sumPersistFlag(metricsSumPersistFlag)
-			.snapshotsSupplier(() -> metricsSnapshotsByIndex(originIndex)).quantileValues(quantiles(metricsConfig))
+			.snapshotsSupplier(() -> metricsSnapshotsByIndex(originIndex))
+			//.quantileValues(quantiles(metricsConfig))
 			.nodeAddrs(remoteNodeAddrs(config))
 			.comment(config.stringVal("run-comment"))
 			.runId(runId())
@@ -438,6 +456,17 @@ implements LoadStepClient {
 			} catch(final RemoteException ignored) {
 			}
 		}
+		itemTimingMetricsOutputFileAggregators.parallelStream().forEach(itemMetricsOutputFileAggregator -> {
+			try {
+				itemMetricsOutputFileAggregator.close();
+			} catch(final Exception e) {
+				throwUncheckedIfInterrupted(e);
+				LogUtil.exception(Level.WARN, e, "{}: failed to close the item metrics output file aggregator \"{}\"",
+						loadStepId(), itemMetricsOutputFileAggregator
+				);
+			}
+		});
+		itemTimingMetricsOutputFileAggregators.clear();
 		super.doStop();
 	}
 

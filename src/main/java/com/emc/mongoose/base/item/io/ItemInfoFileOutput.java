@@ -13,7 +13,9 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Created by kurila on 09.01.17. */
+/** Created by kurila on 09.01.17.
+ * Item output to file with support for the single object and batch calls
+ */
 public final class ItemInfoFileOutput<I extends Item, O extends Operation> implements Output<O> {
 
 	private final Output<String> itemInfoOutput;

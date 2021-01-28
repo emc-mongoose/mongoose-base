@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 public interface DistributedContextBuilder
 				extends ContextBuilder<DistributedContextBuilder, DistributedMetricsContextImpl> {
 
-	DistributedContextBuilder quantileValues(final List<Double> quantileValues);
+	//DistributedContextBuilder quantileValues(final List<Double> quantileValues);
 
 	DistributedContextBuilder nodeAddrs(final List<String> nodeAddrs);
 

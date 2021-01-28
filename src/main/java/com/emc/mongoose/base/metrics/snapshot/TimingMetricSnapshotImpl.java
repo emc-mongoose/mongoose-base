@@ -11,7 +11,6 @@ public class TimingMetricSnapshotImpl extends NamedCountMetricSnapshotImpl
 	private final long min;
 	private final long max;
 	private final double mean;
-	private final HistogramSnapshot histogramSnapshot;
 
 	public TimingMetricSnapshotImpl(
 					final long sum,
@@ -19,14 +18,12 @@ public class TimingMetricSnapshotImpl extends NamedCountMetricSnapshotImpl
 					final long min,
 					final long max,
 					final double mean,
-					final HistogramSnapshot histogramSnapshot,
 					final String metricName) {
 		super(metricName, count);
 		this.sum = sum;
 		this.min = min;
 		this.max = max;
 		this.mean = mean;
-		this.histogramSnapshot = histogramSnapshot;
 	}
 
 	public static TimingMetricSnapshot aggregate(final List<TimingMetricSnapshot> snapshots) {
@@ -38,7 +35,6 @@ public class TimingMetricSnapshotImpl extends NamedCountMetricSnapshotImpl
 		long sumOfSums = 0;
 		long newMax = Long.MIN_VALUE;
 		long newMin = Long.MAX_VALUE;
-		final List<HistogramSnapshot> histogramSnapshots = new ArrayList<>(snapshotCount);
 		TimingMetricSnapshot nextSnapshot;
 		for (int i = 0; i < snapshotCount; ++i) {
 			nextSnapshot = snapshots.get(i);
@@ -46,7 +42,6 @@ public class TimingMetricSnapshotImpl extends NamedCountMetricSnapshotImpl
 			sumOfSums += nextSnapshot.sum();
 			newMax = Math.max(newMax, nextSnapshot.max());
 			newMin = Math.min(newMin, nextSnapshot.min());
-			histogramSnapshots.add(nextSnapshot.histogramSnapshot());
 		}
 		if (sumOfSums == 0) {
 			newMin = 0;
@@ -59,7 +54,6 @@ public class TimingMetricSnapshotImpl extends NamedCountMetricSnapshotImpl
 						newMin,
 						newMax,
 						newMean,
-						HistogramSnapshotImpl.aggregate(histogramSnapshots),
 						snapshots.get(0).name());
 	}
 
@@ -76,16 +70,6 @@ public class TimingMetricSnapshotImpl extends NamedCountMetricSnapshotImpl
 	@Override
 	public final long max() {
 		return max;
-	}
-
-	@Override
-	public long quantile(final double value) {
-		return histogramSnapshot.quantile(value);
-	}
-
-	@Override
-	public final HistogramSnapshot histogramSnapshot() {
-		return histogramSnapshot;
 	}
 
 	@Override

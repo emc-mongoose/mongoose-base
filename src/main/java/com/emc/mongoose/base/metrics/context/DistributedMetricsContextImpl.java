@@ -35,7 +35,7 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 	private final boolean avgPersistFlag;
 	private final boolean sumPersistFlag;
 	private volatile DistributedMetricsListener metricsListener = null;
-	private final List<Double> quantileValues;
+	//private final List<Double> quantileValues;
 
 	public DistributedMetricsContextImpl(
 					final Map metaData,
@@ -45,8 +45,8 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 					final boolean stdOutColorFlag,
 					final boolean avgPersistFlag,
 					final boolean sumPersistFlag,
-					final Supplier<List<AllMetricsSnapshot>> snapshotsSupplier,
-					final List<Double> quantileValues) {
+					final Supplier<List<AllMetricsSnapshot>> snapshotsSupplier/*,
+					final List<Double> quantileValues*/) {
 		super(
 						metaData,
 						concurrencyThreshold,
@@ -56,7 +56,7 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 		this.snapshotsSupplier = snapshotsSupplier;
 		this.avgPersistFlag = avgPersistFlag;
 		this.sumPersistFlag = sumPersistFlag;
-		this.quantileValues = quantileValues;
+		//this.quantileValues = quantileValues;
 	}
 
 	@Override
@@ -92,10 +92,10 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 		return nodeCountSupplier.getAsInt();
 	}
 
-	@Override
+	/*@Override
 	public List<Double> quantileValues() {
 		return quantileValues;
-	}
+	}*/
 
 	@Override
 	public boolean avgPersistEnabled() {
@@ -190,7 +190,7 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 						.avgPersistFlag(avgPersistFlag)
 						.sumPersistFlag(sumPersistFlag)
 						.snapshotsSupplier(snapshotsSupplier)
-						.quantileValues(quantileValues)
+						//.quantileValues(quantileValues)
 						.nodeAddrs(nodeAddrs())
 						.runId(runId())
 						.build();
@@ -238,7 +238,7 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 		private Supplier<List<AllMetricsSnapshot>> snapshotsSupplier;
 		private boolean avgPersistFlag;
 		private boolean sumPersistFlag;
-		private List<Double> quantileValues;
+		//private List<Double> quantileValues;
 		private int concurrencyThreshold;
 		private boolean stdOutColorFlag;
 		private int outputPeriodSec;
@@ -253,8 +253,9 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 							stdOutColorFlag,
 							avgPersistFlag,
 							sumPersistFlag,
-							snapshotsSupplier,
-							quantileValues);
+							snapshotsSupplier//,
+							//quantileValues
+			);
 		}
 
 		@Override
@@ -329,12 +330,12 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 			this.sumPersistFlag = sumPersistFlag;
 			return this;
 		}
-
+/*
 		@Override
 		public DistributedContextBuilder quantileValues(final List<Double> quantileValues) {
 			this.quantileValues = quantileValues;
 			return this;
-		}
+		}*/
 
 		@Override
 		public DistributedContextBuilder nodeAddrs(final List<String> nodeAddrs) {

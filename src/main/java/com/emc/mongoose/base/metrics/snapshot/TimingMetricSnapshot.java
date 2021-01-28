@@ -10,7 +10,4 @@ public interface TimingMetricSnapshot
 
 	long max();
 
-	long quantile(final double value);
-
-	HistogramSnapshot histogramSnapshot();
 }
