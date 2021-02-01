@@ -21,7 +21,8 @@ public class StepResultsMetricsLogMessage extends LogMessageBase {
 	private final String stepId;
 	private final int concurrencyLimit;
 	private final DistributedAllMetricsSnapshot snapshot;
-	private final ArrayList<Integer> latencies;
+	private final ArrayList<Long> latencies;
+	private final ArrayList<Long> durations;
 	//private final AfterTestTimingMetricsSnapshot afterTestSnapshot;
 
 	public StepResultsMetricsLogMessage(
@@ -29,14 +30,14 @@ public class StepResultsMetricsLogMessage extends LogMessageBase {
 					final String stepId,
 					final int concurrencyLimit,
 					final DistributedAllMetricsSnapshot snapshot,
-					final ArrayList<Integer> latencies) {
+					final ArrayList<Long> latencies,
+					final ArrayList<Long> durations) {
 		this.opType = opType;
 		this.stepId = stepId;
 		this.snapshot = snapshot;
 		this.concurrencyLimit = concurrencyLimit;
-		Collections.sort(latencies);
-		this.latencies = new ArrayList<>(Arrays.asList(latencies.get(0),latencies.get((int) (0.5*latencies.size())), latencies.get(latencies.size()-1)));
-
+		this.latencies = latencies;
+		this.durations = durations;
 
 	}
 
@@ -87,7 +88,7 @@ public class StepResultsMetricsLogMessage extends LogMessageBase {
 						.append(snapshot.elapsedTimeMillis() / K)
 						.append(lineSep)
 						.append("    Sum:                       ")
-						//.append(snapshot.durationSnapshot().sum() / M)
+						.append(snapshot.durationSnapshot().sum() / M)
 						.append(lineSep)
 						.append("  Throughput [op/s]:           ")
 						.append(lineSep)
@@ -114,13 +115,13 @@ public class StepResultsMetricsLogMessage extends LogMessageBase {
 						.append(snapshot.durationSnapshot().min())
 						.append(lineSep)
 						.append("    LoQ:                       ")
-						//.append(snapshot.durationSnapshot().histogramSnapshot().quantile(0.25))
+						.append(durations.get(0)) //snapshot.durationSnapshot().histogramSnapshot().quantile(0.25))
 						.append(lineSep)
 						.append("    Med:                       ")
-						//.append(snapshot.durationSnapshot().histogramSnapshot().quantile(0.5))
+						.append(durations.get(1)) //snapshot.durationSnapshot().histogramSnapshot().quantile(0.5))
 						.append(lineSep)
 						.append("    HiQ:                       ")
-						//.append(snapshot.durationSnapshot().histogramSnapshot().quantile(0.75))
+						.append(durations.get(2)) //snapshot.durationSnapshot().histogramSnapshot().quantile(0.75))
 						.append(lineSep)
 						.append("    Max:                       ")
 						.append(snapshot.durationSnapshot().max())

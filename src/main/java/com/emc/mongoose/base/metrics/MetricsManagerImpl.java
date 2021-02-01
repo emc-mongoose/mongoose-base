@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Map;
@@ -159,19 +160,19 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 		}
 	}
 
-	private void readArrayFromInputStream(InputStream inputStream, ArrayList<Integer> outputArray)
+	public enum timingMetrics {LATENCY, DURATION};
+
+	private void readArrayFromInputStream(InputStream inputStream, ArrayList<Long> outputArray,
+										  timingMetrics tm)
 			throws IOException {
-		StringBuilder resultStringBuilder = new StringBuilder();
 		try (BufferedReader br
 					 = new BufferedReader(new InputStreamReader(inputStream))) {
 			String line;
 			while ((line = br.readLine()) != null) {
-				outputArray.add(Integer.valueOf(line.split(" ")[0]));
-
-				//resultStringBuilder.append(line).append("\n");
+				var values = line.split(" ");
+				outputArray.add(Long.valueOf(values[tm.ordinal()]));
 			}
 		}
-		//return resultStringBuilder.toString();
 	}
 
 	@Override
@@ -189,11 +190,24 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 					if (metricsCtx.thresholdStateEntered() && !metricsCtx.thresholdStateExited()) {
 						exitMetricsThresholdState(metricsCtx);
 					}
-					ArrayList<Integer> latencies = new ArrayList<>();
-					ClassLoader classLoader = getClass().getClassLoader();
-					String s = System.getProperty("java.io.tmpdir")+ "/mongoose/"+ "timingMetrics_" + metricsCtx.loadStepId();
-					var cl = new FileInputStream(s);//classLoader.getResourceAsStream(s);
-					readArrayFromInputStream(cl,latencies);
+					ArrayList<Long> lat = null;
+					ArrayList<Long> dur = null;
+					if (metricsCtx instanceof DistributedMetricsContext) {
+						ArrayList<Long> latencies = new ArrayList<>();
+						ArrayList<Long> durations = new ArrayList<>();
+						String s = System.getProperty("java.io.tmpdir") + "/mongoose/" + "timingMetrics_" + metricsCtx.loadStepId();
+						var cl = new FileInputStream(s);//classLoader.getResourceAsStream(s);
+						readArrayFromInputStream(cl, latencies, timingMetrics.LATENCY);
+						Loggers.MSG.info("latencies size: {}", latencies.size());
+						Collections.sort(latencies);
+						var cl2 = new FileInputStream(s);
+						lat = new ArrayList<>(Arrays.asList(latencies.get((int) (0.25 * latencies.size())), latencies.get((int) (0.5 * latencies.size())), latencies.get((int)(0.75*latencies.size()))));
+						readArrayFromInputStream(cl2, durations, timingMetrics.DURATION);
+						Collections.sort(durations);
+						//dur = new ArrayList<>(Arrays.asList(0, 0, 0));
+						dur = new ArrayList<>(Arrays.asList(durations.get((int) (0.25*durations.size())),durations.get((int) (0.5*durations.size())), durations.get((int)(0.75*durations.size()))));
+					}
+
 					if (snapshot != null) {
 						// file output
 						if (metricsCtx.sumPersistEnabled()) {
@@ -215,7 +229,7 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 															metricsCtx.loadStepId(),
 															metricsCtx.concurrencyLimit(),
 															aggregSnapshot,
-															latencies));
+															lat, dur));
 						}
 						final PrometheusMetricsExporter exporter = distributedMetrics.remove(distributedMetricsCtx);
 						if (exporter != null) {

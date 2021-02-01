@@ -28,8 +28,6 @@ item:
     length: int
   output:
     file: string
-    metrics:
-      file: string
     path: string
   type: string
 load:

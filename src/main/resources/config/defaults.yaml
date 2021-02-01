@@ -28,8 +28,6 @@ item:
     type: random
   output:
     file: null
-    metrics:
-      file: "timingMetrics_%{time:nanos()}" //TODO: can we add values to config w/o exposing them?
     path: "%{date:format(\"yyyyMMdd.HHmmss.SSS\").format(date:from(time:millisSinceEpoch()))}"
   type: data
 

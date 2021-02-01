@@ -71,8 +71,6 @@ public class ItemTimingMetricOutputFileAggregator implements AutoCloseable {
             final var fileMgr = fileMgrs.get(i);
             if (fileMgr instanceof FileManagerService) {
                 try {
-                    //final var remoteItemOutputFileName = fileMgr.newTmpFileName();
-                    configSlices.get(i).val("item-output-metrics-file", "shouldn't affect anything");
                     itemTimingMetricOutputFileSlices.put(fileMgr, itemTimingMetricsOutputFilePath.toString());
                     Loggers.MSG.debug(
                             "\"{}\": new tmp item output file \"{}\"", fileMgr, itemTimingMetricsOutputFilePath.toString());
@@ -117,7 +115,7 @@ public class ItemTimingMetricOutputFileAggregator implements AutoCloseable {
                                                     localItemOutputLock,
                                                     byteCounter);
                                             try {
-                                                //fileMgr.deleteFile(remoteItemOutputFileName);
+                                                fileMgr.deleteFile(remoteItemOutputFileName);
                                             } catch (final Exception e) {
                                                 throwUncheckedIfInterrupted(e);
                                                 LogUtil.exception(
