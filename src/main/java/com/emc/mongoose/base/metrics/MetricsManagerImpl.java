@@ -68,7 +68,13 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 			try {
 				for (final MetricsContext metricsCtx : allMetrics) {
 					ThreadContext.put(KEY_STEP_ID, metricsCtx.loadStepId());
-					metricsCtx.refreshLastSnapshot();
+					// TODO: consider whether throttling is needed here
+					//final long lastSnapshotUpdateTs = metricsCtx.lastOutputTs();
+					//final long nextSnapshotUpdateTs = System.currentTimeMillis();
+					//if (nextSnapshotUpdateTs - lastSnapshotUpdateTs >= 1000){
+						metricsCtx.refreshLastSnapshot();
+						//metricsCtx.lastOutputTs(nextSnapshotUpdateTs);
+					//}
 					final AllMetricsSnapshot snapshot = metricsCtx.lastSnapshot();
 					if (snapshot != null) {
 						final ConcurrencyMetricSnapshot concurrencySnapshot = snapshot.concurrencySnapshot();

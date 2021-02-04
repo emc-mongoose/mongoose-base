@@ -19,9 +19,12 @@ public final class MetricsSnapshotsSupplierTaskImpl extends ExclusiveFiberBase
 	private final LoadStep loadStep;
 	private volatile List<? extends AllMetricsSnapshot> snapshotsByOrigin = null;
 	private volatile boolean failedBeforeFlag = false;
-
+	private long lastCalledMillis = 0;
+	private int waitPeriodMillis;
 	public MetricsSnapshotsSupplierTaskImpl(final LoadStep loadStep) {
 		this(ServiceTaskExecutor.INSTANCE, loadStep);
+		this.waitPeriodMillis = 100;
+		// TODO: add a config flag on how often snapshots are aggregated
 	}
 
 	public MetricsSnapshotsSupplierTaskImpl(final FibersExecutor executor, final LoadStep loadStep) {
@@ -32,7 +35,12 @@ public final class MetricsSnapshotsSupplierTaskImpl extends ExclusiveFiberBase
 	@Override
 	protected final void invokeTimedExclusively(final long startTimeNanos) {
 		try {
-			snapshotsByOrigin = loadStep.metricsSnapshots();
+			final long nextSnapshotUpdateTs = System.currentTimeMillis();
+			if (nextSnapshotUpdateTs - lastCalledMillis >= waitPeriodMillis){
+				snapshotsByOrigin = loadStep.metricsSnapshots();
+				lastCalledMillis = nextSnapshotUpdateTs;
+			}
+
 		} catch (final Exception e) {
 			throwUncheckedIfInterrupted(e);
 			LogUtil.exception(Level.INFO, e, "Failed to fetch the metrics snapshots from \"{}\"", loadStep);
