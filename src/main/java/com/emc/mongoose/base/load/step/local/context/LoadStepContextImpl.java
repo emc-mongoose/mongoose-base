@@ -60,6 +60,7 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 	private final int batchSize;
 	private volatile Output<O> opsResultsOutput;
 	private final boolean waitOpFinishBeforeStop;
+	
 	/** @param id test step id */
 	public LoadStepContextImpl(
 					final String id,
