@@ -19,6 +19,7 @@ import com.emc.mongoose.base.load.step.LoadStepFactory;
 import com.emc.mongoose.base.load.step.client.metrics.MetricsAggregator;
 import com.emc.mongoose.base.load.step.client.metrics.MetricsAggregatorImpl;
 import com.emc.mongoose.base.load.step.file.FileManager;
+import com.emc.mongoose.base.load.step.service.file.FileManagerService;
 import com.emc.mongoose.base.logging.LogUtil;
 import com.emc.mongoose.base.logging.Loggers;
 import com.emc.mongoose.base.metrics.MetricsManager;
@@ -59,6 +60,7 @@ implements LoadStepClient {
 	private final List<AutoCloseable> itemOutputFileAggregators = new ArrayList<>();
 	private final List<AutoCloseable> opTraceLogFileAggregators = new ArrayList<>();
 	private final List<AutoCloseable> storageAuthFileSlicers = new ArrayList<>();
+	private final static int MAX_SLEEP_TIME_MILLIS = 120_000; // 2min.
 
 	public LoadStepClientBase(
 		final Config config, final List<Extension> extensions, final List<Config> ctxConfigs,
@@ -118,9 +120,27 @@ implements LoadStepClient {
 		// local file manager
 		fileMgrsDst.add(FileManager.INSTANCE);
 		// remote file managers
-		nodeAddrs.stream().map(FileManagerClient::resolve).forEachOrdered(fileMgrsDst::add);
+		nodeAddrs.stream().map(nodeAddr -> resolveFileManagerWithRetries(nodeAddr, 10)).forEachOrdered(fileMgrsDst::add);
 	}
 
+	private static FileManagerService resolveFileManagerWithRetries(final String nodeAddrWithPort, final int maxRetries) {
+		FileManagerService fms = null;
+		int retryCount = 0;
+		while (null == fms && retryCount < maxRetries) {
+			fms = FileManagerClient.resolve(nodeAddrWithPort);
+			retryCount++;
+			final int sleepTime = 1000 * (int) Math.pow(2, retryCount);
+			try {
+				Thread.sleep(Math.min(sleepTime, MAX_SLEEP_TIME_MILLIS));
+			} catch (InterruptedException e) {
+				LogUtil.exception(
+						Level.ERROR, e, "Failed to resolve the file manager service @ {} at {} retry",
+						nodeAddrWithPort, retryCount);
+			}
+		}
+		return fms;
+	}
+	
 	private void addFileClients(final Config config, final List<Config> configSlices) {
 		final var loadConfig = config.configVal("load");
 		final var batchSize = loadConfig.intVal("batch-size");
