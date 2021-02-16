@@ -176,20 +176,9 @@ implements LoadStepClient {
 				new ItemOutputFileAggregator(loadStepId(), fileMgrs, configSlices, itemOutputFile));
 			Loggers.MSG.debug("{}: item output file aggregator initialized", loadStepId());
 		}
-		/*final var itemTimingMetricsOutputFilePath = config.stringVal("item-output-metrics-file");
-		final Input<String> itemTimingMetricsOutputFileInput;
-		if (itemTimingMetricsOutputFilePath.contains(ASYNC_MARKER) ||
-				itemTimingMetricsOutputFilePath.contains(SYNC_MARKER) ||
-				itemTimingMetricsOutputFilePath.contains(INIT_MARKER)) {
-			itemTimingMetricsOutputFileInput = CompositeExpressionInputBuilder.newInstance()
-					.expression(itemTimingMetricsOutputFilePath)
-					.build();
-		} else {
-			itemTimingMetricsOutputFileInput = new ConstantValueInputImpl<>(itemTimingMetricsOutputFilePath);
-		}*/
 
 		itemTimingMetricsOutputFileAggregators.add(
-				new ItemTimingMetricOutputFileAggregator(loadStepId(), fileMgrs, configSlices/*, itemTimingMetricsOutputFileInput.get()*/));
+				new ItemTimingMetricOutputFileAggregator(loadStepId(), fileMgrs));
 		Loggers.MSG.debug("{}: item metrics output file aggregator initialized", loadStepId());
 
 		if(config.boolVal("output-metrics-trace-persist")) {

@@ -64,13 +64,6 @@ public final class Main {
 		final var appHomePath = coreResources.appHomePath();
 		final var initialStepId = "none-" + LogUtil.getDateTimeStamp();
 		LogUtil.init(appHomePath.toString(), initialStepId);
-		/*PrintStream o = null;
-		try {
-			o = new PrintStream(new File("rmi_logs"));
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		System.setErr(o);*/
 
 		try {
 			// install the core resources

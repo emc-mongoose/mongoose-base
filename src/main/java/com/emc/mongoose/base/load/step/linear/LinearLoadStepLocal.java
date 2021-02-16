@@ -142,20 +142,8 @@ public class LinearLoadStepLocal
 						}
 					}
 
-					// metrics files should be in tmp dir and after aggregated they should be removed from the system
-                    /*final String itemTimingMetricsOutputFilePath = itemConfig.stringVal("output-metrics-file");
-					final Input<String> itemTimingMetricsOutputFileInput;
-					if (itemTimingMetricsOutputFilePath.contains(ASYNC_MARKER) ||
-							itemTimingMetricsOutputFilePath.contains(SYNC_MARKER) ||
-							itemTimingMetricsOutputFilePath.contains(INIT_MARKER)) {
-						itemTimingMetricsOutputFileInput = CompositeExpressionInputBuilder.newInstance()
-								.expression(itemTimingMetricsOutputFilePath)
-								.build();
-					} else {
-						itemTimingMetricsOutputFileInput = new ConstantValueInputImpl<>(itemTimingMetricsOutputFilePath);
-					}*/
-
-					final Path itemTimingMetricsOutputPath = Paths.get(System.getProperty("java.io.tmpdir"), "mongoose", "timingMetrics_" + config.stringVal("load-step-id"));
+					final Path itemTimingMetricsOutputPath = Paths.get(System.getProperty("java.io.tmpdir"),
+							"mongoose", "timingMetrics_" + config.stringVal("load-step-id"));
 					try {
 						final Output<? extends Item> itemOutput = new ItemTimingMetricsFileOutput<>(itemTimingMetricsOutputPath);
 						stepCtx.operationsMetricsOutput(itemOutput);

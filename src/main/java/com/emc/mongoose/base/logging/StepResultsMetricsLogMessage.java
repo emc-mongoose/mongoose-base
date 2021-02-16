@@ -21,7 +21,6 @@ public class StepResultsMetricsLogMessage extends LogMessageBase {
 	private final DistributedAllMetricsSnapshot snapshot;
 	private final Map<Double, Long> latencies;
 	private final Map<Double, Long> durations;
-	//private final AfterTestTimingMetricsSnapshot afterTestSnapshot;
 
 	public StepResultsMetricsLogMessage(
 					final OpType opType,
@@ -113,11 +112,13 @@ public class StepResultsMetricsLogMessage extends LogMessageBase {
 						.append(snapshot.durationSnapshot().min())
 						.append(lineSep);
 
+		final int LENGTH_OF_SHORT_QUANTILE = 3; // meaning 0.5 instead of 0.75 or 0.51
+
 		for(Double quantile: durations.keySet()) {
 			buff.append("    Quantile ")
 					.append(quantile)
 					.append(":             ");
-			if (String.valueOf(quantile).length() == 3) {
+			if (String.valueOf(quantile).length() == LENGTH_OF_SHORT_QUANTILE) {
 				buff.append(" ");
 			}
 			buff.append(durations.get(quantile))
@@ -140,7 +141,7 @@ public class StepResultsMetricsLogMessage extends LogMessageBase {
 			buff.append("    Quantile ")
 					.append(quantile)
 					.append(":             ");
-			if (String.valueOf(quantile).length() == 3) {
+			if (String.valueOf(quantile).length() == LENGTH_OF_SHORT_QUANTILE) {
 				buff.append(" ");
 			}
 			buff.append(latencies.get(quantile))

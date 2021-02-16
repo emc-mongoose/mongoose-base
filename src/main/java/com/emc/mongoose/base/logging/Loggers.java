@@ -24,7 +24,6 @@ public interface Loggers {
 	Logger MULTIPART = LogManager.getLogger(BASE + "Multipart");
 	Logger SCENARIO = LogManager.getLogger(BASE + "Scenario");
 	Logger TEST = LogManager.getLogger(BASE + "Test");
-	Logger TIMING_METRICS_FILE = LogManager.getLogger(BASE_METRICS + "Timing");
 
 	Map<String, String> DESCRIPTIONS_BY_NAME = new HashMap<>() {
 		{
@@ -37,7 +36,6 @@ public interface Loggers {
 			put(METRICS_THRESHOLD_FILE_TOTAL.getName().substring(BASE.length()), "Threshold Metrics Total");
 			put(MSG.getName().substring(BASE.length()), "Messages");
 			put(SCENARIO.getName().substring(BASE.length()), "Scenario");
-			put(TIMING_METRICS_FILE.getName().substring(BASE.length()), "Timing metrics");
 		}
 	};
 }

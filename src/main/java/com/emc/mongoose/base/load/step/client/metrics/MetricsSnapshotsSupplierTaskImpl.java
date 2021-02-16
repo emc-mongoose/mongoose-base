@@ -24,7 +24,7 @@ public final class MetricsSnapshotsSupplierTaskImpl extends ExclusiveFiberBase
 	public MetricsSnapshotsSupplierTaskImpl(final LoadStep loadStep) {
 		this(ServiceTaskExecutor.INSTANCE, loadStep);
 		this.waitPeriodMillis = 100;
-		// TODO: add a config flag on how often snapshots are aggregated
+		// TODO: add a config flag on how often snapshots are aggregated?
 	}
 
 	public MetricsSnapshotsSupplierTaskImpl(final FibersExecutor executor, final LoadStep loadStep) {
@@ -32,6 +32,9 @@ public final class MetricsSnapshotsSupplierTaskImpl extends ExclusiveFiberBase
 		this.loadStep = loadStep;
 	}
 
+	// as MetricsSnapshotsSupplierTaskImpl is running as a separate fiber this method is called as often as it can be.
+	// Effectively leading to continuous metrics flood to entry node. Though we need fresh results for thresholds, but
+	// 10 times a second is enough
 	@Override
 	protected final void invokeTimedExclusively(final long startTimeNanos) {
 		try {
@@ -66,9 +69,3 @@ public final class MetricsSnapshotsSupplierTaskImpl extends ExclusiveFiberBase
 		}
 	}
 }
-
-//TODO: check how much this affects metrics and network traffic
-//  if (startTimeNanos-lastCalledTime > 1_000_000_000) {
-//				loadStep.metricsSnapshots();
-//						//}
-//						lastCalledTime = startTimeNanos;

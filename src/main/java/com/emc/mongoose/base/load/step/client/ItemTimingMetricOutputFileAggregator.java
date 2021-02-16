@@ -43,14 +43,10 @@ public class ItemTimingMetricOutputFileAggregator implements AutoCloseable {
     private final String loadStepId;
     private final Path itemTimingMetricsOutputFilePath;
     private final Map<FileManager, String> itemTimingMetricOutputFileSlices;
-    //private final Map<FileManager, ArrayList<Integer>> latencies;
-    //private final Map<FileManager, ArrayList<Integer>> durations;
 
     public ItemTimingMetricOutputFileAggregator(
             final String loadStepId,
-            final List<FileManager> fileMgrs,
-            final List<Config> configSlices/*,
-            final String itemTimingMetricsOutputFile*/) {
+            final List<FileManager> fileMgrs) {
         this.loadStepId = loadStepId;
         final var sliceCount = fileMgrs.size();
         this.itemTimingMetricOutputFileSlices = new HashMap<>(sliceCount);
@@ -62,16 +58,6 @@ public class ItemTimingMetricOutputFileAggregator implements AutoCloseable {
             throw new AssertionError("File manager @ index #0 shouldn't be a service");
         }
         itemTimingMetricOutputFileSlices.put(fileMgrs.get(0), itemTimingMetricsOutputFilePath.toString());
-//        try {
-//            this.itemTimingMetricsOutputFile = entryNodeFileManager.newTmpFileName();
-//        } catch (final Exception e) {
-//            throwUncheckedIfInterrupted(e);
-//            LogUtil.exception(
-//                    Level.ERROR,
-//                    e,
-//                    "Failed to get the new temporary file name for the file manager service \"{}\"",
-//                    entryNodeFileManager);
-//        }
 
         for (var i = 1; i < sliceCount; i++) {
             final var fileMgr = fileMgrs.get(i);
