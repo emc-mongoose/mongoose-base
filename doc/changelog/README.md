@@ -1,7 +1,8 @@
 # Changelog
 
 # Contents
-
+## 2021
+* [4.3.0](#430) 2021-02-17
 ## 2020
 * [4.2.20](#4220) 2020-12-10
 * [4.2.19](#4219) 2020-06-18
@@ -75,6 +76,17 @@
 * [0.1.5](#015) 09/22/14
 * [0.1.4](#014) 09/17/14
 * [0.1.3](#013) 08/15/14
+
+# 4.3.0
+
+## Fixed Bugs
+
+| Id | Description |
+|----|-------------|
+| [BASE-1414](https://mongoose-issues.atlassian.net/browse/BASE-1414)| Improve performance by changing metrics exchange approach |
+| [BASE-1425](https://mongoose-issues.atlassian.net/browse/BASE-1425)| Retry mechanism for resolving remote file managers |
+| [BASE-1426](https://mongoose-issues.atlassian.net/browse/BASE-1426)| Mongoose doesn't complete active operations when finishing on time limit |
+| [BASE-1428](https://mongoose-issues.atlassian.net/browse/BASE-1428)| Make amount of specified quantiles variable |
 
 # 4.2.20
 
