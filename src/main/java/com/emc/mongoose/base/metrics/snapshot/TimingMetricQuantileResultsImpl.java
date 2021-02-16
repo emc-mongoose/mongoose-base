@@ -16,7 +16,7 @@ import java.io.InputStreamReader;
 import java.nio.file.FileSystemException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -143,7 +143,13 @@ public class TimingMetricQuantileResultsImpl implements Closeable {
 
     // when quantile values are parsed at the start of the test we check that values are in [0,1).
     private Map<Double, Long> retrieveQuantileValues(List<Double> quantiles, List<Long> metricsArray) {
-        Map<Double, Long> arrayQuantileValues = new HashMap<>(metricsArray.size());
+        // for the metrics csv output it's important we iterate in the order passed by user to avoid things like:
+        // Quantile 0.7:              4542
+        // Quantile 0.95:             13961
+        // Quantile 0.9:              6521
+        // Quantile 0.1:              1679
+        // so linkedHashMap is used over HashMap
+        Map<Double, Long> arrayQuantileValues = new LinkedHashMap<>(metricsArray.size());
         int metricsArrayLength = metricsArray.size();
         Loggers.ERR.warn("metrics amount: {}", metricsArrayLength);
         for (Double quantile: quantiles) {

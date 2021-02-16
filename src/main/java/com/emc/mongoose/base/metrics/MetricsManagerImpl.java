@@ -14,6 +14,7 @@ import com.emc.mongoose.base.logging.LogUtil;
 import com.emc.mongoose.base.logging.Loggers;
 import com.emc.mongoose.base.logging.MetricsAsciiTableLogMessage;
 import com.emc.mongoose.base.logging.MetricsCsvLogMessage;
+import com.emc.mongoose.base.logging.MetricsTotalCsvLogMessage;
 import com.emc.mongoose.base.logging.StepResultsMetricsLogMessage;
 import com.emc.mongoose.base.metrics.context.DistributedMetricsContext;
 import com.emc.mongoose.base.metrics.context.MetricsContext;
@@ -188,7 +189,7 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 					}
 
 					if (metricsCtx instanceof DistributedMetricsContext) {
-						var distributedMetricsCtx = (DistributedMetricsContext<?>) metricsCtx;
+						final DistributedMetricsContext<?> distributedMetricsCtx = (DistributedMetricsContext<?>) metricsCtx;
 						final String timingMetricsDirPath = System.getProperty("java.io.tmpdir") + "/mongoose/";
 						final String timingMetricsFilePattern = "timingMetrics_" + metricsCtx.loadStepId();
 						latencyQuantiles = new TimingMetricQuantileResultsImpl(distributedMetricsCtx.quantileValues(),
@@ -197,20 +198,19 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 						durationQuantiles = new TimingMetricQuantileResultsImpl(distributedMetricsCtx.quantileValues(),
 								DURATION, distributedMetricsCtx.nodeCount(), timingMetricsDirPath,
 								timingMetricsFilePattern);
-					}
 
 					if (snapshot != null) {
 						// file output
-						// TODO: add timing metrics qunatile values to csv files
+						// due to unknown reasons writing to a csv.total is based on a flag and not on a metrics
+						// class instance. though this flag is only enabled for distributed context.
 						if (metricsCtx.sumPersistEnabled()) {
 							Loggers.METRICS_FILE_TOTAL.info(
-											new MetricsCsvLogMessage(
-															snapshot, metricsCtx.opType(), metricsCtx.concurrencyLimit()));
+											new MetricsTotalCsvLogMessage(snapshot, metricsCtx.opType(),
+													metricsCtx.concurrencyLimit(), latencyQuantiles.getMetricsValues(),
+													durationQuantiles.getMetricsValues()));
 						}
 					}
 					// console output
-					if (metricsCtx instanceof DistributedMetricsContext) {
-						final DistributedMetricsContext distributedMetricsCtx = (DistributedMetricsContext) metricsCtx;
 						Loggers.METRICS_STD_OUT.info(
 										new MetricsAsciiTableLogMessage(Collections.singleton(metricsCtx)));
 						final DistributedAllMetricsSnapshot aggregSnapshot = (DistributedAllMetricsSnapshot) snapshot;
@@ -256,7 +256,7 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 		}
 	}
 
-	private static void exitMetricsThresholdState(final MetricsContext metricsCtx) {
+	private static void exitMetricsThresholdState(final MetricsContext<?> metricsCtx) {
 		Loggers.MSG.info(
 						"{}: the active load operations count is below the threshold of {}, stopping the additional metrics "
 										+ "accounting",
