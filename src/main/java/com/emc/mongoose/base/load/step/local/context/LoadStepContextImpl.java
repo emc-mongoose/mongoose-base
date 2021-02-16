@@ -60,6 +60,8 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 	private final int batchSize;
 	private volatile Output<O> opsResultsOutput;
 	private volatile Output<O> opsMetricsOutput;
+	private final boolean waitOpFinishBeforeStop;
+
 
 	/** @param id test step id */
 	public LoadStepContextImpl(
@@ -101,6 +103,7 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 		final long configFailCount = failConfig.longVal("count");
 		this.failCountLimit = configFailCount > 0 ? configFailCount : Long.MAX_VALUE;
 		this.failRateLimitFlag = failConfig.boolVal("rate");
+		this.waitOpFinishBeforeStop = opConfig.boolVal("wait-finish");
 	}
 
 	@Override
@@ -464,6 +467,15 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 
 	@Override
 	protected final void doStop() throws IllegalStateException {
+		if (waitOpFinishBeforeStop) {
+			while (activeOpCount() != 0) {
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					Loggers.MSG.debug("couldn't put context thread {} to sleep", this);
+				}
+			}
+		}
 
 		driver.stop();
 

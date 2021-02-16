@@ -46,6 +46,8 @@ load:
     retry: false
     shuffle: false
     type: create
+    wait:
+      finish: true
   service:
     threads: 0
   step:
