@@ -151,7 +151,6 @@ public class TimingMetricQuantileResultsImpl implements Closeable {
         // so linkedHashMap is used over HashMap
         Map<Double, Long> arrayQuantileValues = new LinkedHashMap<>(metricsArray.size());
         int metricsArrayLength = metricsArray.size();
-        Loggers.ERR.warn("metrics amount: {}", metricsArrayLength);
         for (Double quantile: quantiles) {
             arrayQuantileValues.put(quantile, metricsArray.get((int) (quantile * metricsArrayLength)));
 
