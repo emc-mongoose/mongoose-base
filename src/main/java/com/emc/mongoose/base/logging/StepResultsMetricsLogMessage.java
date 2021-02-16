@@ -9,9 +9,7 @@ import com.emc.mongoose.base.metrics.snapshot.DistributedAllMetricsSnapshot;
 import com.github.akurilov.commons.system.SizeInBytes;
 import org.apache.logging.log4j.message.AsynchronouslyFormattable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.Map;
 
 /** Created by kurila on 18.05.17. */
 @AsynchronouslyFormattable
@@ -21,8 +19,8 @@ public class StepResultsMetricsLogMessage extends LogMessageBase {
 	private final String stepId;
 	private final int concurrencyLimit;
 	private final DistributedAllMetricsSnapshot snapshot;
-	private final ArrayList<Long> latencies;
-	private final ArrayList<Long> durations;
+	private final Map<Double, Long> latencies;
+	private final Map<Double, Long> durations;
 	//private final AfterTestTimingMetricsSnapshot afterTestSnapshot;
 
 	public StepResultsMetricsLogMessage(
@@ -30,14 +28,14 @@ public class StepResultsMetricsLogMessage extends LogMessageBase {
 					final String stepId,
 					final int concurrencyLimit,
 					final DistributedAllMetricsSnapshot snapshot,
-					final ArrayList<Long> latencies,
-					final ArrayList<Long> durations) {
+					final Map<Double, Long> latencyQuantiles,
+					final Map<Double, Long> durationQuantiles) {
 		this.opType = opType;
 		this.stepId = stepId;
 		this.snapshot = snapshot;
 		this.concurrencyLimit = concurrencyLimit;
-		this.latencies = latencies;
-		this.durations = durations;
+		this.latencies = latencyQuantiles;
+		this.durations = durationQuantiles;
 
 	}
 
@@ -113,17 +111,20 @@ public class StepResultsMetricsLogMessage extends LogMessageBase {
 						.append(lineSep)
 						.append("    Min:                       ")
 						.append(snapshot.durationSnapshot().min())
-						.append(lineSep)
-						.append("    LoQ:                       ")
-						.append(durations.get(0)) //snapshot.durationSnapshot().histogramSnapshot().quantile(0.25))
-						.append(lineSep)
-						.append("    Med:                       ")
-						.append(durations.get(1)) //snapshot.durationSnapshot().histogramSnapshot().quantile(0.5))
-						.append(lineSep)
-						.append("    HiQ:                       ")
-						.append(durations.get(2)) //snapshot.durationSnapshot().histogramSnapshot().quantile(0.75))
-						.append(lineSep)
-						.append("    Max:                       ")
+						.append(lineSep);
+
+		for(Double quantile: durations.keySet()) {
+			buff.append("    Quantile ")
+					.append(quantile)
+					.append(":             ");
+			if (String.valueOf(quantile).length() == 3) {
+				buff.append(" ");
+			}
+			buff.append(durations.get(quantile))
+					.append(lineSep);
+		}
+
+		buff.append("    Max:                       ")
 						.append(snapshot.durationSnapshot().max())
 						.append(lineSep)
 						.append("  Operations Latency [us]:     ")
@@ -133,17 +134,20 @@ public class StepResultsMetricsLogMessage extends LogMessageBase {
 						.append(lineSep)
 						.append("    Min:                       ")
 						.append(snapshot.latencySnapshot().min())
-						.append(lineSep)
-						.append("    LoQ:                       ")
-						.append(latencies.get(0)) //snapshot.latencySnapshot().histogramSnapshot().quantile(0.25))
-						.append(lineSep)
-						.append("    Med:                       ")
-						.append(latencies.get(1)) //snapshot.latencySnapshot().histogramSnapshot().quantile(0.5))
-						.append(lineSep)
-						.append("    HiQ:                       ")
-						.append(latencies.get(2)) //snapshot.latencySnapshot().histogramSnapshot().quantile(0.75))
-						.append(lineSep)
-						.append("    Max:                       ")
+						.append(lineSep);
+
+		for(Double quantile: latencies.keySet()) {
+			buff.append("    Quantile ")
+					.append(quantile)
+					.append(":             ");
+			if (String.valueOf(quantile).length() == 3) {
+				buff.append(" ");
+			}
+			buff.append(latencies.get(quantile))
+					.append(lineSep);
+		}
+
+		buff.append("    Max:                       ")
 						.append(snapshot.latencySnapshot().max())
 						.append(lineSep)
 						.append("...")

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +34,10 @@ import static com.emc.mongoose.base.load.step.client.LoadStepClient.OUTPUT_PROGR
 import static com.github.akurilov.commons.lang.Exceptions.throwUnchecked;
 import static org.apache.logging.log4j.CloseableThreadContext.put;
 
-//TODO: handler?
+// unlike other aggregators this one pulls each remote tmp timing metrics (latency and duration) file
+// into a separate local file.
+// This is done to increase performance as mock tests showed that sorting 4 files 25mil lines each
+// and then mergeSorting them is 2+ times faster than sorting 100mil file using Collections.sort().
 public class ItemTimingMetricOutputFileAggregator implements AutoCloseable {
 
     private final String loadStepId;
@@ -50,8 +54,10 @@ public class ItemTimingMetricOutputFileAggregator implements AutoCloseable {
         this.loadStepId = loadStepId;
         final var sliceCount = fileMgrs.size();
         this.itemTimingMetricOutputFileSlices = new HashMap<>(sliceCount);
-        this.itemTimingMetricsOutputFilePath = Paths.get(System.getProperty("java.io.tmpdir"), "mongoose", "timingMetrics_" + loadStepId); //itemTimingMetricsOutputFile;
-        // file manager for slice == 0 is the file manager of entry node. Shouldn't be a service.
+        this.itemTimingMetricsOutputFilePath = Paths.get(System.getProperty("java.io.tmpdir"),
+                "mongoose", "timingMetrics_" + loadStepId);
+
+        // file manager for slice == 0 is the file manager of the entry node. Shouldn't be a service.
         if (fileMgrs.get(0) instanceof FileManagerService) {
             throw new AssertionError("File manager @ index #0 shouldn't be a service");
         }
@@ -89,16 +95,16 @@ public class ItemTimingMetricOutputFileAggregator implements AutoCloseable {
         }
     }
 
-    private void collectToLocalAndHandle() {
+    // each remote file is collected to a local file that has the same old name + the random number
+    private void collectToLocal() {
         final var byteCounter = new LongAdder();
         final var executor = Executors.newScheduledThreadPool(
                 2, new LogContextThreadFactory("collectItemTimingMetricsOutputFileWorker", true));
-        final var finishLatch = new CountDownLatch(1);
+        // we need as many locks as there are slices except for entry node. Because we have a separate tmp file for each slice
+        final var finishLatch = new CountDownLatch(itemTimingMetricOutputFileSlices.size() - 1);
         FsUtil.createParentDirsIfNotExist(itemTimingMetricsOutputFilePath);
         executor.submit(
                 () -> {
-                    try (final var localItemOutput = Files.newOutputStream(itemTimingMetricsOutputFilePath, FileManager.APPEND_OPEN_OPTIONS)) {
-                        final Lock localItemOutputLock = new ReentrantLock();
                         itemTimingMetricOutputFileSlices
                                 .entrySet()
                                 .parallelStream()
@@ -108,12 +114,26 @@ public class ItemTimingMetricOutputFileAggregator implements AutoCloseable {
                                         entry -> {
                                             final var fileMgr = entry.getKey();
                                             final var remoteItemOutputFileName = entry.getValue();
+                                            final Path localItemOutputPath = Paths.get(itemTimingMetricsOutputFilePath.toString() +
+                                                    "_" + (new Random()).nextLong());
+                                            try (final var localItemOutput =
+                                                         Files.newOutputStream(localItemOutputPath,
+                                                                 FileManager.APPEND_OPEN_OPTIONS)) {
                                             transferToLocal(
                                                     fileMgr,
                                                     remoteItemOutputFileName,
                                                     localItemOutput,
-                                                    localItemOutputLock,
                                                     byteCounter);
+                                            } catch (final IOException e) {
+                                                LogUtil.exception(
+                                                        Level.WARN,
+                                                        e,
+                                                        "{}: failed to open the local item output file \"{}\" for appending",
+                                                        loadStepId,
+                                                        itemTimingMetricsOutputFilePath.toString());
+                                            } finally {
+                                                finishLatch.countDown();
+                                            }
                                             try {
                                                 fileMgr.deleteFile(remoteItemOutputFileName);
                                             } catch (final Exception e) {
@@ -127,16 +147,6 @@ public class ItemTimingMetricOutputFileAggregator implements AutoCloseable {
                                                         fileMgr);
                                             }
                                         });
-                    } catch (final IOException e) {
-                        LogUtil.exception(
-                                Level.WARN,
-                                e,
-                                "{}: failed to open the local item output file \"{}\" for appending",
-                                loadStepId,
-                                itemTimingMetricsOutputFilePath.toString());
-                    } finally {
-                        finishLatch.countDown();
-                    }
                 });
         executor.scheduleAtFixedRate(
                 () -> Loggers.MSG.info(
@@ -164,23 +174,18 @@ public class ItemTimingMetricOutputFileAggregator implements AutoCloseable {
             final FileManager fileMgr,
             final String remoteItemOutputFileName,
             final OutputStream localItemOutput,
-            final Lock localItemOutputLock,
             final LongAdder byteCounter) {
         long transferredByteCount = 0;
         try (final var logCtx = put(KEY_CLASS_NAME, ItemOutputFileAggregator.class.getSimpleName())) {
             byte buff[];
             while (true) {
                 buff = fileMgr.readFromFile(remoteItemOutputFileName, transferredByteCount);
-                localItemOutputLock.lock();
-                try {
-                    localItemOutput.write(buff);
-                } finally {
-                    localItemOutputLock.unlock();
-                }
+                localItemOutput.write(buff);
                 transferredByteCount += buff.length;
                 byteCounter.add(buff.length);
             }
-        } catch (final EOFException ok) {} catch (final IOException e) {
+        } catch (final EOFException ok) {
+        } catch (final IOException e) {
             LogUtil.exception(Level.WARN, e, "Remote items output file transfer failure");
         } finally {
             Loggers.MSG.debug(
@@ -196,7 +201,7 @@ public class ItemTimingMetricOutputFileAggregator implements AutoCloseable {
     public final void close() {
         Loggers.MSG.info("closing metrics aggregator");
         try {
-            collectToLocalAndHandle();
+            collectToLocal();
         } finally {
             itemTimingMetricOutputFileSlices.clear();
         }

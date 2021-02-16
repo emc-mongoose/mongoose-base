@@ -15,8 +15,14 @@ import java.util.List;
 import static com.github.akurilov.commons.lang.Exceptions.throwUnchecked;
 
 /**
- * Item latency and duration output to file with support for the single object and batch calls
+ * Item latency and duration output to file with support for the single object and batch calls.
+ *
+ * The format: "latency duration", e.g.
+ * "100 200
+ *  300 400
+ *  500 700"
  */
+
 public class ItemTimingMetricsFileOutput<I extends Item, O extends Operation>  implements Output<O> {
 
         private final Output<String> itemInfoOutput;

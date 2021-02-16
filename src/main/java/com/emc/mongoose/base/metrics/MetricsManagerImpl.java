@@ -4,6 +4,8 @@ import static com.emc.mongoose.base.Constants.KEY_CLASS_NAME;
 import static com.emc.mongoose.base.Constants.KEY_STEP_ID;
 import static com.emc.mongoose.base.Exceptions.throwUncheckedIfInterrupted;
 import static com.emc.mongoose.base.metrics.MetricsConstants.METRIC_LABELS;
+import static com.emc.mongoose.base.metrics.TimingMetricType.LATENCY;
+import static com.emc.mongoose.base.metrics.TimingMetricType.DURATION;
 import static com.github.akurilov.commons.lang.Exceptions.throwUnchecked;
 import static org.apache.logging.log4j.CloseableThreadContext.Instance;
 import static org.apache.logging.log4j.CloseableThreadContext.put;
@@ -15,6 +17,7 @@ import com.emc.mongoose.base.logging.MetricsCsvLogMessage;
 import com.emc.mongoose.base.logging.StepResultsMetricsLogMessage;
 import com.emc.mongoose.base.metrics.context.DistributedMetricsContext;
 import com.emc.mongoose.base.metrics.context.MetricsContext;
+import com.emc.mongoose.base.metrics.snapshot.TimingMetricQuantileResultsImpl;
 import com.emc.mongoose.base.metrics.snapshot.AllMetricsSnapshot;
 import com.emc.mongoose.base.metrics.snapshot.ConcurrencyMetricSnapshot;
 import com.emc.mongoose.base.metrics.snapshot.DistributedAllMetricsSnapshot;
@@ -166,25 +169,12 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 		}
 	}
 
-	public enum timingMetrics {LATENCY, DURATION};
-
-	private void readArrayFromInputStream(InputStream inputStream, ArrayList<Long> outputArray,
-										  timingMetrics tm)
-			throws IOException {
-		try (BufferedReader br
-					 = new BufferedReader(new InputStreamReader(inputStream))) {
-			String line;
-			while ((line = br.readLine()) != null) {
-				var values = line.split(" ");
-				outputArray.add(Long.valueOf(values[tm.ordinal()]));
-			}
-		}
-	}
-
 	@Override
 	public void unregister(final MetricsContext metricsCtx) {
 		try (final Instance logCtx = put(KEY_STEP_ID, metricsCtx.loadStepId()).put(KEY_CLASS_NAME, getClass().getSimpleName())) {
 			if (allMetrics.remove(metricsCtx)) {
+				TimingMetricQuantileResultsImpl latencyQuantiles = null;
+				TimingMetricQuantileResultsImpl durationQuantiles = null;
 				try {
 					if (!outputLock.tryLock(Fiber.WARN_DURATION_LIMIT_NANOS, TimeUnit.NANOSECONDS)) {
 						Loggers.ERR.warn(
@@ -196,26 +186,22 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 					if (metricsCtx.thresholdStateEntered() && !metricsCtx.thresholdStateExited()) {
 						exitMetricsThresholdState(metricsCtx);
 					}
-					ArrayList<Long> lat = null;
-					ArrayList<Long> dur = null;
+
 					if (metricsCtx instanceof DistributedMetricsContext) {
-						ArrayList<Long> latencies = new ArrayList<>();
-						ArrayList<Long> durations = new ArrayList<>();
-						String s = System.getProperty("java.io.tmpdir") + "/mongoose/" + "timingMetrics_" + metricsCtx.loadStepId();
-						var cl = new FileInputStream(s);//classLoader.getResourceAsStream(s);
-						readArrayFromInputStream(cl, latencies, timingMetrics.LATENCY);
-						Loggers.MSG.info("latencies size: {}", latencies.size());
-						Collections.sort(latencies);
-						var cl2 = new FileInputStream(s);
-						lat = new ArrayList<>(Arrays.asList(latencies.get((int) (0.25 * latencies.size())), latencies.get((int) (0.5 * latencies.size())), latencies.get((int)(0.75*latencies.size()))));
-						readArrayFromInputStream(cl2, durations, timingMetrics.DURATION);
-						Collections.sort(durations);
-						//dur = new ArrayList<>(Arrays.asList(0, 0, 0));
-						dur = new ArrayList<>(Arrays.asList(durations.get((int) (0.25*durations.size())),durations.get((int) (0.5*durations.size())), durations.get((int)(0.75*durations.size()))));
+						var distributedMetricsCtx = (DistributedMetricsContext<?>) metricsCtx;
+						final String timingMetricsDirPath = System.getProperty("java.io.tmpdir") + "/mongoose/";
+						final String timingMetricsFilePattern = "timingMetrics_" + metricsCtx.loadStepId();
+						latencyQuantiles = new TimingMetricQuantileResultsImpl(distributedMetricsCtx.quantileValues(),
+								LATENCY, distributedMetricsCtx.nodeCount(), timingMetricsDirPath,
+								timingMetricsFilePattern);
+						durationQuantiles = new TimingMetricQuantileResultsImpl(distributedMetricsCtx.quantileValues(),
+								DURATION, distributedMetricsCtx.nodeCount(), timingMetricsDirPath,
+								timingMetricsFilePattern);
 					}
 
 					if (snapshot != null) {
 						// file output
+						// TODO: add timing metrics qunatile values to csv files
 						if (metricsCtx.sumPersistEnabled()) {
 							Loggers.METRICS_FILE_TOTAL.info(
 											new MetricsCsvLogMessage(
@@ -235,7 +221,8 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 															metricsCtx.loadStepId(),
 															metricsCtx.concurrencyLimit(),
 															aggregSnapshot,
-															lat, dur));
+															latencyQuantiles.getMetricsValues(),
+															durationQuantiles.getMetricsValues()));
 						}
 						final PrometheusMetricsExporter exporter = distributedMetrics.remove(distributedMetricsCtx);
 						if (exporter != null) {
@@ -244,12 +231,18 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 					}
 				} catch (final InterruptedException e) {
 					throwUnchecked(e);
-				} catch (IOException e) {
-					e.printStackTrace();
 				} finally {
 					try {
 						outputLock.unlock();
-					} catch (final IllegalMonitorStateException ignored) {}
+						if (null != latencyQuantiles && null != durationQuantiles) {
+							latencyQuantiles.close();
+							durationQuantiles.close();
+						}
+					} catch (final IllegalMonitorStateException ignored) {
+					} catch (final IOException e) {
+						LogUtil.exception(Level.WARN, e,
+								"probably failed to delete one of the tmp local files");
+					}
 				}
 			} else {
 				Loggers.ERR.debug("Metrics context \"{}\" has not been registered", metricsCtx);

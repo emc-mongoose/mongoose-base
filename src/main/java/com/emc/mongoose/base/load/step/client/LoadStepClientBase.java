@@ -362,7 +362,7 @@ implements LoadStepClient {
 			.avgPersistFlag(metricsAvgPersistFlag)
 			.sumPersistFlag(metricsSumPersistFlag)
 			.snapshotsSupplier(() -> metricsSnapshotsByIndex(originIndex))
-			//.quantileValues(quantiles(metricsConfig))
+			.quantileValues(quantiles(metricsConfig))
 			.nodeAddrs(remoteNodeAddrs(config))
 			.comment(config.stringVal("run-comment"))
 			.runId(runId())
@@ -371,11 +371,21 @@ implements LoadStepClient {
 	}
 
 	private List<Double> quantiles(final Config metricsConfig) {
-		return metricsConfig
-			.listVal("quantiles")
-			.stream()
-			.map(v -> Double.valueOf(v.toString()))
-			.collect(Collectors.toList());
+		List<Double> quantileValues = metricsConfig
+				.listVal("quantiles")
+				.stream()
+				.map(v -> {
+					Double val = Double.valueOf(v.toString());
+					if ((val < 0) || (val >= 1)) {
+						throw new IllegalArgumentException("Quantile values must be in range [0,1), but found" + val);
+					}
+					return val;
+				})
+				.collect(Collectors.toList());
+		if (quantileValues.size() == 0) {
+			throw new IllegalArgumentException("Quantile values list cannot be empty");
+		}
+		return quantileValues;
 	}
 
 	private List<AllMetricsSnapshot> metricsSnapshotsByIndex(final int originIndex) {
