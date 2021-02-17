@@ -162,7 +162,8 @@ public class ItemTimingMetricOutputFileAggregator implements AutoCloseable {
             final OutputStream localItemOutput,
             final LongAdder byteCounter) {
         long transferredByteCount = 0;
-        try (final var logCtx = put(KEY_CLASS_NAME, ItemOutputFileAggregator.class.getSimpleName())) {
+        try (final var logCtx = put(KEY_CLASS_NAME,
+                ItemTimingMetricOutputFileAggregator.class.getSimpleName())) {
             byte buff[];
             while (true) {
                 buff = fileMgr.readFromFile(remoteItemOutputFileName, transferredByteCount);
@@ -172,10 +173,10 @@ public class ItemTimingMetricOutputFileAggregator implements AutoCloseable {
             }
         } catch (final EOFException ok) {
         } catch (final IOException e) {
-            LogUtil.exception(Level.WARN, e, "Remote items output file transfer failure");
+            LogUtil.exception(Level.WARN, e, "Remote items output timing metrics file transfer failure");
         } finally {
             Loggers.MSG.debug(
-                    "{} of items output data transferred from \"{}\" @ \"{}\" to \"{}\"",
+                    "{} of items timing metrics output data transferred from \"{}\" @ \"{}\" to \"{}\"",
                     SizeInBytes.formatFixedSize(transferredByteCount),
                     remoteItemOutputFileName,
                     fileMgr,
