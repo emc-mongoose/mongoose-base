@@ -20,10 +20,9 @@ public final class MetricsSnapshotsSupplierTaskImpl extends ExclusiveFiberBase
 	private volatile List<? extends AllMetricsSnapshot> snapshotsByOrigin = null;
 	private volatile boolean failedBeforeFlag = false;
 	private long lastCalledMillis = 0;
-	private int waitPeriodMillis;
+	private final int WAIT_PERIOD_MILLIS = 100;
 	public MetricsSnapshotsSupplierTaskImpl(final LoadStep loadStep) {
 		this(ServiceTaskExecutor.INSTANCE, loadStep);
-		this.waitPeriodMillis = 100;
 		// TODO: add a config flag on how often snapshots are aggregated?
 	}
 
@@ -39,7 +38,7 @@ public final class MetricsSnapshotsSupplierTaskImpl extends ExclusiveFiberBase
 	protected final void invokeTimedExclusively(final long startTimeNanos) {
 		try {
 			final long nextSnapshotUpdateTs = System.currentTimeMillis();
-			if (nextSnapshotUpdateTs - lastCalledMillis >= waitPeriodMillis){
+			if (nextSnapshotUpdateTs - lastCalledMillis >= WAIT_PERIOD_MILLIS){
 				snapshotsByOrigin = loadStep.metricsSnapshots();
 				lastCalledMillis = nextSnapshotUpdateTs;
 			}
