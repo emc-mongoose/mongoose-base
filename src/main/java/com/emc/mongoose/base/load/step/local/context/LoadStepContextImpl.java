@@ -359,6 +359,7 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 					} else {
 						outputResults(opResult);
 						outputTimingMetrics(opResult);
+						//TODO: check if this should be outside if
 					}
 					metricsCtx.markSucc(countBytesDone, reqDuration, respLatency);
 					counterResults.increment();

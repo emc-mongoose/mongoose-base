@@ -168,7 +168,7 @@ public class TimingMetricQuantileResultsImpl implements Closeable {
         for (File metricsFile : listOfMetricsFiles) {
             if (!metricsFile.delete()) {
                 // for some reason java.io.File.delete() method can return false when the file is actually deleted
-                if(metricsFile.exists()) {
+                if (metricsFile.exists()) {
                     throw new FileSystemException(metricsFile.getName(), null, "Failed to delete a metrics file in " + metricsFilesDirPath);
                 }
             }

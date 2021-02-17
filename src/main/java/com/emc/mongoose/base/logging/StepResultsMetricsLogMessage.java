@@ -21,6 +21,8 @@ public class StepResultsMetricsLogMessage extends LogMessageBase {
 	private final DistributedAllMetricsSnapshot snapshot;
 	private final Map<Double, Long> latencies;
 	private final Map<Double, Long> durations;
+	// assuming 0.999999 is the most detailed quantile user would want to use
+	private final int LENGTH_OF_LONGEST_QUANTILE = 8;
 
 	public StepResultsMetricsLogMessage(
 					final OpType opType,
@@ -112,14 +114,14 @@ public class StepResultsMetricsLogMessage extends LogMessageBase {
 						.append(snapshot.durationSnapshot().min())
 						.append(lineSep);
 
-		final int LENGTH_OF_SHORT_QUANTILE = 3; // meaning 0.5 instead of 0.75 or 0.51
 
 		for(Double quantile: durations.keySet()) {
 			buff.append("    Quantile ")
 					.append(quantile)
-					.append(":             ");
-			if (String.valueOf(quantile).length() == LENGTH_OF_SHORT_QUANTILE) {
-				buff.append(" ");
+					.append(":         ");
+			final int quantileLengthDifference = LENGTH_OF_LONGEST_QUANTILE - String.valueOf(quantile).length();
+			if (quantileLengthDifference > 0) {
+				buff.append(" ".repeat(quantileLengthDifference));
 			}
 			buff.append(durations.get(quantile))
 					.append(lineSep);
@@ -140,9 +142,10 @@ public class StepResultsMetricsLogMessage extends LogMessageBase {
 		for(Double quantile: latencies.keySet()) {
 			buff.append("    Quantile ")
 					.append(quantile)
-					.append(":             ");
-			if (String.valueOf(quantile).length() == LENGTH_OF_SHORT_QUANTILE) {
-				buff.append(" ");
+					.append(":         ");
+			final int quantileLengthDifference = LENGTH_OF_LONGEST_QUANTILE - String.valueOf(quantile).length();
+			if (quantileLengthDifference > 0) {
+				buff.append(" ".repeat(quantileLengthDifference));
 			}
 			buff.append(latencies.get(quantile))
 					.append(lineSep);
