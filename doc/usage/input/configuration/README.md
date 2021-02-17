@@ -63,6 +63,7 @@ reference.
 | load-step-node-port                            | Integer > 0 | 1099               | Distributed mode: the common port number to start/connect the slave node
 | output-color                                   | Flag | true                      | Use colored standard output flag
 | output-metrics-average-period                  | Time >= 0 | 0                    | The time period for the load step's metrics console output. 0 means to not to output the metrics to the console
+| output-metrics-average-aggregation-period      | Int > 0 | 100                    | The time period in ms for the load step's metrics to get aggregated to entry node. Happens not often than the specified value (meaning for 100ms it can happen 10 or less times).
 | output-metrics-average-persist                 | Flag | true                      | Persist the average (periodic) metrics if true
 | output-metrics-average-table-header-period     | Integer > 0 | 20                 | Output the metrics table header every N rows
 | output-metrics-quantiles                       | List |0.25,0.5,0.75              | Output quantiles for metrics (only for [Monitoring API](../../api/monitoring#monitoring-api))

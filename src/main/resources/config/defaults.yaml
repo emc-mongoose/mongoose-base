@@ -64,6 +64,8 @@ output:
   color: true
   metrics:
     average:
+      aggregation:
+        period: 100
       period: 10s
       persist: true
       table:

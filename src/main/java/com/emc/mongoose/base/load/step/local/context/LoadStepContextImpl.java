@@ -290,8 +290,8 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 					generator.recycle(opResult);
 				} else {
 					outputResults(opResult);
-					outputTimingMetrics(opResult); //Loggers.TIMING_METRICS_FILE.info(new OperationTraceCsvLogMessage<>(opResult));
 				}
+				outputTimingMetrics(opResult);
 				metricsCtx.markSucc(countBytesDone, reqDuration, respLatency);
 				counterResults.increment();
 			}
@@ -358,9 +358,8 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 						generator.recycle(opResult);
 					} else {
 						outputResults(opResult);
-						outputTimingMetrics(opResult);
-						//TODO: check if this should be outside if
 					}
+					outputTimingMetrics(opResult);
 					metricsCtx.markSucc(countBytesDone, reqDuration, respLatency);
 					counterResults.increment();
 				}

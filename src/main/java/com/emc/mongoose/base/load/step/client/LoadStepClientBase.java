@@ -100,7 +100,7 @@ implements LoadStepClient {
 				}
 			}
 			initAndStartStepSlices(nodeAddrs, configSlices, ctxConfigsSlices, metricsMgr);
-			initAndStartMetricsAggregator();
+			initAndStartMetricsAggregator(config.configVal("output-metrics"));
 			Loggers.MSG.info(
 				"{}: load step client started, additional nodes: {}", loadStepId(),
 				Arrays.toString(nodeAddrs.toArray())
@@ -216,9 +216,9 @@ implements LoadStepClient {
 		}
 	}
 
-	private void initAndStartMetricsAggregator() {
+	private void initAndStartMetricsAggregator(Config config) {
 		try(final var logCtx = put(KEY_STEP_ID, loadStepId()).put(KEY_CLASS_NAME, getClass().getSimpleName())) {
-			metricsAggregator = new MetricsAggregatorImpl(loadStepId(), stepSlices);
+			metricsAggregator = new MetricsAggregatorImpl(loadStepId(), stepSlices, config);
 			metricsAggregator.start();
 		} catch(final Exception e) {
 			LogUtil.exception(Level.ERROR, e, "{}: failed to start the metrics aggregator", loadStepId());

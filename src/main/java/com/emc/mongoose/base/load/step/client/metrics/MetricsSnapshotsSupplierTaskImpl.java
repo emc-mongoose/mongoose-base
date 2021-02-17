@@ -4,6 +4,7 @@ import com.emc.mongoose.base.concurrent.ServiceTaskExecutor;
 import com.emc.mongoose.base.load.step.LoadStep;
 import com.emc.mongoose.base.logging.LogUtil;
 import com.emc.mongoose.base.metrics.snapshot.AllMetricsSnapshot;
+import com.github.akurilov.confuse.Config;
 import com.github.akurilov.fiber4j.ExclusiveFiberBase;
 import com.github.akurilov.fiber4j.FibersExecutor;
 
@@ -20,10 +21,11 @@ public final class MetricsSnapshotsSupplierTaskImpl extends ExclusiveFiberBase
 	private volatile List<? extends AllMetricsSnapshot> snapshotsByOrigin = null;
 	private volatile boolean failedBeforeFlag = false;
 	private long lastCalledMillis = 0;
-	private final int WAIT_PERIOD_MILLIS = 100;
-	public MetricsSnapshotsSupplierTaskImpl(final LoadStep loadStep) {
+	private int AGGREGATION_PERIOD_MILLIS;
+
+	public MetricsSnapshotsSupplierTaskImpl(final LoadStep loadStep, Config metricsConfig) {
 		this(ServiceTaskExecutor.INSTANCE, loadStep);
-		// TODO: add a config flag on how often snapshots are aggregated?
+		AGGREGATION_PERIOD_MILLIS = metricsConfig.intVal("average-aggregation-period");
 	}
 
 	public MetricsSnapshotsSupplierTaskImpl(final FibersExecutor executor, final LoadStep loadStep) {
@@ -38,7 +40,7 @@ public final class MetricsSnapshotsSupplierTaskImpl extends ExclusiveFiberBase
 	protected final void invokeTimedExclusively(final long startTimeNanos) {
 		try {
 			final long nextSnapshotUpdateTs = System.currentTimeMillis();
-			if (nextSnapshotUpdateTs - lastCalledMillis >= WAIT_PERIOD_MILLIS){
+			if (nextSnapshotUpdateTs - lastCalledMillis >= AGGREGATION_PERIOD_MILLIS){
 				snapshotsByOrigin = loadStep.metricsSnapshots();
 				lastCalledMillis = nextSnapshotUpdateTs;
 			}
