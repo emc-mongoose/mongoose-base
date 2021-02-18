@@ -4,6 +4,8 @@ import static com.emc.mongoose.base.Constants.KEY_CLASS_NAME;
 import static com.emc.mongoose.base.Constants.KEY_STEP_ID;
 import static com.emc.mongoose.base.Exceptions.throwUncheckedIfInterrupted;
 import static com.emc.mongoose.base.metrics.MetricsConstants.METRIC_LABELS;
+import static com.emc.mongoose.base.metrics.TimingMetricType.LATENCY;
+import static com.emc.mongoose.base.metrics.TimingMetricType.DURATION;
 import static com.github.akurilov.commons.lang.Exceptions.throwUnchecked;
 import static org.apache.logging.log4j.CloseableThreadContext.Instance;
 import static org.apache.logging.log4j.CloseableThreadContext.put;
@@ -12,9 +14,11 @@ import com.emc.mongoose.base.logging.LogUtil;
 import com.emc.mongoose.base.logging.Loggers;
 import com.emc.mongoose.base.logging.MetricsAsciiTableLogMessage;
 import com.emc.mongoose.base.logging.MetricsCsvLogMessage;
+import com.emc.mongoose.base.logging.MetricsTotalCsvLogMessage;
 import com.emc.mongoose.base.logging.StepResultsMetricsLogMessage;
 import com.emc.mongoose.base.metrics.context.DistributedMetricsContext;
 import com.emc.mongoose.base.metrics.context.MetricsContext;
+import com.emc.mongoose.base.metrics.snapshot.TimingMetricQuantileResultsImpl;
 import com.emc.mongoose.base.metrics.snapshot.AllMetricsSnapshot;
 import com.emc.mongoose.base.metrics.snapshot.ConcurrencyMetricSnapshot;
 import com.emc.mongoose.base.metrics.snapshot.DistributedAllMetricsSnapshot;
@@ -25,6 +29,14 @@ import com.github.akurilov.fiber4j.Fiber;
 import com.github.akurilov.fiber4j.FibersExecutor;
 import io.prometheus.client.Collector;
 import io.prometheus.client.CollectorRegistry;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Map;
@@ -60,7 +72,9 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 			try {
 				for (final MetricsContext metricsCtx : allMetrics) {
 					ThreadContext.put(KEY_STEP_ID, metricsCtx.loadStepId());
+					// TODO: as a future improvement consider whether throttling is needed here.
 					metricsCtx.refreshLastSnapshot();
+
 					final AllMetricsSnapshot snapshot = metricsCtx.lastSnapshot();
 					if (snapshot != null) {
 						final ConcurrencyMetricSnapshot concurrencySnapshot = snapshot.concurrencySnapshot();
@@ -138,7 +152,7 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 								distributedMetricsCtx,
 								new PrometheusMetricsExporterImpl(distributedMetricsCtx)
 												.labels(METRIC_LABELS, labelValues)
-												.quantiles(distributedMetricsCtx.quantileValues())
+												//.quantiles(distributedMetricsCtx.quantileValues())
 												.register());
 			}
 			Loggers.MSG.debug("Metrics context \"{}\" registered", metricsCtx);
@@ -156,6 +170,8 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 	public void unregister(final MetricsContext metricsCtx) {
 		try (final Instance logCtx = put(KEY_STEP_ID, metricsCtx.loadStepId()).put(KEY_CLASS_NAME, getClass().getSimpleName())) {
 			if (allMetrics.remove(metricsCtx)) {
+				TimingMetricQuantileResultsImpl latencyQuantiles = null;
+				TimingMetricQuantileResultsImpl durationQuantiles = null;
 				try {
 					if (!outputLock.tryLock(Fiber.WARN_DURATION_LIMIT_NANOS, TimeUnit.NANOSECONDS)) {
 						Loggers.ERR.warn(
@@ -167,17 +183,30 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 					if (metricsCtx.thresholdStateEntered() && !metricsCtx.thresholdStateExited()) {
 						exitMetricsThresholdState(metricsCtx);
 					}
+
+					if (metricsCtx instanceof DistributedMetricsContext) {
+						final DistributedMetricsContext<?> distributedMetricsCtx = (DistributedMetricsContext<?>) metricsCtx;
+						final String timingMetricsDirPath = System.getProperty("java.io.tmpdir") + "/mongoose/";
+						final String timingMetricsFilePattern = "timingMetrics_" + metricsCtx.loadStepId();
+						latencyQuantiles = new TimingMetricQuantileResultsImpl(distributedMetricsCtx.quantileValues(),
+								LATENCY, distributedMetricsCtx.nodeCount(), timingMetricsDirPath,
+								timingMetricsFilePattern);
+						durationQuantiles = new TimingMetricQuantileResultsImpl(distributedMetricsCtx.quantileValues(),
+								DURATION, distributedMetricsCtx.nodeCount(), timingMetricsDirPath,
+								timingMetricsFilePattern);
+
 					if (snapshot != null) {
 						// file output
+						// due to unknown reasons writing to a csv.total is based on a flag and not on a metrics
+						// class instance. though this flag is only enabled for distributed context.
 						if (metricsCtx.sumPersistEnabled()) {
 							Loggers.METRICS_FILE_TOTAL.info(
-											new MetricsCsvLogMessage(
-															snapshot, metricsCtx.opType(), metricsCtx.concurrencyLimit()));
+											new MetricsTotalCsvLogMessage(snapshot, metricsCtx.opType(),
+													metricsCtx.concurrencyLimit(), latencyQuantiles.getMetricsValues(),
+													durationQuantiles.getMetricsValues()));
 						}
 					}
 					// console output
-					if (metricsCtx instanceof DistributedMetricsContext) {
-						final DistributedMetricsContext distributedMetricsCtx = (DistributedMetricsContext) metricsCtx;
 						Loggers.METRICS_STD_OUT.info(
 										new MetricsAsciiTableLogMessage(Collections.singleton(metricsCtx)));
 						final DistributedAllMetricsSnapshot aggregSnapshot = (DistributedAllMetricsSnapshot) snapshot;
@@ -187,7 +216,9 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 															metricsCtx.opType(),
 															metricsCtx.loadStepId(),
 															metricsCtx.concurrencyLimit(),
-															aggregSnapshot));
+															aggregSnapshot,
+															latencyQuantiles.getMetricsValues(),
+															durationQuantiles.getMetricsValues()));
 						}
 						final PrometheusMetricsExporter exporter = distributedMetrics.remove(distributedMetricsCtx);
 						if (exporter != null) {
@@ -199,7 +230,15 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 				} finally {
 					try {
 						outputLock.unlock();
-					} catch (final IllegalMonitorStateException ignored) {}
+						if (null != latencyQuantiles && null != durationQuantiles) {
+							latencyQuantiles.close();
+							durationQuantiles.close();
+						}
+					} catch (final IllegalMonitorStateException ignored) {
+					} catch (final IOException e) {
+						LogUtil.exception(Level.WARN, e,
+								"probably failed to delete one of the tmp local files");
+					}
 				}
 			} else {
 				Loggers.ERR.debug("Metrics context \"{}\" has not been registered", metricsCtx);
@@ -213,7 +252,7 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 		}
 	}
 
-	private static void exitMetricsThresholdState(final MetricsContext metricsCtx) {
+	private static void exitMetricsThresholdState(final MetricsContext<?> metricsCtx) {
 		Loggers.MSG.info(
 						"{}: the active load operations count is below the threshold of {}, stopping the additional metrics "
 										+ "accounting",

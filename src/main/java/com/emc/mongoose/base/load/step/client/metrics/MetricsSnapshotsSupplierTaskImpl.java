@@ -4,6 +4,7 @@ import com.emc.mongoose.base.concurrent.ServiceTaskExecutor;
 import com.emc.mongoose.base.load.step.LoadStep;
 import com.emc.mongoose.base.logging.LogUtil;
 import com.emc.mongoose.base.metrics.snapshot.AllMetricsSnapshot;
+import com.github.akurilov.confuse.Config;
 import com.github.akurilov.fiber4j.ExclusiveFiberBase;
 import com.github.akurilov.fiber4j.FibersExecutor;
 
@@ -19,9 +20,12 @@ public final class MetricsSnapshotsSupplierTaskImpl extends ExclusiveFiberBase
 	private final LoadStep loadStep;
 	private volatile List<? extends AllMetricsSnapshot> snapshotsByOrigin = null;
 	private volatile boolean failedBeforeFlag = false;
+	private long lastCalledMillis = 0;
+	private int AGGREGATION_PERIOD_MILLIS;
 
-	public MetricsSnapshotsSupplierTaskImpl(final LoadStep loadStep) {
+	public MetricsSnapshotsSupplierTaskImpl(final LoadStep loadStep, Config metricsConfig) {
 		this(ServiceTaskExecutor.INSTANCE, loadStep);
+		AGGREGATION_PERIOD_MILLIS = metricsConfig.intVal("average-aggregation-period");
 	}
 
 	public MetricsSnapshotsSupplierTaskImpl(final FibersExecutor executor, final LoadStep loadStep) {
@@ -29,10 +33,18 @@ public final class MetricsSnapshotsSupplierTaskImpl extends ExclusiveFiberBase
 		this.loadStep = loadStep;
 	}
 
+	// as MetricsSnapshotsSupplierTaskImpl is running as a separate fiber this method is called as often as it can be.
+	// Effectively leading to continuous metrics flood to entry node. Though we need fresh results for thresholds, but
+	// 10 times a second is enough
 	@Override
 	protected final void invokeTimedExclusively(final long startTimeNanos) {
 		try {
-			snapshotsByOrigin = loadStep.metricsSnapshots();
+			final long nextSnapshotUpdateTs = System.currentTimeMillis();
+			if (nextSnapshotUpdateTs - lastCalledMillis >= AGGREGATION_PERIOD_MILLIS){
+				snapshotsByOrigin = loadStep.metricsSnapshots();
+				lastCalledMillis = nextSnapshotUpdateTs;
+			}
+
 		} catch (final Exception e) {
 			throwUncheckedIfInterrupted(e);
 			LogUtil.exception(Level.INFO, e, "Failed to fetch the metrics snapshots from \"{}\"", loadStep);

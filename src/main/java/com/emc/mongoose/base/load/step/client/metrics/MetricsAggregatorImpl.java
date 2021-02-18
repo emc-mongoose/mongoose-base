@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.github.akurilov.confuse.Config;
 import org.apache.logging.log4j.Level;
 
 public final class MetricsAggregatorImpl extends AsyncRunnableBase implements MetricsAggregator {
@@ -22,11 +24,11 @@ public final class MetricsAggregatorImpl extends AsyncRunnableBase implements Me
 	private final MetricsSnapshotsSupplierTask[] snapshotSuppliers;
 	private final int count;
 
-	public MetricsAggregatorImpl(final String loadStepId, final List<LoadStep> stepSlices) {
+	public MetricsAggregatorImpl(final String loadStepId, final List<LoadStep> stepSlices, final Config metricsConfig) {
 		this.loadStepId = loadStepId;
 		snapshotSuppliers = stepSlices
 						.stream()
-						.map(MetricsSnapshotsSupplierTaskImpl::new)
+						.map(slice -> new MetricsSnapshotsSupplierTaskImpl(slice, metricsConfig))
 						.collect(Collectors.toList())
 						.toArray(new MetricsSnapshotsSupplierTask[]{});
 		count = snapshotSuppliers.length;

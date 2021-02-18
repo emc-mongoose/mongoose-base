@@ -22,7 +22,6 @@ import com.emc.mongoose.base.env.Extension;
 import com.emc.mongoose.base.load.step.LoadStepManagerService;
 import com.emc.mongoose.base.load.step.ScenarioUtil;
 import com.emc.mongoose.base.load.step.service.LoadStepManagerServiceImpl;
-import com.emc.mongoose.base.load.step.service.LoadStepService;
 import com.emc.mongoose.base.load.step.service.file.FileManagerServiceImpl;
 import com.emc.mongoose.base.logging.LogUtil;
 import com.emc.mongoose.base.logging.Loggers;
@@ -34,6 +33,7 @@ import com.github.akurilov.confuse.SchemaProvider;
 import com.github.akurilov.confuse.exceptions.InvalidValuePathException;
 import com.github.akurilov.confuse.exceptions.InvalidValueTypeException;
 import io.prometheus.client.exporter.MetricsServlet;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

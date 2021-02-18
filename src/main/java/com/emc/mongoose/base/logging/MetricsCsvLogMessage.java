@@ -76,24 +76,13 @@ public final class MetricsCsvLogMessage extends LogMessageBase {
 						.append(',')
 						.append(durationSnapshot.min())
 						.append(',')
-						.append(durationSnapshot.histogramSnapshot().quantile(0.25))
-						.append(',')
-						.append(durationSnapshot.histogramSnapshot().quantile(0.5))
-						.append(',')
-						.append(durationSnapshot.histogramSnapshot().quantile(0.75))
-						.append(',')
 						.append(durationSnapshot.max())
 						.append(',')
 						.append(latencySnapshot.mean())
 						.append(',')
 						.append(latencySnapshot.min())
 						.append(',')
-						.append(latencySnapshot.histogramSnapshot().quantile(0.25))
-						.append(',')
-						.append(latencySnapshot.histogramSnapshot().quantile(0.5))
-						.append(',')
-						.append(latencySnapshot.histogramSnapshot().quantile(0.75))
-						.append(',')
-						.append(latencySnapshot.max());
+						.append(latencySnapshot.max())
+		;
 	}
 }

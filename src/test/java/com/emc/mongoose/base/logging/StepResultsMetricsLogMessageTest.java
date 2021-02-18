@@ -62,15 +62,8 @@ public class StepResultsMetricsLogMessageTest extends StepResultsMetricsLogMessa
 	private static final DistributedAllMetricsSnapshot SNAPSHOT;
 
 	static {
-		LongMeter<HistogramSnapshot> h;
-		h = new HistogramImpl(new ConcurrentSlidingWindowLongReservoir(COUNT));
-		LongStream.of(DURATIONS).forEach(h::update);
-		final TimingMetricSnapshot dS = new TimingMeterImpl(h, MetricsConstants.METRIC_NAME_DUR).snapshot();
-		h = new HistogramImpl(new ConcurrentSlidingWindowLongReservoir(COUNT));
-		LongStream.of(LATENCIES).forEach(h::update);
-		final TimingMetricSnapshot lS = new TimingMeterImpl(h, MetricsConstants.METRIC_NAME_LAT).snapshot();
-		h = new HistogramImpl(new ConcurrentSlidingWindowLongReservoir(COUNT));
-		LongStream.of(CONCURRENCIES).forEach(h::update);
+		final TimingMetricSnapshot dS = new TimingMeterImpl(MetricsConstants.METRIC_NAME_DUR).snapshot();
+		final TimingMetricSnapshot lS = new TimingMeterImpl(MetricsConstants.METRIC_NAME_LAT).snapshot();
 		final ConcurrencyMetricSnapshot cS = new ConcurrencyMeterImpl(MetricsConstants.METRIC_NAME_CONC).snapshot();
 		final RateMetricSnapshot fS = new RateMetricSnapshotImpl(0, 0, MetricsConstants.METRIC_NAME_FAIL, 0, 0);
 		final RateMetricSnapshot sS = new RateMetricSnapshotImpl(

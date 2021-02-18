@@ -81,7 +81,7 @@ Configuration:
         StepIdTriggeringPolicy: {}
       DirectWriteRolloverStrategy: {}
       PatternLayout:
-        header: "DateTimeISO8601,OpType,Concurrency,NodeCount,ConcurrencyCurr,ConcurrencyMean,CountSucc,CountFail,Size,StepDuration[s],DurationSum[s],TPAvg[op/s],TPLast[op/s],BWAvg[MB/s],BWLast[MB/s],DurationAvg[us],DurationMin[us],DurationLoQ[us],DurationMed[us],DurationHiQ[us],DurationMax[us],LatencyAvg[us],LatencyMin[us],LatencyLoQ[us],LatencyMed[us],LatencyHiQ[us],LatencyMax[us]\n"
+        #header: is removed as it's dynamically generated based on the passed quantiles
         pattern: "%m%n"
     - name: metricsThresholdFileTotal
       fileName: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}${ctx:step_id}${sys:file.separator}metrics.threshold.total.csv"

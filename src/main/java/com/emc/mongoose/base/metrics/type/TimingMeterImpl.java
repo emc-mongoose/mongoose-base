@@ -9,21 +9,18 @@ import java.util.concurrent.atomic.LongAdder;
 /** @author veronika K. on 10.10.18 */
 public class TimingMeterImpl implements LongMeter<TimingMetricSnapshot> {
 
-	private final LongMeter<HistogramSnapshot> histogram;
 	private final LongAdder count = new LongAdder();
 	private final LongAdder sum = new LongAdder();
 	private volatile long min = Long.MAX_VALUE;
 	private volatile long max = Long.MIN_VALUE;
 	private final String metricName;
 
-	public TimingMeterImpl(final LongMeter<HistogramSnapshot> histogram, final String metricName) {
-		this.histogram = histogram;
+	public TimingMeterImpl(final String metricName) {
 		this.metricName = metricName;
 	}
 
 	@Override
 	public void update(final long value) {
-		histogram.update(value);
 		count.increment();
 		sum.add(value);
 		if (value < min) {
@@ -37,7 +34,7 @@ public class TimingMeterImpl implements LongMeter<TimingMetricSnapshot> {
 	@Override
 	public TimingMetricSnapshotImpl snapshot() {
 		if (count.sum() == 0) {
-			return new TimingMetricSnapshotImpl(0, 0, 0, 0, 0, histogram.snapshot(), metricName);
+			return new TimingMetricSnapshotImpl(0, 0, 0, 0, 0, metricName);
 		}
 		return new TimingMetricSnapshotImpl(
 						sum.sum(),
@@ -45,7 +42,6 @@ public class TimingMeterImpl implements LongMeter<TimingMetricSnapshot> {
 						min,
 						max,
 						((double) sum.sum()) / count.sum(),
-						histogram.snapshot(),
 						metricName);
 	}
 }

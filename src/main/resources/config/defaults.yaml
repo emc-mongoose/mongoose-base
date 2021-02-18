@@ -64,6 +64,8 @@ output:
   color: true
   metrics:
     average:
+      aggregation:
+        period: 100
       period: 10s
       persist: true
       table:
@@ -85,7 +87,7 @@ run:
   node: false
   port: 9999
   scenario: null
-  version: 4.2.20
+  version: 4.3.0
 
 storage:
   auth:

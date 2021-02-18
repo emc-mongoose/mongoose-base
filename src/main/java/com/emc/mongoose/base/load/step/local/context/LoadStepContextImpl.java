@@ -59,8 +59,10 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 	private final boolean tracePersistFlag;
 	private final int batchSize;
 	private volatile Output<O> opsResultsOutput;
+	private volatile Output<O> opsMetricsOutput;
 	private final boolean waitOpFinishBeforeStop;
-	
+
+
 	/** @param id test step id */
 	public LoadStepContextImpl(
 					final String id,
@@ -247,6 +249,11 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 	}
 
 	@Override
+	public final void operationsMetricsOutput(final Output<O> opsMetricsOutput) {
+		this.opsMetricsOutput = opsMetricsOutput;
+	}
+
+	@Override
 	public final int activeOpCount() {
 		return driver.activeOpCount();
 	}
@@ -282,8 +289,11 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 					latestSuccOpResultByItem.put(opResult.item(), opResult);
 					generator.recycle(opResult);
 				} else {
+					// recycled ops should only appear in output.csv only once
 					outputResults(opResult);
 				}
+				// each recycled op's lat and dur should be written to file each time
+				outputTimingMetrics(opResult);
 				metricsCtx.markSucc(countBytesDone, reqDuration, respLatency);
 				counterResults.increment();
 			}
@@ -349,8 +359,10 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 						latestSuccOpResultByItem.put(opResult.item(), opResult);
 						generator.recycle(opResult);
 					} else {
+						// recycled ops should only appear in output.csv only once
 						outputResults(opResult);
 					}
+					// each recycled op's lat and dur should be written to file each time
 					metricsCtx.markSucc(countBytesDone, reqDuration, respLatency);
 					counterResults.increment();
 				}
@@ -414,6 +426,27 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 				} else if (e instanceof IOException) {
 					LogUtil.exception(
 							Level.WARN, e, "Failed to put the load operation to the destination");
+				} else {
+					throw e;
+				}
+			}
+		}
+	}
+
+	private void outputTimingMetrics(final O opResult) {
+		final var opsMetricsOutput = this.opsMetricsOutput;
+		if (opsMetricsOutput != null) {
+			try {
+				if (!opsMetricsOutput.put(opResult)) {
+					Loggers.ERR.warn("Failed to output the operation metrics");
+				}
+			} catch (final Exception e) {
+				throwUncheckedIfInterrupted(e);
+				if (e instanceof EOFException) {
+					LogUtil.exception(Level.DEBUG, e, "Load operations metrics result destination end of input");
+				} else if (e instanceof IOException) {
+					LogUtil.exception(
+							Level.WARN, e, "Failed to put the load operation metrics to the destination");
 				} else {
 					throw e;
 				}
@@ -494,6 +527,26 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 			} catch (final Exception e) {
 				if (e instanceof IOException) {
 					LogUtil.exception(Level.WARN, e, "{}: failed to poison the results output", id);
+				} else {
+					throw e;
+				}
+			}
+		}
+
+		if (opsMetricsOutput != null) {
+			try {
+				opsMetricsOutput.put((O) null);
+				Loggers.MSG.debug("{}: poisoned the items timing metrics output", id);
+			} catch (final NullPointerException e) {
+				LogUtil.exception(
+						Level.ERROR,
+						e,
+						"{}: timing metrics results output \"{}\" failed to eat the poison",
+						id,
+						opsMetricsOutput);
+			} catch (final Exception e) {
+				if (e instanceof IOException) {
+					LogUtil.exception(Level.WARN, e, "{}: failed to poison the timing metrics results output", id);
 				} else {
 					throw e;
 				}

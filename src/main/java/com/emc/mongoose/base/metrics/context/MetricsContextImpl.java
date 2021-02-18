@@ -5,14 +5,12 @@ import com.emc.mongoose.base.metrics.MetricsConstants;
 import com.emc.mongoose.base.metrics.snapshot.AllMetricsSnapshotImpl;
 import com.emc.mongoose.base.metrics.snapshot.ConcurrencyMetricSnapshot;
 import com.emc.mongoose.base.metrics.snapshot.TimingMetricSnapshot;
+import com.emc.mongoose.base.metrics.snapshot.RateMetricSnapshot;
 import com.emc.mongoose.base.metrics.type.ConcurrencyMeterImpl;
-import com.emc.mongoose.base.metrics.type.HistogramImpl;
 import com.emc.mongoose.base.metrics.type.LongMeter;
 import com.emc.mongoose.base.metrics.type.RateMeter;
 import com.emc.mongoose.base.metrics.type.RateMeterImpl;
 import com.emc.mongoose.base.metrics.type.TimingMeterImpl;
-import com.emc.mongoose.base.metrics.snapshot.RateMetricSnapshot;
-import com.emc.mongoose.base.metrics.util.ConcurrentSlidingWindowLongReservoir;
 import com.github.akurilov.commons.system.SizeInBytes;
 import java.time.Clock;
 import java.util.HashMap;
@@ -53,14 +51,10 @@ public class MetricsContextImpl<S extends AllMetricsSnapshotImpl> extends Metric
 						stdOutColorFlag,
 						TimeUnit.SECONDS.toMillis(updateIntervalSec));
 		//
-		respLatency = new TimingMeterImpl(
-						new HistogramImpl(new ConcurrentSlidingWindowLongReservoir(DEFAULT_RESERVOIR_SIZE)),
-						MetricsConstants.METRIC_NAME_LAT);
+		respLatency = new TimingMeterImpl(MetricsConstants.METRIC_NAME_LAT);
 		respLatSnapshot = respLatency.snapshot();
 		//
-		reqDuration = new TimingMeterImpl(
-						new HistogramImpl(new ConcurrentSlidingWindowLongReservoir(DEFAULT_RESERVOIR_SIZE)),
-						MetricsConstants.METRIC_NAME_DUR);
+		reqDuration = new TimingMeterImpl(MetricsConstants.METRIC_NAME_DUR);
 		reqDurSnapshot = reqDuration.snapshot();
 		//
 		this.actualConcurrencyGauge = actualConcurrencyGauge;

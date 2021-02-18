@@ -9,6 +9,8 @@ import com.emc.mongoose.base.metrics.snapshot.DistributedAllMetricsSnapshot;
 import com.github.akurilov.commons.system.SizeInBytes;
 import org.apache.logging.log4j.message.AsynchronouslyFormattable;
 
+import java.util.Map;
+
 /** Created by kurila on 18.05.17. */
 @AsynchronouslyFormattable
 public class StepResultsMetricsLogMessage extends LogMessageBase {
@@ -17,16 +19,25 @@ public class StepResultsMetricsLogMessage extends LogMessageBase {
 	private final String stepId;
 	private final int concurrencyLimit;
 	private final DistributedAllMetricsSnapshot snapshot;
+	private final Map<Double, Long> latencies;
+	private final Map<Double, Long> durations;
+	// assuming 0.999999 is the most detailed quantile user would want to use
+	private final int LENGTH_OF_LONGEST_QUANTILE = 8;
 
 	public StepResultsMetricsLogMessage(
 					final OpType opType,
 					final String stepId,
 					final int concurrencyLimit,
-					final DistributedAllMetricsSnapshot snapshot) {
+					final DistributedAllMetricsSnapshot snapshot,
+					final Map<Double, Long> latencyQuantiles,
+					final Map<Double, Long> durationQuantiles) {
 		this.opType = opType;
 		this.stepId = stepId;
 		this.snapshot = snapshot;
 		this.concurrencyLimit = concurrencyLimit;
+		this.latencies = latencyQuantiles;
+		this.durations = durationQuantiles;
+
 	}
 
 	@Override
@@ -101,17 +112,22 @@ public class StepResultsMetricsLogMessage extends LogMessageBase {
 						.append(lineSep)
 						.append("    Min:                       ")
 						.append(snapshot.durationSnapshot().min())
-						.append(lineSep)
-						.append("    LoQ:                       ")
-						.append(snapshot.durationSnapshot().histogramSnapshot().quantile(0.25))
-						.append(lineSep)
-						.append("    Med:                       ")
-						.append(snapshot.durationSnapshot().histogramSnapshot().quantile(0.5))
-						.append(lineSep)
-						.append("    HiQ:                       ")
-						.append(snapshot.durationSnapshot().histogramSnapshot().quantile(0.75))
-						.append(lineSep)
-						.append("    Max:                       ")
+						.append(lineSep);
+
+
+		for(Double quantile: durations.keySet()) {
+			buff.append("    Quantile ")
+					.append(quantile)
+					.append(":         ");
+			final int quantileLengthDifference = LENGTH_OF_LONGEST_QUANTILE - String.valueOf(quantile).length();
+			if (quantileLengthDifference > 0) {
+				buff.append(" ".repeat(quantileLengthDifference));
+			}
+			buff.append(durations.get(quantile))
+					.append(lineSep);
+		}
+
+		buff.append("    Max:                       ")
 						.append(snapshot.durationSnapshot().max())
 						.append(lineSep)
 						.append("  Operations Latency [us]:     ")
@@ -121,17 +137,21 @@ public class StepResultsMetricsLogMessage extends LogMessageBase {
 						.append(lineSep)
 						.append("    Min:                       ")
 						.append(snapshot.latencySnapshot().min())
-						.append(lineSep)
-						.append("    LoQ:                       ")
-						.append(snapshot.latencySnapshot().histogramSnapshot().quantile(0.25))
-						.append(lineSep)
-						.append("    Med:                       ")
-						.append(snapshot.latencySnapshot().histogramSnapshot().quantile(0.5))
-						.append(lineSep)
-						.append("    HiQ:                       ")
-						.append(snapshot.latencySnapshot().histogramSnapshot().quantile(0.75))
-						.append(lineSep)
-						.append("    Max:                       ")
+						.append(lineSep);
+
+		for(Double quantile: latencies.keySet()) {
+			buff.append("    Quantile ")
+					.append(quantile)
+					.append(":         ");
+			final int quantileLengthDifference = LENGTH_OF_LONGEST_QUANTILE - String.valueOf(quantile).length();
+			if (quantileLengthDifference > 0) {
+				buff.append(" ".repeat(quantileLengthDifference));
+			}
+			buff.append(latencies.get(quantile))
+					.append(lineSep);
+		}
+
+		buff.append("    Max:                       ")
 						.append(snapshot.latencySnapshot().max())
 						.append(lineSep)
 						.append("...")

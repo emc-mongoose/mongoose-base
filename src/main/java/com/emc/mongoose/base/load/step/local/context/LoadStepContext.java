@@ -13,6 +13,8 @@ public interface LoadStepContext<I extends Item, O extends Operation<I>> extends
 
 	void operationsResultsOutput(final Output<O> opsResultsOutput);
 
+	void operationsMetricsOutput(final Output<O> opsMetricsOutput);
+
 	int activeOpCount();
 
 	boolean isDone();

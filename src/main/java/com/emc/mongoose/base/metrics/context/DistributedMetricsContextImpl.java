@@ -254,7 +254,8 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 							avgPersistFlag,
 							sumPersistFlag,
 							snapshotsSupplier,
-							quantileValues);
+							quantileValues
+			);
 		}
 
 		@Override

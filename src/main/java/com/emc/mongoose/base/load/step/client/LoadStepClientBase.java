@@ -58,6 +58,7 @@ implements LoadStepClient {
 	private final List<AutoCloseable> itemDataInputFileSlicers = new ArrayList<>();
 	private final List<AutoCloseable> itemInputFileSlicers = new ArrayList<>();
 	private final List<AutoCloseable> itemOutputFileAggregators = new ArrayList<>();
+	private final List<AutoCloseable> itemTimingMetricsOutputFileAggregators = new ArrayList<>();
 	private final List<AutoCloseable> opTraceLogFileAggregators = new ArrayList<>();
 	private final List<AutoCloseable> storageAuthFileSlicers = new ArrayList<>();
 	private final static int MAX_SLEEP_TIME_MILLIS = 120_000; // 2min.
@@ -99,7 +100,7 @@ implements LoadStepClient {
 				}
 			}
 			initAndStartStepSlices(nodeAddrs, configSlices, ctxConfigsSlices, metricsMgr);
-			initAndStartMetricsAggregator();
+			initAndStartMetricsAggregator(config.configVal("output-metrics"));
 			Loggers.MSG.info(
 				"{}: load step client started, additional nodes: {}", loadStepId(),
 				Arrays.toString(nodeAddrs.toArray())
@@ -195,6 +196,11 @@ implements LoadStepClient {
 				new ItemOutputFileAggregator(loadStepId(), fileMgrs, configSlices, itemOutputFile));
 			Loggers.MSG.debug("{}: item output file aggregator initialized", loadStepId());
 		}
+
+		itemTimingMetricsOutputFileAggregators.add(
+				new ItemTimingMetricOutputFileAggregator(loadStepId(), fileMgrs));
+		Loggers.MSG.debug("{}: item metrics output file aggregator initialized", loadStepId());
+
 		if(config.boolVal("output-metrics-trace-persist")) {
 			opTraceLogFileAggregators.add(new OpTraceLogFileAggregator(loadStepId(), fileMgrs));
 			Loggers.MSG.debug("{}: operation traces log file aggregator initialized", loadStepId());
@@ -210,9 +216,9 @@ implements LoadStepClient {
 		}
 	}
 
-	private void initAndStartMetricsAggregator() {
+	private void initAndStartMetricsAggregator(Config config) {
 		try(final var logCtx = put(KEY_STEP_ID, loadStepId()).put(KEY_CLASS_NAME, getClass().getSimpleName())) {
-			metricsAggregator = new MetricsAggregatorImpl(loadStepId(), stepSlices);
+			metricsAggregator = new MetricsAggregatorImpl(loadStepId(), stepSlices, config);
 			metricsAggregator.start();
 		} catch(final Exception e) {
 			LogUtil.exception(Level.ERROR, e, "{}: failed to start the metrics aggregator", loadStepId());
@@ -364,7 +370,8 @@ implements LoadStepClient {
 			.stdOutColorFlag(outputColorFlag)
 			.avgPersistFlag(metricsAvgPersistFlag)
 			.sumPersistFlag(metricsSumPersistFlag)
-			.snapshotsSupplier(() -> metricsSnapshotsByIndex(originIndex)).quantileValues(quantiles(metricsConfig))
+			.snapshotsSupplier(() -> metricsSnapshotsByIndex(originIndex))
+			.quantileValues(quantiles(metricsConfig))
 			.nodeAddrs(remoteNodeAddrs(config))
 			.comment(config.stringVal("run-comment"))
 			.runId(runId())
@@ -373,11 +380,21 @@ implements LoadStepClient {
 	}
 
 	private List<Double> quantiles(final Config metricsConfig) {
-		return metricsConfig
-			.listVal("quantiles")
-			.stream()
-			.map(v -> Double.valueOf(v.toString()))
-			.collect(Collectors.toList());
+		List<Double> quantileValues = metricsConfig
+				.listVal("quantiles")
+				.stream()
+				.map(v -> {
+					Double val = Double.valueOf(v.toString());
+					if ((val < 0) || (val >= 1)) {
+						throw new IllegalArgumentException("Quantile values must be in range [0,1), but found" + val);
+					}
+					return val;
+				})
+				.collect(Collectors.toList());
+		if (quantileValues.size() == 0) {
+			throw new IllegalArgumentException("Quantile values list cannot be empty");
+		}
+		return quantileValues;
 	}
 
 	private List<AllMetricsSnapshot> metricsSnapshotsByIndex(final int originIndex) {
@@ -458,6 +475,17 @@ implements LoadStepClient {
 			} catch(final RemoteException ignored) {
 			}
 		}
+		itemTimingMetricsOutputFileAggregators.parallelStream().forEach(itemMetricsOutputFileAggregator -> {
+			try {
+				itemMetricsOutputFileAggregator.close();
+			} catch(final Exception e) {
+				throwUncheckedIfInterrupted(e);
+				LogUtil.exception(Level.WARN, e, "{}: failed to close the item metrics output file aggregator \"{}\"",
+						loadStepId(), itemMetricsOutputFileAggregator
+				);
+			}
+		});
+		itemTimingMetricsOutputFileAggregators.clear();
 		super.doStop();
 	}
 

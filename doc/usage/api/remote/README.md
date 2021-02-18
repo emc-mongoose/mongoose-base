@@ -231,6 +231,8 @@ curl -X DELETE http://localhost:9999/logs/123/Messages
 ### 4.2.4 Metrics
 
 For real-time monitoring the metrics are exposed in the [Prometheus's](https://github.com/prometheus/client_java) format.
+Notice that since 4.3.0 only mean latency and duration are available during the test run. The qunatile values can be
+accessed through the metrics.total.csv log file.
 
 Example using the command:
 ```bash
