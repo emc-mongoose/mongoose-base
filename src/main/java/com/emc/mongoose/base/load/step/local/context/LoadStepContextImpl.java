@@ -289,8 +289,10 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 					latestSuccOpResultByItem.put(opResult.item(), opResult);
 					generator.recycle(opResult);
 				} else {
+					// recycled ops should only appear in output.csv only once
 					outputResults(opResult);
 				}
+				// each recycled op's lat and dur should be written to file each time
 				outputTimingMetrics(opResult);
 				metricsCtx.markSucc(countBytesDone, reqDuration, respLatency);
 				counterResults.increment();
@@ -357,9 +359,10 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 						latestSuccOpResultByItem.put(opResult.item(), opResult);
 						generator.recycle(opResult);
 					} else {
+						// recycled ops should only appear in output.csv only once
 						outputResults(opResult);
 					}
-					outputTimingMetrics(opResult);
+					// each recycled op's lat and dur should be written to file each time
 					metricsCtx.markSucc(countBytesDone, reqDuration, respLatency);
 					counterResults.increment();
 				}
@@ -490,14 +493,6 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 							Loggers.ERR.debug(
 											"{}: item info output fails to ingest, blocking the closing method", id);
 							while (!opsResultsOutput.put(latestOpResult)) {
-								Thread.sleep(1);
-							}
-							Loggers.MSG.debug("{}: closing method unblocked", id);
-						}
-						if (!opsMetricsOutput.put(latestOpResult)) {
-							Loggers.ERR.debug(
-									"{}: item timing metrics info output fails to ingest, blocking the closing method", id);
-							while (!opsMetricsOutput.put(latestOpResult)) {
 								Thread.sleep(1);
 							}
 							Loggers.MSG.debug("{}: closing method unblocked", id);
