@@ -26,10 +26,6 @@ public class MetricsTotalCsvLogMessage extends LogMessageBase {
     private final Map<Double, Long> latencies;
     private final Map<Double, Long> durations;
 
-    // log4j2 supports file headers to avoid using this anti-pattern, but we need a dynamic header based on
-    // the provided quantiles
-    static boolean firstCalled = true;
-
     public MetricsTotalCsvLogMessage(
             final AllMetricsSnapshot snapshot, final OpType opType, final int concurrencyLimit,
             final Map<Double, Long> latencyQuantiles, final Map<Double, Long> durationQuantiles) {
@@ -42,29 +38,30 @@ public class MetricsTotalCsvLogMessage extends LogMessageBase {
 
     @Override
     public final void formatTo(final StringBuilder strb) {
-        if (firstCalled) {
-            final String lineSep = System.lineSeparator();
-            strb.append("DateTimeISO8601,OpType,Concurrency,NodeCount,ConcurrencyCurr,ConcurrencyMean,CountSucc,")
-                        .append("CountFail,Size,StepDuration[s],DurationSum[s],TPAvg[op/s],TPLast[op/s],BWAvg[MB/s],")
-                        .append("BWLast[MB/s],DurationAvg[us],DurationMin[us],");
+        final String lineSep = System.lineSeparator();
+        // log4j2 supports file headers to avoid this, but we need a dynamic header based on the provided quantiles
+        // headers are printed every time formatTo is called because each time we call it for a new step, hence
+        // for a new file
+        strb.append("DateTimeISO8601,OpType,Concurrency,NodeCount,ConcurrencyCurr,ConcurrencyMean,CountSucc,")
+                .append("CountFail,Size,StepDuration[s],DurationSum[s],TPAvg[op/s],TPLast[op/s],BWAvg[MB/s],")
+                .append("BWLast[MB/s],DurationAvg[us],DurationMin[us],");
 
-            for(Double quantile: durations.keySet()) {
-                strb.append("DurationQ_")
-                        .append(quantile)
-                        .append("[us],");
-            }
-            strb.append("DurationMax[us],LatencyAvg[us],LatencyMin[us],");
-
-            // not like quantiles are different for duration and latency, but just to be precise
-            for(Double quantile: latencies.keySet()) {
-                strb.append("LatencyQ_")
-                        .append(quantile)
-                        .append("[us],");
-            }
-           strb.append("LatencyMax[us]")
-                    .append(lineSep);
+        for (Double quantile : durations.keySet()) {
+            strb.append("DurationQ_")
+                    .append(quantile)
+                    .append("[us],");
         }
-        firstCalled = false;
+        strb.append("DurationMax[us],LatencyAvg[us],LatencyMin[us],");
+
+        // not like quantiles are different for duration and latency, but just to be precise
+        for (Double quantile : latencies.keySet()) {
+            strb.append("LatencyQ_")
+                    .append(quantile)
+                    .append("[us],");
+        }
+        strb.append("LatencyMax[us]")
+                .append(lineSep);
+
         final ConcurrencyMetricSnapshot concurrencySnapshot = snapshot.concurrencySnapshot();
         final TimingMetricSnapshot durationSnapshot = snapshot.durationSnapshot();
         final RateMetricSnapshot successCountSnapshot = snapshot.successSnapshot();
@@ -108,7 +105,7 @@ public class MetricsTotalCsvLogMessage extends LogMessageBase {
                 .append(durationSnapshot.min())
                 .append(',');
 
-        for(Double quantile: durations.keySet()) {
+        for (Double quantile : durations.keySet()) {
             strb.append(durations.get(quantile))
                     .append(',');
         }
@@ -120,7 +117,7 @@ public class MetricsTotalCsvLogMessage extends LogMessageBase {
                 .append(latencySnapshot.min())
                 .append(',');
 
-        for(Double quantile: latencies.keySet()) {
+        for (Double quantile : latencies.keySet()) {
             strb.append(latencies.get(quantile))
                     .append(',');
         }
