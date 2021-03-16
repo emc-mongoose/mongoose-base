@@ -13,6 +13,7 @@ import java.util.Map;
 
 import static com.emc.mongoose.base.Constants.K;
 import static com.emc.mongoose.base.Constants.M;
+import static com.emc.mongoose.base.Constants.MIB;
 import static com.emc.mongoose.base.env.DateUtil.FMT_DATE_ISO8601;
 
 // metricsTotalCsv unlike metricsCsv also output the quantile values for the timing metrics
@@ -96,9 +97,9 @@ public class MetricsTotalCsvLogMessage extends LogMessageBase {
                 .append(',')
                 .append(successCountSnapshot.last())
                 .append(',')
-                .append(byteCountSnapshot.mean() / M)
+                .append(byteCountSnapshot.mean() / MIB)
                 .append(',')
-                .append(byteCountSnapshot.last() / M)
+                .append(byteCountSnapshot.last() / MIB)
                 .append(',')
                 .append(durationSnapshot.mean())
                 .append(',')
