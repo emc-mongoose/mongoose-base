@@ -44,4 +44,6 @@ AVG Latency:
 
 ![](../images/docker_vs_jar_lat.png)
 
+## Does mongoose use 10^3 or 2^10 multiplier for input and output data sizes?
 
+For data sizes mongoose only uses 2^10 (1024) multiplier. So 1MB is 1_048_576 bytes.

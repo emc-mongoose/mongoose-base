@@ -2,6 +2,7 @@ package com.emc.mongoose.base.logging;
 
 import static com.emc.mongoose.base.Constants.K;
 import static com.emc.mongoose.base.Constants.M;
+import static com.emc.mongoose.base.Constants.MIB;
 import static com.emc.mongoose.base.env.DateUtil.FMT_DATE_ISO8601;
 
 import com.emc.mongoose.base.item.op.OpType;
@@ -68,9 +69,9 @@ public final class MetricsCsvLogMessage extends LogMessageBase {
 						.append(',')
 						.append(successCountSnapshot.last())
 						.append(',')
-						.append(byteCountSnapshot.mean() / M)
+						.append(byteCountSnapshot.mean() / MIB)
 						.append(',')
-						.append(byteCountSnapshot.last() / M)
+						.append(byteCountSnapshot.last() / MIB)
 						.append(',')
 						.append(durationSnapshot.mean())
 						.append(',')

@@ -211,6 +211,8 @@ Last Rate / [MB/s]    | The moving average megabytes per second rate for the las
 Mean Latency [us]     | The last mean latency measured in the microseconds.
 Mean Duration [us]    | The last mean operation duration measured in the microseconds.
 
+Mongoose only uses 2^10 (1024) multiplier. So 1MB is 1_048_576 bytes.
+
 ### 2.1.2. Files
 
 Average metrics data is written to a CSV file `metrics.csv` with *dynamic path*. To prevent the average metrics file
@@ -247,6 +249,8 @@ LatencyLoQ[us]  | Low quartile of the operations latency distribution
 LatencyMed[us]  | Median of the operations latency distribution
 LatencyHiQ[us]  | High quartile of the operations latency distribution
 LatencyMax[us]  | Maximum operation latency
+
+Again, mongoose only uses 2^10 (1024) multiplier. So 1MB is 1_048_576 bytes.
 
 ## 2.2. Load Step Summary
 

@@ -133,6 +133,8 @@ The configuration parameters supporting the time type:
 | "6EB"   | 6EB (exobytes)
 | "7YB"   | Invalid Value
 
+All conversions between specified sizes are done using 2^10 (1024) multiplier. So 1MB is 1_048_576 bytes.
+
 ##### 1.2.3. Dictionary
 
 Some configuration values support the dictionary type. Don't use the command line arguments for the dictionary values
