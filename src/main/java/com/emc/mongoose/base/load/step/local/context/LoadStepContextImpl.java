@@ -61,7 +61,7 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 	private volatile Output<O> opsResultsOutput;
 	private volatile Output<O> opsMetricsOutput;
 	private final boolean waitOpFinishBeforeStop;
-
+	private final boolean outputDuplicates;
 
 	/** @param id test step id */
 	public LoadStepContextImpl(
@@ -104,6 +104,7 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 		this.failCountLimit = configFailCount > 0 ? configFailCount : Long.MAX_VALUE;
 		this.failRateLimitFlag = failConfig.boolVal("rate");
 		this.waitOpFinishBeforeStop = opConfig.boolVal("wait-finish");
+		this.outputDuplicates = opConfig.boolVal("output-duplicates");
 	}
 
 	@Override
@@ -286,10 +287,16 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 				metricsCtx.markPartSucc(countBytesDone, reqDuration, respLatency);
 			} else {
 				if (recycleFlag) {
-					latestSuccOpResultByItem.put(opResult.item(), opResult);
+					if (outputDuplicates) {
+						outputResults(opResult);
+					} else {
+						// this way we only add duplicate items once to the output list
+						latestSuccOpResultByItem.put(opResult.item(), opResult);
+					}
 					generator.recycle(opResult);
 				} else {
-					// recycled ops should only appear in output.csv only once
+					// recycled ops should only appear in output.csv only once unless
+					// outputDuplicates flag is specified
 					outputResults(opResult);
 				}
 				// each recycled op's lat and dur should be written to file each time
@@ -356,13 +363,20 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 					metricsCtx.markPartSucc(countBytesDone, reqDuration, respLatency);
 				} else {
 					if (recycleFlag) {
-						latestSuccOpResultByItem.put(opResult.item(), opResult);
+						if (outputDuplicates) {
+							outputResults(opResult);
+						} else {
+							// this way we only add duplicate items once to the output list
+							latestSuccOpResultByItem.put(opResult.item(), opResult);
+						}
 						generator.recycle(opResult);
 					} else {
-						// recycled ops should only appear in output.csv only once
+						// recycled ops should only appear in output.csv only once unless
+						// outputDuplicates flag is specified
 						outputResults(opResult);
 					}
 					// each recycled op's lat and dur should be written to file each time
+					outputTimingMetrics(opResult);
 					metricsCtx.markSucc(countBytesDone, reqDuration, respLatency);
 					counterResults.increment();
 				}
