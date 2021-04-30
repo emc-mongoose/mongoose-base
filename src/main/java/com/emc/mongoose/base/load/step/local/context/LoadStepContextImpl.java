@@ -286,18 +286,17 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 			if (opResult instanceof PartialOperation) {
 				metricsCtx.markPartSucc(countBytesDone, reqDuration, respLatency);
 			} else {
-				if (recycleFlag) {
-					if (outputDuplicates) {
-						outputResults(opResult);
-					} else {
-						// this way we only add duplicate items once to the output list
-						latestSuccOpResultByItem.put(opResult.item(), opResult);
-					}
-					generator.recycle(opResult);
-				} else {
+				if (!recycleFlag) {
 					// recycled ops should only appear in output.csv only once unless
 					// outputDuplicates flag is specified
 					outputResults(opResult);
+				} else if (outputDuplicates) {
+					outputResults(opResult);
+					generator.recycle(opResult);
+				} else {
+					// this way we only add duplicate items once to the output list
+					latestSuccOpResultByItem.put(opResult.item(), opResult);
+					generator.recycle(opResult);
 				}
 				// each recycled op's lat and dur should be written to file each time
 				outputTimingMetrics(opResult);
@@ -362,19 +361,18 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 				if (opResult instanceof PartialOperation) {
 					metricsCtx.markPartSucc(countBytesDone, reqDuration, respLatency);
 				} else {
-					if (recycleFlag) {
-						if (outputDuplicates) {
-							outputResults(opResult);
-						} else {
-							// this way we only add duplicate items once to the output list
-							latestSuccOpResultByItem.put(opResult.item(), opResult);
-						}
-						generator.recycle(opResult);
-					} else {
+					if (!recycleFlag) {
 						// recycled ops should only appear in output.csv only once unless
 						// outputDuplicates flag is specified
 						outputResults(opResult);
-					}
+					} else if (outputDuplicates) {
+						outputResults(opResult);
+						generator.recycle(opResult);
+					} else {
+						// this way we only add duplicate items once to the output list
+						latestSuccOpResultByItem.put(opResult.item(), opResult);
+						generator.recycle(opResult);
+				    }
 					// each recycled op's lat and dur should be written to file each time
 					outputTimingMetrics(opResult);
 					metricsCtx.markSucc(countBytesDone, reqDuration, respLatency);
