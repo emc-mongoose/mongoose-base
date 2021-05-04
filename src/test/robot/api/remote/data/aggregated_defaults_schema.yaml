@@ -6,6 +6,8 @@ output:
       persist: "boolean"
     quantiles: "list"
     average:
+      aggregation:
+        period: "int"
       period: "any"
       table:
         header:
@@ -79,10 +81,14 @@ load:
         count: "long"
         rate: "boolean"
       rate: "double"
+    output:
+      duplicates: "boolean"
     recycle: "boolean"
     shuffle: "boolean"
     type: "string"
     retry: "boolean"
+    wait:
+      finish: "boolean"
   step:
     limit:
       size: "any"

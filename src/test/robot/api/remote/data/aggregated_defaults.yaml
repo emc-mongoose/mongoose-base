@@ -9,6 +9,8 @@ output:
     - 0.5
     - 0.75
     average:
+      aggregation:
+        period: 100
       period: "10s"
       table:
         header:
@@ -53,7 +55,7 @@ run:
   id: 0
   port: 9999
   scenario: null
-  version: "4.2.20"
+  version: "4.3.0"
 storage:
   namespace: null
   driver:
@@ -82,10 +84,14 @@ load:
         count: 100000
         rate: false
       rate: 0.0
+    output:
+      duplicates: false
     recycle: false
     shuffle: false
     type: "create"
     retry: false
+    wait:
+      finish: true
   step:
     limit:
       size: 0
