@@ -64,14 +64,15 @@ public class StepResultsMetricsLogMessageTest extends StepResultsMetricsLogMessa
 		final TimingMetricSnapshot lS = new TimingMeterImpl(MetricsConstants.METRIC_NAME_LAT).snapshot();
 		final ConcurrencyMetricSnapshot cS = new ConcurrencyMeterImpl(MetricsConstants.METRIC_NAME_CONC).snapshot();
 		final RateMetricSnapshot fS = new RateMetricSnapshotImpl(0, 0, MetricsConstants.METRIC_NAME_FAIL, 0, 0);
-		final RateMetricSnapshot sS = new RateMetricSnapshotImpl(
-				COUNT / durSum, COUNT / durSum, MetricsConstants.METRIC_NAME_SUCC, COUNT, 0);
+		final double countDividedByDur = (double)COUNT / durSum;
+		final RateMetricSnapshot sS = new RateMetricSnapshotImpl(countDividedByDur
+						, countDividedByDur, MetricsConstants.METRIC_NAME_SUCC, COUNT, 0);
 		final RateMetricSnapshot bS = new RateMetricSnapshotImpl(
-				COUNT / durSum,
-				COUNT / durSum,
-				MetricsConstants.METRIC_NAME_BYTE,
-				new Double(COUNT * Constants.K).longValue(),
-				0);
+						countDividedByDur,
+						countDividedByDur,
+						MetricsConstants.METRIC_NAME_BYTE,
+						Double.valueOf(COUNT * Constants.K).longValue(),
+						0);
 		SNAPSHOT = new DistributedAllMetricsSnapshotImpl(dS, lS, cS, fS, sS, bS, 2, 123456);
 		// there is no way to unit-test TimingMetricQuantileResultsImpl as it requires creating several files with actual
 		// metrics, so it's only covered by functional tests
