@@ -52,6 +52,8 @@ load:
         rate: boolean
       rate: double
       recycle: int
+    output:
+      duplicates: boolean
     recycle: boolean
     retry: boolean
     shuffle: boolean

@@ -49,6 +49,7 @@ reference.
 | load-op-limit-fail-rate                        | Boolean | false                  | Stop the step if failures rate is more than success rate and if the flag is set to true
 | load-op-limit-rate                             | Float >= 0 | 0                   | The maximum number of the load operations to execute per second (throughput limit). 0 means no rate limit.
 | load-op-limit-recycle                          | Integer >= 1 | 1000000           | The load operations and results queues size limit
+| load-op-output-duplicates                      | Flag | false                     | Specifies whether to add duplicates to output items list when in recycle mode or only print them once. No duplicates by default |
 | load-op-recycle                                | Flag | false                     | Specifies whether to recycle the successfully finished operations multiple times or not
 | load-op-retry                                  | Flag | false                     | Specifies whether to retry the failed operations or not
 | load-op-shuffle                                | Flag | false                     | Defines whether to shuffle or not the items got from the item input, what should make the order of the load operations execution randomized

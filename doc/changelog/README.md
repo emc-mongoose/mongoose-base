@@ -87,6 +87,7 @@
 | [BASE-1425](https://mongoose-issues.atlassian.net/browse/BASE-1425)| Retry mechanism for resolving remote file managers |
 | [BASE-1426](https://mongoose-issues.atlassian.net/browse/BASE-1426)| Mongoose doesn't complete active operations when finishing on time limit |
 | [BASE-1428](https://mongoose-issues.atlassian.net/browse/BASE-1428)| Make amount of specified quantiles variable |
+| [BASE-1436](https://mongoose-issues.atlassian.net/browse/BASE-1436)| Add ability to add duplicates to output list |
 
 # 4.2.20
 

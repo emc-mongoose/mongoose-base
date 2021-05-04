@@ -42,6 +42,8 @@ load:
         rate: false
       rate: 0
       recycle: 1000000
+    output:
+      duplicates: false
     recycle: false
     retry: false
     shuffle: false
