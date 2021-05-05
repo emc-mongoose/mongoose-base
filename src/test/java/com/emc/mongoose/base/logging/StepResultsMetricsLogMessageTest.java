@@ -8,20 +8,17 @@ import com.emc.mongoose.base.metrics.MetricsConstants;
 import com.emc.mongoose.base.metrics.snapshot.ConcurrencyMetricSnapshot;
 import com.emc.mongoose.base.metrics.snapshot.DistributedAllMetricsSnapshot;
 import com.emc.mongoose.base.metrics.snapshot.DistributedAllMetricsSnapshotImpl;
-import com.emc.mongoose.base.metrics.snapshot.HistogramSnapshot;
 import com.emc.mongoose.base.metrics.snapshot.RateMetricSnapshot;
 import com.emc.mongoose.base.metrics.snapshot.RateMetricSnapshotImpl;
 import com.emc.mongoose.base.metrics.snapshot.TimingMetricSnapshot;
 import com.emc.mongoose.base.metrics.type.ConcurrencyMeterImpl;
-import com.emc.mongoose.base.metrics.type.HistogramImpl;
-import com.emc.mongoose.base.metrics.type.LongMeter;
 import com.emc.mongoose.base.metrics.type.TimingMeterImpl;
-import com.emc.mongoose.base.metrics.util.ConcurrentSlidingWindowLongReservoir;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.LongStream;
 import org.junit.Test;
 
 public class StepResultsMetricsLogMessageTest extends StepResultsMetricsLogMessage {
@@ -33,7 +30,8 @@ public class StepResultsMetricsLogMessageTest extends StepResultsMetricsLogMessa
 	private static final int LAT_MAX = 27183;
 	private static final long[] DURATIONS = new long[COUNT];
 	private static long durSum = 0;
-
+	private static Map<Double, Long> latencies;
+	private static Map<Double, Long> durations;
 	static {
 		for (int i = 0; i < COUNT; i++) {
 			DURATIONS[i] = System.nanoTime() % DUR_MAX;
@@ -66,19 +64,30 @@ public class StepResultsMetricsLogMessageTest extends StepResultsMetricsLogMessa
 		final TimingMetricSnapshot lS = new TimingMeterImpl(MetricsConstants.METRIC_NAME_LAT).snapshot();
 		final ConcurrencyMetricSnapshot cS = new ConcurrencyMeterImpl(MetricsConstants.METRIC_NAME_CONC).snapshot();
 		final RateMetricSnapshot fS = new RateMetricSnapshotImpl(0, 0, MetricsConstants.METRIC_NAME_FAIL, 0, 0);
-		final RateMetricSnapshot sS = new RateMetricSnapshotImpl(
-						COUNT / durSum, COUNT / durSum, MetricsConstants.METRIC_NAME_SUCC, COUNT, 0);
+		final double countDividedByDur = (double)COUNT / durSum;
+		final RateMetricSnapshot sS = new RateMetricSnapshotImpl(countDividedByDur
+						, countDividedByDur, MetricsConstants.METRIC_NAME_SUCC, COUNT, 0);
 		final RateMetricSnapshot bS = new RateMetricSnapshotImpl(
-						COUNT / durSum,
-						COUNT / durSum,
+						countDividedByDur,
+						countDividedByDur,
 						MetricsConstants.METRIC_NAME_BYTE,
-						new Double(COUNT * Constants.K).longValue(),
+						Double.valueOf(COUNT * Constants.K).longValue(),
 						0);
 		SNAPSHOT = new DistributedAllMetricsSnapshotImpl(dS, lS, cS, fS, sS, bS, 2, 123456);
+		// there is no way to unit-test TimingMetricQuantileResultsImpl as it requires creating several files with actual
+		// metrics, so it's only covered by functional tests
+		latencies = new LinkedHashMap<>();
+		latencies.put(0.25, 25L);
+		latencies.put(0.5, 50L);
+		latencies.put(0.75, 75L);
+		durations = new LinkedHashMap<>();
+		durations.put(0.25, 26L);
+		durations.put(0.5, 51L);
+		durations.put(0.75, 76L);
 	}
 
 	public StepResultsMetricsLogMessageTest() {
-		super(OP_TYPE, STEP_ID, 0, SNAPSHOT);
+		super(OP_TYPE, STEP_ID, 0, SNAPSHOT, latencies, durations);
 	}
 
 	@Test

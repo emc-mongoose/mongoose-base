@@ -7,10 +7,12 @@ output:
     quantiles: "list"
     average:
       period: "any"
+      aggregation:
+        period: "int"
+      persist: "boolean"
       table:
         header:
           period: "int"
-      persist: "boolean"
     trace:
       persist: "boolean"
     threshold: "double"
@@ -72,6 +74,10 @@ load:
   batch:
     size: "int"
   op:
+    output:
+      duplicates: "boolean"
+    wait:
+      finish: "boolean"
     limit:
       count: "long"
       recycle: "int"

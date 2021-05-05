@@ -10,10 +10,12 @@ output:
     - 0.75
     average:
       period: "10s"
+      aggregation:
+        period: 100
+      persist: true
       table:
         header:
           period: 20
-      persist: true
     trace:
       persist: false
     threshold: 0.0
@@ -53,7 +55,7 @@ run:
   id: 0
   port: 9999
   scenario: null
-  version: "4.2.20"
+  version: "4.3.0"
 storage:
   namespace: null
   driver:
@@ -75,6 +77,10 @@ load:
   batch:
     size: 32768
   op:
+    output:
+      duplicates: false
+    wait:
+      finish: true
     limit:
       count: 0
       recycle: 1000000

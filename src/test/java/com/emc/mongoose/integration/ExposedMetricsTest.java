@@ -133,9 +133,9 @@ public class ExposedMetricsTest {
 		final var elapsedTimeMillis = TimeUnit.MICROSECONDS.toSeconds(MARK_DUR * ITERATION_COUNT);
 		expected.put("value", (double) elapsedTimeMillis);
 		testMetric(result, METRIC_NAME_TIME, expected, ELAPSED_TIME_ACCURACY);
-		//
-		testTimingMetric(result, MARK_DUR, METRIC_NAME_DUR);
-		testTimingMetric(result, MARK_LAT, METRIC_NAME_LAT);
+		// latency and duration are now only testable in functional testing as they use actual files in the os
+		//testTimingMetric(result, MARK_DUR, METRIC_NAME_DUR);
+		//testTimingMetric(result, MARK_LAT, METRIC_NAME_LAT);
 		testConcurrencyMetric(result, 1, METRIC_NAME_CONC);
 		//
 		testRateMetric(result, ITEM_DATA_SIZE.get(), METRIC_NAME_BYTE);
