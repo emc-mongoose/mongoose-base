@@ -6,13 +6,13 @@ output:
       persist: "boolean"
     quantiles: "list"
     average:
+      period: "any"
       aggregation:
         period: "int"
-      period: "any"
+      persist: "boolean"
       table:
         header:
           period: "int"
-      persist: "boolean"
     trace:
       persist: "boolean"
     threshold: "double"
@@ -74,6 +74,10 @@ load:
   batch:
     size: "int"
   op:
+    output:
+      duplicates: "boolean"
+    wait:
+      finish: "boolean"
     limit:
       count: "long"
       recycle: "int"
@@ -81,14 +85,10 @@ load:
         count: "long"
         rate: "boolean"
       rate: "double"
-    output:
-      duplicates: "boolean"
     recycle: "boolean"
     shuffle: "boolean"
     type: "string"
     retry: "boolean"
-    wait:
-      finish: "boolean"
   step:
     limit:
       size: "any"
