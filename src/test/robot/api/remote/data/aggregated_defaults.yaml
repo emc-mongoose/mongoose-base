@@ -76,11 +76,11 @@ storage:
 load:
   batch:
     size: 32768
-  output:
-    duplicates: false
-  wait:
-    finish: true
   op:
+    output:
+      duplicates: false
+    wait:
+      finish: true
     limit:
       count: 0
       recycle: 1000000
