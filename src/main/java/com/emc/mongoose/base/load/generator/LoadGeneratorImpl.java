@@ -22,6 +22,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -61,6 +62,8 @@ public class LoadGeneratorImpl<I extends Item, O extends Operation<I>> extends F
 	private final LongAdder builtTasksCounter = new LongAdder();
 	private final LongAdder recycledOpCounter = new LongAdder();
 	private final LongAdder outputOpCounter = new LongAdder();
+	private final Lock tempBufferLock = new ReentrantLock();
+	private List<I> items;
 
 	@SuppressWarnings("unchecked")
 	public LoadGeneratorImpl(
@@ -91,6 +94,7 @@ public class LoadGeneratorImpl<I extends Item, O extends Operation<I>> extends F
 						+ (countLimit > 0 && countLimit < Long.MAX_VALUE ? Long.toString(countLimit) : "")
 						+ itemInput.toString();
 		threadLocalOpBuff = ThreadLocal.withInitial(() -> new CircularArrayBuffer<>(batchSize));
+		this.items = new ArrayList<>(batchSize); // prepare the items buffer
 	}
 
 	@Override
@@ -123,7 +127,16 @@ public class LoadGeneratorImpl<I extends Item, O extends Operation<I>> extends F
 							if (remainingOpCount > 0) {
 								// make the limit not more than batch size
 								n = (int) Math.min(remainingOpCount, n);
-								final var items = getItems(itemInput, n);
+								if (tempBufferLock.tryLock()) {
+									try {
+
+										items = getItems(itemInput, n);
+									} catch (final ConcurrentModificationException ignored) {
+									} finally {
+										tempBufferLock.unlock();
+									}
+								}
+
 								if (items == null) {
 									itemInputFinishFlag = true;
 									Loggers.MSG.debug(
@@ -131,9 +144,16 @@ public class LoadGeneratorImpl<I extends Item, O extends Operation<I>> extends F
 													itemInput.toString(),
 													generatedOpCount());
 								} else {
-									n = items.size();
-									if (n > 0) {
-										pendingOpCount += buildOps(items, opBuff, n);
+									if (tempBufferLock.tryLock()) {
+										try {
+											n = items.size();
+											if (n > 0) {
+												pendingOpCount += buildOps(items, opBuff, n);
+											}
+										} catch (final ConcurrentModificationException ignored) {
+										} finally {
+											tempBufferLock.unlock();
+										}
 									}
 								}
 							}
@@ -151,8 +171,7 @@ public class LoadGeneratorImpl<I extends Item, O extends Operation<I>> extends F
 					n = pendingOpCount;
 
 					// acquire the permit for all the throttles
-					for (var i = 0; i < throttles.length; i++) {
-						final var throttle = throttles[i];
+					for (final Object throttle : throttles) {
 						if (throttle instanceof Throttle) {
 							n = ((Throttle) throttle).tryAcquire(n);
 						} else if (throttle instanceof IndexThrottle) {
@@ -221,8 +240,8 @@ public class LoadGeneratorImpl<I extends Item, O extends Operation<I>> extends F
 		}
 	}
 
-	private static <I extends Item> List<I> getItems(final Input<I> itemInput, final int n) {
-		final List<I> items = new ArrayList<>(n); // prepare the items buffer
+	private List<I> getItems(final Input<I> itemInput, final int n) {
+		items.clear();
 		try {
 			itemInput.get(items, n); // get the items from the input
 		} catch (final Exception e) {
