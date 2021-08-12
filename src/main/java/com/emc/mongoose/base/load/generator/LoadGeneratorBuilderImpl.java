@@ -308,7 +308,8 @@ public class LoadGeneratorBuilderImpl<I extends Item, O extends Operation<I>, T 
 		if (sizeEstimate > 0 && ItemType.DATA.equals(itemType) && opOutput instanceof StorageDriver) {
 			((StorageDriver) opOutput).adjustIoBuffers(sizeEstimate, opType);
 		}
-		final var recycleFlag = opConfig.boolVal("recycle");
+		final var recycleConfig = opConfig.configVal("recycle");
+		final var recycleFlag = recycleConfig.boolVal("mode");
 		final var retryFlag = opConfig.boolVal("retry");
 		final var recycleLimit = opConfig.intVal("limit-recycle");
 		if (recycleLimit < 1) {

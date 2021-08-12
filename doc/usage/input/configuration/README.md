@@ -50,7 +50,8 @@ reference.
 | load-op-limit-rate                             | Float >= 0 | 0                   | The maximum number of the load operations to execute per second (throughput limit). 0 means no rate limit.
 | load-op-limit-recycle                          | Integer >= 1 | 1000000           | The load operations and results queues size limit
 | load-op-output-duplicates                      | Flag | false                     | Specifies whether to add duplicates to output items list when in recycle mode or only print them once. No duplicates by default |
-| load-op-recycle                                | Flag | false                     | Specifies whether to recycle the successfully finished operations multiple times or not
+| load-op-recycle-mode                           | Flag | false                     | Specifies whether to recycle the successfully finished operations multiple times or not
+| load-op-recycle-contents-update                | Flag | false                     | Specifies whether to update the contents of the recycled object. Note: usually you just want to have a new object. This is rarely used. E.g. s3 versioning.
 | load-op-retry                                  | Flag | false                     | Specifies whether to retry the failed operations or not
 | load-op-shuffle                                | Flag | false                     | Defines whether to shuffle or not the items got from the item input, what should make the order of the load operations execution randomized
 | load-op-type                                   | Enum | create                    | The operation to process the items, may be "create", "update", "read" or "delete"

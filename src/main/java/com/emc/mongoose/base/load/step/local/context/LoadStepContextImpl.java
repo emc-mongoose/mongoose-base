@@ -9,6 +9,7 @@ import static com.github.akurilov.commons.lang.Exceptions.throwUnchecked;
 import static org.apache.logging.log4j.CloseableThreadContext.Instance;
 
 import com.emc.mongoose.base.concurrent.DaemonBase;
+import com.emc.mongoose.base.item.DataItem;
 import com.emc.mongoose.base.item.Item;
 import com.emc.mongoose.base.item.op.Operation;
 import com.emc.mongoose.base.item.op.Operation.Status;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.SplittableRandom;
 import org.apache.logging.log4j.CloseableThreadContext;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.ThreadContext;
@@ -62,6 +64,8 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 	private volatile Output<O> opsMetricsOutput;
 	private final boolean waitOpFinishBeforeStop;
 	private final boolean outputDuplicates;
+	private final boolean updateContents;
+	private final ThreadLocal<SplittableRandom> rand = ThreadLocal.withInitial(SplittableRandom::new);
 
 	/** @param id test step id */
 	public LoadStepContextImpl(
@@ -79,7 +83,9 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 		this.tracePersistFlag = tracePersistFlag;
 		this.batchSize = loadConfig.intVal("batch-size");
 		final Config opConfig = loadConfig.configVal("op");
-		this.recycleFlag = opConfig.boolVal("recycle");
+		final var recycleConfig = opConfig.configVal("recycle");
+		this.recycleFlag = recycleConfig.boolVal("mode");
+		this.updateContents = recycleConfig.boolVal("content-update");
 		this.retryFlag = opConfig.boolVal("retry");
 		final Config opLimitConfig = opConfig.configVal("limit");
 		final int recycleLimit = opLimitConfig.intVal("recycle");
@@ -290,15 +296,27 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 					// recycled ops should only appear in output.csv only once unless
 					// outputDuplicates flag is specified
 					outputResults(opResult);
-				} else if (outputDuplicates) {
-					outputResults(opResult);
-					generator.recycle(opResult);
 				} else {
-					// this way we only add duplicate items once to the output list
-					latestSuccOpResultByItem.put(opResult.item(), opResult);
+					// for recycled ops we might want to print them once or every time
+					if (outputDuplicates) {
+						outputResults(opResult);
+					} else {
+						// this way we only add duplicate items once to the output list
+						latestSuccOpResultByItem.put(opResult.item(), opResult);
+					}
+
+					// for recycled ops we might also want to update contents before recycling
+					if (updateContents) {
+						//if (recycleFlag && updateContents) {
+						final var dataItem = (DataItem) opResult.item();
+						// TODO: possible change: remove dataItem.offset() to improve perf and increase variability
+						dataItem.offset(dataItem.offset() + rand.get().nextLong());
+					}
 					generator.recycle(opResult);
 				}
+
 				// each recycled op's lat and dur should be written to file each time
+				// just like regular op
 				outputTimingMetrics(opResult);
 				metricsCtx.markSucc(countBytesDone, reqDuration, respLatency);
 				counterResults.increment();
@@ -365,15 +383,27 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 						// recycled ops should only appear in output.csv only once unless
 						// outputDuplicates flag is specified
 						outputResults(opResult);
-					} else if (outputDuplicates) {
-						outputResults(opResult);
-						generator.recycle(opResult);
 					} else {
-						// this way we only add duplicate items once to the output list
-						latestSuccOpResultByItem.put(opResult.item(), opResult);
+						// for recycled ops we might want to print them once or every time
+						if (outputDuplicates) {
+							outputResults(opResult);
+						} else {
+							// this way we only add duplicate items once to the output list
+							latestSuccOpResultByItem.put(opResult.item(), opResult);
+						}
+
+						// for recycled ops we might also want to update contents before recycling
+						if (updateContents) {
+							//if (recycleFlag && updateContents) {
+							final var dataItem = (DataItem) opResult.item();
+							// TODO: possible change: remove dataItem.offset() to improve perf and increase variability
+							dataItem.offset(dataItem.offset() + rand.get().nextLong());
+						}
 						generator.recycle(opResult);
-				    }
+					}
+
 					// each recycled op's lat and dur should be written to file each time
+					// just like regular op
 					outputTimingMetrics(opResult);
 					metricsCtx.markSucc(countBytesDone, reqDuration, respLatency);
 					counterResults.increment();
@@ -482,12 +512,13 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 
 	@Override
 	protected final void doStop() throws IllegalStateException {
-		if (waitOpFinishBeforeStop) {
+		if (waitOpFinishBeforeStop && !Thread.interrupted()) {
 			while (activeOpCount() != 0) {
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
-					Loggers.MSG.debug("couldn't put context thread {} to sleep", this);
+					Loggers.MSG.debug("couldn't put context thread {} to sleep or was interrupted", this);
+					Thread.currentThread().interrupt();
 				}
 			}
 		}

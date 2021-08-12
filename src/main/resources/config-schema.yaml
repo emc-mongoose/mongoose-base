@@ -54,7 +54,10 @@ load:
       recycle: int
     output:
       duplicates: boolean
-    recycle: boolean
+    recycle:
+      mode: boolean
+      content:
+        update: boolean
     retry: boolean
     shuffle: boolean
     type: string
