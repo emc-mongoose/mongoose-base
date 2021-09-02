@@ -10,9 +10,12 @@ import java.util.Map;
 import java.util.TimeZone;
 
 /** Created by andrey on 18.11.16. */
+//TODO: update using formatters
 public interface DateUtil {
 
 	TimeZone TZ_UTC = TimeZone.getTimeZone("UTC");
+
+	// e.g. 2001-07-04T12:08:56.235-0700
 	String PATTERN_ISO8601 = "yyyy-MM-dd'T'HH:mm:ss,SSS";
 	DateFormat FMT_DATE_ISO8601 = new SimpleDateFormat(PATTERN_ISO8601, Constants.LOCALE_DEFAULT) {
 		{
@@ -22,6 +25,18 @@ public interface DateUtil {
 
 	static String formatNowIso8601() {
 		return FMT_DATE_ISO8601.format(new Date(System.currentTimeMillis()));
+	}
+
+	// e.g. 20210901T182320Z
+	String PATTERN_AMAZON = "yyyyMMdd'T'HHmmss'Z'"; // close to ISO_INSTANT but not quite
+	DateFormat FMT_DATE_AMAZON = new SimpleDateFormat(PATTERN_AMAZON, Constants.LOCALE_DEFAULT) {
+		{
+			setTimeZone(TZ_UTC);
+		}
+	};
+
+	static String formatNowAmazonStyle() {
+		return FMT_DATE_AMAZON.format(new Date(System.currentTimeMillis()));
 	}
 
 	// e.g. Sun, 06 Nov 1994 08:49:37 GMT

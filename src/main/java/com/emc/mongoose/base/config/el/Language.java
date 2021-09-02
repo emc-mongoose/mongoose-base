@@ -17,6 +17,7 @@ public interface Language {
 	Map<String, Method> FUNCTIONS = new HashMap<>() {
 		{
 			try {
+				put("date:formatNowAmazonStyle", DateUtil.class.getMethod("formatNowAmazonStyle"));
 				put("date:formatNowIso8601", DateUtil.class.getMethod("formatNowIso8601"));
 				put("date:formatNowRfc1123", DateUtil.class.getMethod("formatNowRfc1123"));
 				put("date:format", DateUtil.class.getMethod("dateFormat", String.class));
