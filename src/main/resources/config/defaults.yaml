@@ -44,7 +44,10 @@ load:
       recycle: 1000000
     output:
       duplicates: false
-    recycle: false
+    recycle:
+      mode: false
+      content:
+        update: false
     retry: false
     shuffle: false
     type: create

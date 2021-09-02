@@ -56,7 +56,7 @@ public class TimingMetricQuantileResultsImpl implements Closeable {
                         metricsFromFile = readArrayFromInputStream(new FileInputStream(file));
                         Collections.sort(metricsFromFile);
                         if (metricsFromFile.size() == 0) {
-                            Loggers.ERR.warn("One of the aggregated timing metrics local files is empty");
+                            Loggers.ERR.warn("One of the aggregated timing metrics local files is empty: {}", file);
                         }
                     } catch (FileNotFoundException e) {
                         LogUtil.exception(
@@ -68,8 +68,8 @@ public class TimingMetricQuantileResultsImpl implements Closeable {
                 .collect(Collectors.toList());
         if (tmpMetrics.size() != nodeAmount) {
             Loggers.ERR.warn(
-                    "Expected to aggregate timing metrics from {} node(s), but only found {} local file(s) after aggregation",
-                    nodeAmount, tmpMetrics.size());
+                    "Expected to aggregate timing metrics from {} node(s), but found {} local file(s) after aggregation for pattern {}",
+                    nodeAmount, tmpMetrics.size(), metricsFilePattern);
         }
 
         // merge sorted metrics arrays from each aggregated local tmp file and take the quantile values from it
