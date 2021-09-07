@@ -3,6 +3,8 @@
 # Contents
 ## 2021
 * [4.3.0](#430) 2021-02-17
+* [4.3.1](#431) 2021-05-13
+* [4.3.2](#432) 2021-07-09
 ## 2020
 * [4.2.20](#4220) 2020-12-10
 * [4.2.19](#4219) 2020-06-18
@@ -76,6 +78,24 @@
 * [0.1.5](#015) 09/22/14
 * [0.1.4](#014) 09/17/14
 * [0.1.3](#013) 08/15/14
+
+# 4.3.2
+
+## Fixed Bugs
+
+| Id | Description |
+|----|-------------|
+| [BASE-1444](https://mongoose-issues.atlassian.net/browse/BASE-1444)| Add new option to update contents of recycled items |
+| [BASE-1446](https://mongoose-issues.atlassian.net/browse/BASE-1446)| Add new datetime format |
+
+# 4.3.1
+
+## Fixed Bugs
+
+| Id | Description |
+|----|-------------|
+| [BASE-1437](https://mongoose-issues.atlassian.net/browse/BASE-1437)| Improve performance of small reads on all-flash storages |
+
 
 # 4.3.0
 
