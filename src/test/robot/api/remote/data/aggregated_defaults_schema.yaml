@@ -87,8 +87,8 @@ load:
       rate: "double"
     recycle:
       mode: "boolean"
-        content:
-          update: "boolean"
+      content:
+        update: "boolean"
     shuffle: "boolean"
     type: "string"
     retry: "boolean"
