@@ -20,14 +20,14 @@ ${HEADER_ETAG}             ETag
 *** Keywords ***
 Start Mongoose Scenario
     [Arguments]  ${data}
-    ${resp} =  Post Request  ${SESSION_NAME}  ${MONGOOSE_RUN_URI_PATH}  files=${data}
+    ${resp} =  POST On Session  ${SESSION_NAME}  ${MONGOOSE_RUN_URI_PATH}  files=${data}
     Log  ${resp.status_code}
     [Return]  ${resp}
 
 Stop Mongoose Scenario Run
     [Arguments]  ${etag}
     &{req_headers} =  Create Dictionary  If-Match=${etag}
-    ${resp} =  Delete Request  ${SESSION_NAME}  ${MONGOOSE_RUN_URI_PATH}  headers=${req_headers}
+    ${resp} =  Delete On Session  ${SESSION_NAME}  ${MONGOOSE_RUN_URI_PATH}  headers=${req_headers}
     Log  ${resp.status_code}
     [Return]  ${resp}
 

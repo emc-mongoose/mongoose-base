@@ -49,7 +49,7 @@ Start Mongoose Node
     ...  --run-node
     ${std_out} =  Run  ${cmd}
     Log  ${std_out}
-    Create Session  ${session_name}  http://${service_host}:${rest_port}  debug=1  timeout=4000  max_retries=40
+    Create Session  ${session_name}  http://${service_host}:${rest_port}  debug=1  timeout=8000  max_retries=40
     Get Docker Logs From Container With Name ${session_name}
 
 Execute Mongoose Scenario

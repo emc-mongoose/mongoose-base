@@ -27,6 +27,6 @@ Should Return Aggregated Schema
 Should Return Text
     [Arguments]  ${expected_file_name}  ${uri_path}
     ${expected_text} =  Get File  ${expected_file_name}
-    ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
+    ${resp} =  Get On Session  ${SESSION_NAME}  ${uri_path}
     Should Be Equal As Strings  ${resp.status_code}  200
     Should Be Equal  ${expected_text}  ${resp.text}
