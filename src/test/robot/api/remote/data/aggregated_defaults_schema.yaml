@@ -85,7 +85,10 @@ load:
         count: "long"
         rate: "boolean"
       rate: "double"
-    recycle: "boolean"
+    recycle:
+      mode: "boolean"
+        content:
+          update: "boolean"
     shuffle: "boolean"
     type: "string"
     retry: "boolean"
