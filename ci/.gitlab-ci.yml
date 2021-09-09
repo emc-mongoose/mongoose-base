@@ -7,7 +7,7 @@ variables:
   IMAGE_FILE_NAME: build/mongoose-base.tar
   JAVA_HOME: /opt/jdk-11.0.2+9
   ROBOTEST_CONTAINER_WORKING_DIR: /root/mongoose
-  SERVICE_HOST: 127.0.0.1 #docker # should be used instead of the "localhost"/"127.0.0.1" in GL CI
+  SERVICE_HOST: docker # should be used instead of the "localhost"/"127.0.0.1" in GL CI
 
 services:
   - docker:18.09.7-dind
