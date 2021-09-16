@@ -33,7 +33,7 @@ Stop Mongoose Scenario Run
 
 Should Return Status
     [Arguments]  ${uri_path}  ${expected_status}
-    ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
+    ${resp} =  Get On Session  ${SESSION_NAME}  ${uri_path}
     Should Be Equal As Strings  ${resp.status_code}  ${expected_status}
 
 Should Include String
