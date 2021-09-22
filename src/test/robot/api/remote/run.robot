@@ -18,7 +18,7 @@ ${HEADER_IF_MATCH}   If-Match
 Should Start Scenario
     ${data} =  Make Start Request Payload Full
     ${resp_start} =  Start Mongoose Scenario  ${data}
-    Log ${resp_start}
+    Log  ${resp_start}
     Should Be Equal As Strings  ${resp_start.status_code}  202
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
