@@ -79,6 +79,7 @@ Should Not Start Scenario With Invalid Defaults
 
 Should Return The Node State
     ${data} =  Make Start Request Payload Full
+    ${resp_status_running} =  Get Mongoose Node Status
     ${resp_start} =  Start Mongoose Scenario  ${data}
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
     ${resp_status_running} =  Get Mongoose Node Status
