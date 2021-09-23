@@ -20,7 +20,7 @@ ${HEADER_ETAG}             ETag
 *** Keywords ***
 Start Mongoose Scenario
     [Arguments]  ${data}
-    ${resp} =  POST On Session  ${SESSION_NAME}  ${MONGOOSE_RUN_URI_PATH}  files=${data}
+    ${resp} =  POST On Session  ${SESSION_NAME}  ${MONGOOSE_RUN_URI_PATH}  data=${data}
     Log  ${resp.status_code}
     [Return]  ${resp}
 
