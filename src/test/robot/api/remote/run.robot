@@ -6,7 +6,7 @@ Resource        MongooseContainer.robot
 Library         Collections
 Library         OperatingSystem
 Library         RequestsLibrary
-
+Library         String
 
 
 *** Variables ***
@@ -15,6 +15,21 @@ ${HEADER_IF_MATCH}   If-Match
 
 
 *** Test Cases ***
+
+Should Stop Running Scenario In Distributed Mode
+    ${data} =  Make Start Request Payload For Distributed Mode
+    Sleep  5s
+    ${resp_start} =  Start Mongoose Scenario  ${data}
+    Get Docker Logs From Container With Name ${SESSION_NAME}
+    ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
+    Sleep  12s
+    ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
+    Log  ${resp_stop.text}
+    Should Be Equal As Strings  ${resp_stop.status_code}  200
+    Should Not Export Metrics More Then 30s
+    Get Docker Logs From Container With Name ${SESSION_NAME}
+    Get Docker Logs From Container With Name ${ADD_SESSION_NAME}
+
 Should Start Scenario
     ${data} =  Make Start Request Payload Full
     ${resp_start} =  Start Mongoose Scenario  ${data}
@@ -44,24 +59,11 @@ Should Stop Running Scenario
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
     Should Be Equal As Strings  ${resp_stop.status_code}  200
 
-Should Stop Running Scenario In Distributed Mode
-    ${data} =  Make Start Request Payload For Distributed Mode
-    ${resp_start} =  Start Mongoose Scenario  ${data}
-    Get Docker Logs From Container With Name ${SESSION_NAME}
-    ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
-    Sleep  30s
-    ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
-    Log  ${resp_stop.text}
-    Should Be Equal As Strings  ${resp_stop.status_code}  200
-    Should Not Export Metrics More Then 30s
-    Get Docker Logs From Container With Name ${SESSION_NAME}
-    Get Docker Logs From Container With Name ${ADD_SESSION_NAME}
-
 Should Stop Running Scenario After Error In Distributed Mode
     ${data} =  Make Start Request Payload Invalid For Distributed Mode
     ${resp_start} =  Start Mongoose Scenario  ${data}
     Should Be Equal As Strings  ${resp_start.status_code}  202
-    Should Not Export Metrics More Then 30s
+    Should Stop Logging Errors After 5s
 
 Should Not Stop Not Running Scenario
     ${data} =  Make Start Request Payload Full
@@ -140,7 +142,7 @@ Should Return Mongoose Scenario Run State
     Should Be Equal As Strings  ${resp_state.status_code}  ${expected_status_code}
 
 Get Mongoose Node Status
-    ${resp} =  Head Request  ${SESSION_NAME}  ${MONGOOSE_RUN_URI_PATH}
+    ${resp} =  Head On Session  ${SESSION_NAME}  ${MONGOOSE_RUN_URI_PATH}
     Log  ${resp.status_code}
     [Return]  ${resp}
 
@@ -152,15 +154,33 @@ Get Mongoose Scenario Run State
     [Return]  ${resp}
 
 Should Not Export Metrics More Then ${time}
-    ${text1}   Get Metrics File Content
     Sleep  ${time}
+    ${text1}   Get Metrics File Content
+    ${text1_lines_count} =  Get Line Count  ${text1}
+    Sleep  12s
     ${text2}   Get Metrics File Content
-    Should Be Equal As Strings  ${text1}  ${text2}
+    ${text2_lines_count} =  Get Line Count  ${text2}
+    Should Be Equal As Strings  ${text1_lines_count}  ${text2_lines_count}
 
+Should Stop Logging Errors After ${time}
+    Sleep  ${time}
+    ${text1}   Get Error Log File Content
+    ${text1_lines_count} =  Get Line Count  ${text1}
+    Sleep  12s
+    ${text2}   Get Error Log File Content
+    ${text2_lines_count} =  Get Line Count  ${text2}
+    Should Be Equal As Strings  ${text1_lines_count}  ${text2_lines_count}
 
 Get Metrics File Content
     ${uri_path} =  Catenate  /logs/${STEP_ID}/metrics.File
-    Wait Until Keyword Succeeds  10x  7s  Should Return Status  ${uri_path}  200
+    Wait Until Keyword Succeeds  5x  5s  Should Return Status  ${uri_path}  200
+    ${resp} =  Get On Session  ${SESSION_NAME}  ${uri_path}
+    Should Be Equal As Strings  ${resp.status_code}  200
+    [Return]  ${resp.text}
+
+Get Error Log File Content
+    ${uri_path} =  Catenate  /logs/${STEP_ID}/Errors
+    Wait Until Keyword Succeeds  5x  5s  Should Return Status  ${uri_path}  200
     ${resp} =  Get On Session  ${SESSION_NAME}  ${uri_path}
     Should Be Equal As Strings  ${resp.status_code}  200
     [Return]  ${resp.text}

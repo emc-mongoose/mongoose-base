@@ -22,6 +22,7 @@ ${LOGGER_NAME}              metrics.FileTotal
 *** Test Cases ***
 Should Stop After 1000 Operation
     ${data} =  Make Start Request Payload Without Scenario Part
+    Sleep  5s
     ${resp_start} =  Start Mongoose Scenario  ${data}
     Should Be Equal As Strings  ${resp_start.status_code}  202
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}

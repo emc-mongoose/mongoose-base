@@ -18,6 +18,7 @@ ${MONGOOSE_LOGS_URI_PATH}   /logs
 *** Test Cases ***
 Should Respond Message Logs
     ${data} =  Make Start Request Payload
+    Sleep  5s
     ${resp_start} =  Start Mongoose Scenario  ${data}
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
     ${uri_path} =  Catenate  ${MONGOOSE_LOGS_URI_PATH}/${STEP_ID}/${MESS_LOGGER_NAME}
@@ -45,7 +46,7 @@ Should Delete Logs
     ${uri_path} =  Catenate  ${MONGOOSE_LOGS_URI_PATH}/${STEP_ID}/${MESS_LOGGER_NAME}
     Wait Until Keyword Succeeds  10x  7s  Should Return Status  ${uri_path}  200
     Delete On Session  ${SESSION_NAME}  ${uri_path}
-    ${resp} =  Get On Session  ${SESSION_NAME}  ${uri_path}
+    ${resp} =  Get On Session  ${SESSION_NAME}  ${uri_path}  expected_status=404
     Should Be Equal As Strings  ${resp.status_code}  404
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
 
