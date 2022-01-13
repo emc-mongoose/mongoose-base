@@ -146,7 +146,8 @@ public class ItemTimingMetricOutputFileAggregator implements AutoCloseable {
         try {
             finishLatch.await();
         } catch (final InterruptedException e) {
-            throwUnchecked(e);
+            LogUtil.exception(Level.ERROR, e, "data aggregation was interrupted. Metrics may be inaccurate");
+            //throwUnchecked(e); //TODO: what to do? ctrl c while aggregating -> ? BASE-1447
         } finally {
             executor.shutdownNow();
             Loggers.MSG.info(
