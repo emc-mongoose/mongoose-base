@@ -6,13 +6,9 @@ import com.emc.mongoose.base.svc.ServiceUtil;
 import org.apache.logging.log4j.Level;
 
 public interface FileManagerClient {
-	static FileManagerService resolve(final String nodeAddrWithPort) {
-		try {
-			return (FileManagerService) ServiceUtil.resolve(nodeAddrWithPort, FileManagerService.SVC_NAME);
-		} catch (final Exception e) {
-			LogUtil.exception(
-							Level.ERROR, e, "Failed to resolve the file manager service @ {}", nodeAddrWithPort);
-		}
-		return null;
+	static FileManagerService resolve(final String nodeAddrWithPort)
+			throws java.rmi.NotBoundException, java.rmi.RemoteException, java.net.URISyntaxException,
+			java.net.MalformedURLException {
+			return ServiceUtil.resolve(nodeAddrWithPort, FileManagerService.SVC_NAME);
 	}
 }
