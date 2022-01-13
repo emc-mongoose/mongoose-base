@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation   Mongoose Limitations tests
 Force Tags      Limitations
-Resource        Common.robot
+Resource        ../../lib/Common.robot
 Library         OperatingSystem
 Library         RequestsLibrary
 Library         Collections

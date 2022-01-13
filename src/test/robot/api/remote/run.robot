@@ -1,8 +1,8 @@
 *** Settings ***
 Documentation   Mongoose Run API tests
 Force Tags      Run
-Resource        Common.robot
-Resource        MongooseContainer.robot
+Resource        ../../lib/Common.robot
+Resource        ../../lib/MongooseContainer.robot
 Library         Collections
 Library         OperatingSystem
 Library         RequestsLibrary
@@ -26,7 +26,7 @@ Should Stop Running Scenario In Distributed Mode
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
     Log  ${resp_stop.text}
     Should Be Equal As Strings  ${resp_stop.status_code}  200
-    Should Not Export Metrics More Then 30s
+    Should Not Export Metrics More Then 10s
     Get Docker Logs From Container With Name ${SESSION_NAME}
     Get Docker Logs From Container With Name ${ADD_SESSION_NAME}
 
@@ -99,7 +99,7 @@ Should Return Scenario Run State
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
     Should Return Mongoose Scenario Run State  ${resp_etag_header}  200
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
-    Wait Until Keyword Succeeds  10x  7s  Should Return Mongoose Scenario Run State  ${resp_etag_header}  204
+    Wait Until Keyword Succeeds  5x  7s  Should Return Mongoose Scenario Run State  ${resp_etag_header}  204
 
 
 

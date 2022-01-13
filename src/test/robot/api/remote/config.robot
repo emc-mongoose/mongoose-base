@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation   Mongoose Config API tests
 Force Tags      Config
-Resource        Common.robot
+Resource        ../../lib/Common.robot
 Library         OperatingSystem
 Library         RequestsLibrary
 
