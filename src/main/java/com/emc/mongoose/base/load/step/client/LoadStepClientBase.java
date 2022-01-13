@@ -35,7 +35,9 @@ import com.github.akurilov.confuse.exceptions.InvalidValueTypeException;
 import com.github.akurilov.confuse.impl.BasicConfig;
 
 import java.io.IOException;
+import java.rmi.ConnectException;
 import java.rmi.RemoteException;
+import java.rmi.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -127,16 +129,32 @@ implements LoadStepClient {
 	private static FileManagerService resolveFileManagerWithRetries(final String nodeAddrWithPort, final int maxRetries) {
 		FileManagerService fms = null;
 		int retryCount = 0;
-		while (null == fms && retryCount < maxRetries) {
-			fms = FileManagerClient.resolve(nodeAddrWithPort);
-			retryCount++;
-			final int sleepTime = 1000 * (int) Math.pow(2, retryCount);
+		while (null == fms && retryCount < maxRetries && !Thread.currentThread().isInterrupted()) {
 			try {
+				fms = FileManagerClient.resolve(nodeAddrWithPort);
+				retryCount++;
+				final int sleepTime = 1000 * (int) Math.pow(2, retryCount);
 				Thread.sleep(Math.min(sleepTime, MAX_SLEEP_TIME_MILLIS));
-			} catch (InterruptedException e) {
+			} catch (final ConnectException e) {
 				LogUtil.exception(
-						Level.ERROR, e, "Failed to resolve the file manager service @ {} at {} retry",
-						nodeAddrWithPort, retryCount);
+						Level.ERROR, e, "Failed to resolve the file manager service @ {}. Will try to " +
+								"reconnect. {} retry out of {}", nodeAddrWithPort, retryCount, maxRetries);
+			} catch (final UnknownHostException e) {
+				LogUtil.exception(
+						Level.ERROR, e, "Failed to resolve the hostname @ {}. Stopping workload",
+						nodeAddrWithPort);
+				break;
+			} catch (final InterruptedException ie) {
+				LogUtil.exception(
+					Level.ERROR, ie, "Failed to resolve the file manager service @ {} due to " +
+							"an interruption. Stopping workload.", nodeAddrWithPort);
+				break;
+			} catch (final Exception e) {
+				LogUtil.exception(
+					Level.ERROR, e, "Failed to resolve the file manager service @ {}. No action " +
+								"taken. Report to devs. Stopping workload.",
+					nodeAddrWithPort);
+				break;
 			}
 		}
 		return fms;
