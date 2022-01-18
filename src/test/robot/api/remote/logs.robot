@@ -18,7 +18,7 @@ ${MONGOOSE_LOGS_URI_PATH}   /logs
 *** Test Cases ***
 Should Respond Message Logs
     ${data} =  Make Start Request Payload
-    Sleep  5s
+    Sleep  10s
     ${resp_start} =  Start Mongoose Scenario  ${data}
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
     ${uri_path} =  Catenate  ${MONGOOSE_LOGS_URI_PATH}/${STEP_ID}/${MESS_LOGGER_NAME}

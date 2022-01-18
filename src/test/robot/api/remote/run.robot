@@ -18,7 +18,7 @@ ${HEADER_IF_MATCH}   If-Match
 
 Should Stop Running Scenario In Distributed Mode
     ${data} =  Make Start Request Payload For Distributed Mode
-    Sleep  5s
+    Sleep  10s
     ${resp_start} =  Start Mongoose Scenario  ${data}
     Get Docker Logs From Container With Name ${SESSION_NAME}
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
