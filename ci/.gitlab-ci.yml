@@ -91,7 +91,7 @@ build_docker_image:
     - apk add --no-cache --update python3 py-pip
     - pip install -U virtualenv #==20.8.0 #--ignore-installed distlib
     - pip install -U requests==2.26.0 #--ignore-installed urllib3
-    - pip install -U robotframework=4.1.1
+    - pip install -U robotframework==4.1.1
     - pip install -U robotframework-requests==0.9.2
     - pip install -U robotframework-csvlib==1.0.2
   script:
