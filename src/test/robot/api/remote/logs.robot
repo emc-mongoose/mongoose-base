@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation   Mongoose Logs API tests
 Force Tags      Logs
-Resource        Common.robot
+Resource        ../../lib/Common.robot
 Library         Collections
 Library         OperatingSystem
 Library         RequestsLibrary
@@ -18,11 +18,12 @@ ${MONGOOSE_LOGS_URI_PATH}   /logs
 *** Test Cases ***
 Should Respond Message Logs
     ${data} =  Make Start Request Payload
+    Sleep  10s
     ${resp_start} =  Start Mongoose Scenario  ${data}
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
     ${uri_path} =  Catenate  ${MONGOOSE_LOGS_URI_PATH}/${STEP_ID}/${MESS_LOGGER_NAME}
-    Wait Until Keyword Succeeds  10x  7s  Should Return Status  ${uri_path}  200
-    ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
+    Wait Until Keyword Succeeds  5x  7s  Should Return Status  ${uri_path}  200
+    ${resp} =  Get On Session  ${SESSION_NAME}  ${uri_path}
     Should Be Equal As Strings  ${resp.status_code}  200
     Should Include String  ${resp.text}  *| INFO |*
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
@@ -32,8 +33,8 @@ Should Respond Operation Trace Logs
     ${resp_start} =  Start Mongoose Scenario  ${data}
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
     ${uri_path} =  Catenate  ${MONGOOSE_LOGS_URI_PATH}/${STEP_ID}/${OP_TRACE_LOGGER_NAME}
-    Wait Until Keyword Succeeds  10x  7s  Should Return Status  ${uri_path}  200
-    ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
+    Wait Until Keyword Succeeds  5x  7s  Should Return Status  ${uri_path}  200
+    ${resp} =  Get On Session  ${SESSION_NAME}  ${uri_path}
     Should Be Equal As Strings  ${resp.status_code}  200
     Should Include String  ${resp.text}  *
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
@@ -43,15 +44,15 @@ Should Delete Logs
     ${resp_start} =  Start Mongoose Scenario  ${data}
     ${resp_etag_header} =  Get From Dictionary  ${resp_start.headers}  ${HEADER_ETAG}
     ${uri_path} =  Catenate  ${MONGOOSE_LOGS_URI_PATH}/${STEP_ID}/${MESS_LOGGER_NAME}
-    Wait Until Keyword Succeeds  10x  7s  Should Return Status  ${uri_path}  200
-    Delete Request  ${SESSION_NAME}  ${uri_path}
-    ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
+    Wait Until Keyword Succeeds  5x  7s  Should Return Status  ${uri_path}  200
+    Delete On Session  ${SESSION_NAME}  ${uri_path}
+    ${resp} =  Get On Session  ${SESSION_NAME}  ${uri_path}  expected_status=404
     Should Be Equal As Strings  ${resp.status_code}  404
     ${resp_stop} =  Stop Mongoose Scenario Run  ${resp_etag_header}
 
 Should Respond Loggers
     ${expected_text} =  Get File  ${DATA_DIR}/loggers.json
-    ${resp} =  Get Request  ${SESSION_NAME}  ${MONGOOSE_LOGS_URI_PATH}
+    ${resp} =  Get On Session  ${SESSION_NAME}  ${MONGOOSE_LOGS_URI_PATH}
     Should Be Equal As Strings  ${resp.status_code}  200
     Should Be Equal  ${expected_text}  ${resp.text}
 

@@ -20,20 +20,20 @@ ${HEADER_ETAG}             ETag
 *** Keywords ***
 Start Mongoose Scenario
     [Arguments]  ${data}
-    ${resp} =  Post Request  ${SESSION_NAME}  ${MONGOOSE_RUN_URI_PATH}  files=${data}
+    ${resp} =  POST Request  ${SESSION_NAME}  ${MONGOOSE_RUN_URI_PATH}  files=${data}
     Log  ${resp.status_code}
     [Return]  ${resp}
 
 Stop Mongoose Scenario Run
     [Arguments]  ${etag}
     &{req_headers} =  Create Dictionary  If-Match=${etag}
-    ${resp} =  Delete Request  ${SESSION_NAME}  ${MONGOOSE_RUN_URI_PATH}  headers=${req_headers}
+    ${resp} =  Delete On Session  ${SESSION_NAME}  ${MONGOOSE_RUN_URI_PATH}  headers=${req_headers}
     Log  ${resp.status_code}
     [Return]  ${resp}
 
 Should Return Status
     [Arguments]  ${uri_path}  ${expected_status}
-    ${resp} =  Get Request  ${SESSION_NAME}  ${uri_path}
+    ${resp} =  Get On Session  ${SESSION_NAME}  ${uri_path}
     Should Be Equal As Strings  ${resp.status_code}  ${expected_status}
 
 Should Include String

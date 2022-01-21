@@ -103,7 +103,8 @@ public class LoadGeneratorBuilderImplTest {
 				put("load-batch-size", opCount);
 				put("load-op-limit-count", opCount);
 				put("load-op-limit-recycle", 1_000_000);
-				put("load-op-recycle", false);
+				put("load-op-recycle-mode", false);
+				put("load-op-recycle-content-update", false);
 				put("load-op-retry", false);
 				put("load-op-shuffle", false);
 				put("load-op-type", OpType.CREATE.name().toLowerCase());

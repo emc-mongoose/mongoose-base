@@ -43,22 +43,25 @@ public class TimingMetricQuantileResultsImpl implements Closeable {
         this.metricType = metricType;
         this.metricsFilesDirPath = metricsFilesDirPath;
         this.metricsFilePattern = metricsFilePattern;
-        this.listOfMetricsFiles = findAllWorkersMetricsFiles();
-        if (listOfMetricsFiles.length == 0) {
-            Loggers.ERR.warn("No local timing metrics files found in {} by pattern {}",
-                    metricsFilesDirPath, metricsFilePattern);
+        listOfMetricsFiles = findAllWorkersMetricsFiles();
+
+        if (0 == listOfMetricsFiles.length) {
+            Loggers.ERR.warn("No local timing metrics files found in {} by pattern {}. " +
+                            "Skipping lat/dur analysis", metricsFilesDirPath, metricsFilePattern);
+            metricsValues = new LinkedHashMap<>(0);
+            return;
         }
 
-        List<List<Long>> tmpMetrics = Stream.of(listOfMetricsFiles)
+        final List<List<Long>> tmpMetrics = Stream.of(listOfMetricsFiles)
                 .map(file -> {
                     List<Long> metricsFromFile = null;
                     try {
                         metricsFromFile = readArrayFromInputStream(new FileInputStream(file));
                         Collections.sort(metricsFromFile);
-                        if (metricsFromFile.size() == 0) {
+                        if (metricsFromFile.isEmpty()) {
                             Loggers.ERR.warn("One of the aggregated timing metrics local files is empty: {}", file);
                         }
-                    } catch (FileNotFoundException e) {
+                    } catch (final FileNotFoundException e) {
                         LogUtil.exception(
                                 Level.WARN, e, "Failed to find one of the timing metrics files: {}",
                                 file.toString());
@@ -76,11 +79,11 @@ public class TimingMetricQuantileResultsImpl implements Closeable {
         // we do not want to store the whole values list in the class as we can eventually reach a few Gb size array of
         // latency/duration values.
         // So we only store a few values of specified quantiles
-        this.metricsValues = retrieveQuantileValues(quantileValues, mergeSort(tmpMetrics));
+        metricsValues = retrieveQuantileValues(quantileValues, mergeSort(tmpMetrics));
     }
 
     private File[] findAllWorkersMetricsFiles() {
-        File dir = new File(metricsFilesDirPath);
+        final File dir = new File(metricsFilesDirPath);
         return dir.listFiles((ignored, name) -> name.startsWith(metricsFilePattern));
     }
 
@@ -142,16 +145,16 @@ public class TimingMetricQuantileResultsImpl implements Closeable {
     }
 
     // when quantile values are parsed at the start of the test we check that values are in [0,1).
-    private Map<Double, Long> retrieveQuantileValues(List<Double> quantiles, List<Long> metricsArray) {
+    private Map<Double, Long> retrieveQuantileValues(final List<Double> quantiles, final List<Long> metricsArray) {
         // for the metrics csv output it's important we iterate in the order passed by user to avoid things like:
         // Quantile 0.7:              4542
         // Quantile 0.95:             13961
         // Quantile 0.9:              6521
         // Quantile 0.1:              1679
         // so linkedHashMap is used over HashMap
-        Map<Double, Long> arrayQuantileValues = new LinkedHashMap<>(metricsArray.size());
-        int metricsArrayLength = metricsArray.size();
-        for (Double quantile: quantiles) {
+        final Map<Double, Long> arrayQuantileValues = new LinkedHashMap<>(metricsArray.size());
+        final int metricsArrayLength = metricsArray.size();
+        for (final Double quantile: quantiles) {
             arrayQuantileValues.put(quantile, metricsArray.get((int) (quantile * metricsArrayLength)));
 
         }

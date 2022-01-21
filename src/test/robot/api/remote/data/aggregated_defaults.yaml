@@ -55,7 +55,7 @@ run:
   id: 0
   port: 9999
   scenario: null
-  version: "4.3.0"
+  version: "4.3.2"
 storage:
   namespace: null
   driver:
@@ -88,7 +88,10 @@ load:
         count: 100000
         rate: false
       rate: 0.0
-    recycle: false
+    recycle:
+      mode: false
+      content:
+        update: false
     shuffle: false
     type: "create"
     retry: false

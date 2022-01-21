@@ -76,9 +76,9 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 					metricsCtx.refreshLastSnapshot();
 
 					final AllMetricsSnapshot snapshot = metricsCtx.lastSnapshot();
-					if (snapshot != null) {
+					if (null != snapshot) {
 						final ConcurrencyMetricSnapshot concurrencySnapshot = snapshot.concurrencySnapshot();
-						if (concurrencySnapshot != null) {
+						if (null != concurrencySnapshot) {
 							actualConcurrency = (int) concurrencySnapshot.last();
 						}
 						// threshold load state checks
@@ -143,7 +143,7 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 						metricsCtx.opType().name(),
 						String.valueOf(metricsCtx.concurrencyLimit()),
 						metricsCtx.itemDataSize().toString(),
-						"" + metricsCtx.startTimeStamp(),
+						String.valueOf(metricsCtx.startTimeStamp()),
 						((DistributedMetricsContext) metricsCtx).nodeAddrs().toString(),
 						metricsCtx.comment(),
 						String.valueOf(metricsCtx.runId())
@@ -156,7 +156,7 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 												.register());
 			}
 			Loggers.MSG.debug("Metrics context \"{}\" registered", metricsCtx);
-		} catch (final Exception e) {
+		} catch (final RuntimeException e) {
 			throwUncheckedIfInterrupted(e);
 			LogUtil.exception(
 							Level.WARN,
@@ -195,7 +195,7 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 								DURATION, distributedMetricsCtx.nodeCount(), timingMetricsDirPath,
 								timingMetricsFilePattern);
 
-					if (snapshot != null) {
+					if (null != snapshot) {
 						// file output
 						// due to unknown reasons writing to a csv.total is based on a flag and not on a metrics
 						// class instance. though this flag is only enabled for distributed context.
@@ -210,7 +210,7 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 						Loggers.METRICS_STD_OUT.info(
 										new MetricsAsciiTableLogMessage(Collections.singleton(metricsCtx)));
 						final DistributedAllMetricsSnapshot aggregSnapshot = (DistributedAllMetricsSnapshot) snapshot;
-						if (aggregSnapshot != null) {
+						if (null != aggregSnapshot) {
 							Loggers.METRICS_STD_OUT.info(
 											new StepResultsMetricsLogMessage(
 															metricsCtx.opType(),
@@ -219,9 +219,12 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 															aggregSnapshot,
 															latencyQuantiles.getMetricsValues(),
 															durationQuantiles.getMetricsValues()));
+						} else {
+							Loggers.ERR.warn("Metrics snapshot is empty. No metrics were recorded apparently.");
 						}
+
 						final PrometheusMetricsExporter exporter = distributedMetrics.remove(distributedMetricsCtx);
-						if (exporter != null) {
+						if (null != exporter) {
 							CollectorRegistry.defaultRegistry.unregister((Collector) exporter);
 						}
 					}
@@ -245,7 +248,7 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 			}
 			Loggers.MSG.debug("Metrics context \"{}\" unregistered", metricsCtx);
 		} finally {
-			if (allMetrics.size() == 0) {
+			if (allMetrics.isEmpty()) {
 				stop();
 				Loggers.MSG.debug("Stopped the metrics manager fiber");
 			}
