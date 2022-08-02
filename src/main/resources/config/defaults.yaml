@@ -52,7 +52,7 @@ load:
     shuffle: false
     type: create
     wait:
-      finish: true
+      finish: false
   service:
     threads: 0
   step:
