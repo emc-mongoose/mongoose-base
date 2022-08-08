@@ -42,10 +42,18 @@ jobs:
         if-no-files-found: error
         retention-days: 1 # optional
     - name: Execute Gradle unit test
-      run: ./gradlew test    
+      run: ./gradlew test
+    - name: Upload a failed unit test artifact
+      uses: actions/upload-artifact@v3.1.0
+      with:
+        name: testFailure.log
+        path: ./build/reports/tests/test/*
+        if-no-files-found: error
+        retention-days: 14 # optional
+        if: failure()
     - name: Execute Gradle integration test
       run: ./gradlew integrationTest         
-    - name: Upload a failed test artifact
+    - name: Upload a failed integration test artifact
       uses: actions/upload-artifact@v3.1.0
       with:
         name: testFailure.log
