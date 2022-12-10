@@ -156,6 +156,10 @@ sourceSets {
 	}
 }
 
+configurations {
+	implementation.extendsFrom provided
+}
+
 dependencies {
 
 	compileOnly("it.unimi.dsi:fastutil:${depVersion.fastutil}") {

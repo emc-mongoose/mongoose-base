@@ -2,6 +2,8 @@ package com.emc.mongoose.base.item.op;
 
 import static java.lang.System.nanoTime;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import com.emc.mongoose.base.item.Item;
 import com.emc.mongoose.base.storage.Credential;
 
@@ -21,7 +23,9 @@ public class OperationImpl<I extends Item> implements Operation<I> {
 	protected volatile long reqTimeDone;
 	protected volatile long respTimeStart;
 	protected volatile long respTimeDone;
-
+	
+	private AtomicBoolean complete = new AtomicBoolean(false);
+	
 	public OperationImpl() {}
 
 	public OperationImpl(
@@ -219,6 +223,11 @@ public class OperationImpl<I extends Item> implements Operation<I> {
 	@Override
 	public final long latency() {
 		return respTimeStart - reqTimeDone;
+	}
+
+	@Override
+	public boolean isComplete() {
+		return complete.getAndSet(true);
 	}
 
 	protected static final ThreadLocal<StringBuilder> STRB = ThreadLocal.withInitial(StringBuilder::new);

@@ -101,4 +101,6 @@ public interface Operation<I extends Item> {
 	<O extends Operation<I>> O result();
 
 	void reset();
+	
+	boolean isComplete();
 }
