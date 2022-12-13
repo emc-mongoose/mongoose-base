@@ -36,7 +36,11 @@ public interface Operation<I extends Item> {
 		RESP_FAIL_NOT_FOUND, // 11
 		RESP_FAIL_AUTH, // 12
 		RESP_FAIL_CORRUPT, // 13
-		RESP_FAIL_SPACE, // 14
+		RESP_FAIL_SPACE; // 14
+		
+		public static boolean isFailure(Status status) {
+			return status.toString().contains("FAIL");
+		}
 	}
 
 	OpType type();
