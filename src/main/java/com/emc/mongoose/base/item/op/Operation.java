@@ -102,5 +102,5 @@ public interface Operation<I extends Item> {
 
 	void reset();
 	
-	boolean isComplete();
+	boolean isPermitReleased();
 }

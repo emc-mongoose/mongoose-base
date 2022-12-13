@@ -24,7 +24,7 @@ public class OperationImpl<I extends Item> implements Operation<I> {
 	protected volatile long respTimeStart;
 	protected volatile long respTimeDone;
 	
-	private AtomicBoolean complete = new AtomicBoolean(false);
+	private AtomicBoolean permitReleased = new AtomicBoolean(false);
 	
 	public OperationImpl() {}
 
@@ -226,8 +226,8 @@ public class OperationImpl<I extends Item> implements Operation<I> {
 	}
 
 	@Override
-	public boolean isComplete() {
-		return complete.getAndSet(true);
+	public boolean isPermitReleased() {
+		return permitReleased.getAndSet(true);
 	}
 
 	protected static final ThreadLocal<StringBuilder> STRB = ThreadLocal.withInitial(StringBuilder::new);
