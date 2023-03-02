@@ -1,6 +1,17 @@
 on: 
   push:
   workflow_call:
+    secrets:
+      OSSRH_USERNAME:
+        required: true
+      OSSRH_PASSWORD:
+        required: true
+      GPG_SECRET_KEY:
+        required: true
+      GPG_SECRET_KEY_PASSWORD:
+        required: true
+      GPG_SECRING:
+        required: true
 jobs:
   build_job:
     runs-on: ubuntu-latest
@@ -26,12 +37,6 @@ jobs:
       # Release for tags matching the pattern "*.*.*"
       - name: Release to Maven
         if: steps.check-tag.outputs.match == 'true'
-        env:
-          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-          OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
-          GPG_SECRET_KEY: ${{ secrets.GPG_SECRET_KEY }}
-          GPG_SECRET_KEY_PASSWORD: ${{ secrets.GPG_SECRET_KEY_PASSWORD }}
-          GPG_SECRING: ${{ secrets.GPG_SECRING }}
         run: |
-             echo $GPG_SECRING | base64 -d > /tmp/secring.gpg
-             ./gradlew -Psigning.keyId=${GPG_SECRET_KEY} -Psigning.password=${GPG_SECRET_KEY_PASSWORD} -Psigning.secretKeyRingFile=/tmp/secring.gpg -PossrhUsername=${OSSRH_USERNAME} -PossrhPassword=${OSSRH_PASSWORD} publishToNexus closeAndReleaseRepository
+             echo "${{ secrets.GPG_SECRING }}" | base64 -d > /tmp/secring.gpg
+             ./gradlew -Psigning.keyId="${{ secrets.GPG_SECRET_KEY }}" -Psigning.password="${{ secrets.GPG_SECRET_KEY_PASSWORD }}" -Psigning.secretKeyRingFile=/tmp/secring.gpg -PossrhUsername="${{ secrets.OSSRH_USERNAME }}" -PossrhPassword="${{ secrets.OSSRH_PASSWORD }}" publishToNexus closeAndReleaseRepository
