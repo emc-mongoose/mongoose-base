@@ -25,7 +25,6 @@ Configuration:
         pattern: "%highlight{%m}{FATAL=red bold, ERROR=red, WARN=yellow, INFO=normal, DEBUG=black, TRACE=black}"
     RollingRandomAccessFile:
     - name: msgFile
-      fileName: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}${ctx:step_id}${sys:file.separator}messages.log"
       filePattern: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}$${ctx:step_id}${sys:file.separator}messages.log"
       Policies:
         StepIdTriggeringPolicy: {}
@@ -33,7 +32,6 @@ Configuration:
       PatternLayout:
         pattern: "%d{ISO8601}{GMT+0} | %p | %X{class_name} | %t | %m%n"
     - name: 3rdPartyFile
-      fileName: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}${ctx:step_id}${sys:file.separator}3rdparty.log"
       filePattern: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}$${ctx:step_id}${sys:file.separator}3rdparty.log"
       Policies:
         StepIdTriggeringPolicy: {}
@@ -45,7 +43,6 @@ Configuration:
           rate: 100
           maxBurst: 1000
     - name: errFile
-      fileName: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}${ctx:step_id}${sys:file.separator}errors.log"
       filePattern: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}$${ctx:step_id}${sys:file.separator}errors.log"
       Policies:
         StepIdTriggeringPolicy: {}
@@ -57,7 +54,6 @@ Configuration:
           rate: 100
           maxBurst: 1000
     - name: metricsFile
-      fileName: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}${ctx:step_id}${sys:file.separator}metrics.csv"
       filePattern: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}$${ctx:step_id}${sys:file.separator}metrics.csv"
       Policies:
         StepIdTriggeringPolicy: {}
@@ -66,7 +62,6 @@ Configuration:
         header: "DateTimeISO8601,OpType,Concurrency,NodeCount,ConcurrencyCurr,ConcurrencyMean,CountSucc,CountFail,Size,StepDuration[s],DurationSum[s],TPAvg[op/s],TPLast[op/s],BWAvg[MB/s],BWLast[MB/s],DurationAvg[us],DurationMin[us],DurationLoQ[us],DurationMed[us],DurationHiQ[us],DurationMax[us],LatencyAvg[us],LatencyMin[us],LatencyLoQ[us],LatencyMed[us],LatencyHiQ[us],LatencyMax[us]\n"
         pattern: "%m%n"
     - name: metricsThresholdFile
-      fileName: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}${ctx:step_id}${sys:file.separator}metrics.threshold.csv"
       filePattern: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}$${ctx:step_id}${sys:file.separator}metrics.threshold.csv"
       Policies:
         StepIdTriggeringPolicy: {}
@@ -75,7 +70,6 @@ Configuration:
         header: "DateTimeISO8601,OpType,Concurrency,NodeCount,ConcurrencyCurr,ConcurrencyMean,CountSucc,CountFail,Size,StepDuration[s],DurationSum[s],TPAvg[op/s],TPLast[op/s],BWAvg[MB/s],BWLast[MB/s],DurationAvg[us],DurationMin[us],DurationLoQ[us],DurationMed[us],DurationHiQ[us],DurationMax[us],LatencyAvg[us],LatencyMin[us],LatencyLoQ[us],LatencyMed[us],LatencyHiQ[us],LatencyMax[us]\n"
         pattern: "%m%n"
     - name: metricsFileTotal
-      fileName: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}${ctx:step_id}${sys:file.separator}metrics.total.csv"
       filePattern: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}$${ctx:step_id}${sys:file.separator}metrics.total.csv"
       Policies:
         StepIdTriggeringPolicy: {}
@@ -84,7 +78,6 @@ Configuration:
         #header: is removed as it's dynamically generated based on the passed quantiles
         pattern: "%m%n"
     - name: metricsThresholdFileTotal
-      fileName: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}${ctx:step_id}${sys:file.separator}metrics.threshold.total.csv"
       filePattern: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}$${ctx:step_id}${sys:file.separator}metrics.threshold.total.csv"
       Policies:
         StepIdTriggeringPolicy: {}
@@ -93,7 +86,6 @@ Configuration:
         header: "DateTimeISO8601,OpType,Concurrency,NodeCount,ConcurrencyCurr,ConcurrencyMean,CountSucc,CountFail,Size,StepDuration[s],DurationSum[s],TPAvg[op/s],TPLast[op/s],BWAvg[MB/s],BWLast[MB/s],DurationAvg[us],DurationMin[us],DurationLoQ[us],DurationMed[us],DurationHiQ[us],DurationMax[us],LatencyAvg[us],LatencyMin[us],LatencyLoQ[us],LatencyMed[us],LatencyHiQ[us],LatencyMax[us]\n"
         pattern: "%m%n"
     - name: opTraceFile
-      fileName: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}${ctx:step_id}${sys:file.separator}op.trace.csv"
       filePattern: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}$${ctx:step_id}${sys:file.separator}op.trace.csv"
       Policies:
         StepIdTriggeringPolicy: {}
@@ -102,27 +94,23 @@ Configuration:
         pattern: "%m"
     - name: cliFile
       append: "false"
-      fileName: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}${ctx:step_id}${sys:file.separator}cli.args.log"
       filePattern: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}$${ctx:step_id}${sys:file.separator}cli.args.log"
       Policies:
         StepIdTriggeringPolicy: {}
       DirectWriteRolloverStrategy: {}
     - name: cfgFile
       append: "false"
-      fileName: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}${ctx:step_id}${sys:file.separator}config.yaml"
       filePattern: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}$${ctx:step_id}${sys:file.separator}config.yaml"
       Policies:
         StepIdTriggeringPolicy: {}
       DirectWriteRolloverStrategy: {}
     - name: scenarioFile
       append: "false"
-      fileName: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}${ctx:step_id}${sys:file.separator}scenario.txt"
       filePattern: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}$${ctx:step_id}${sys:file.separator}scenario.txt"
       Policies:
         StepIdTriggeringPolicy: {}
       DirectWriteRolloverStrategy: {}
     - name: partsUploadFile
-      fileName: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}${ctx:step_id}${sys:file.separator}parts.upload.csv"
       filePattern: "${ctx:home_dir}${sys:file.separator}log${sys:file.separator}$${ctx:step_id}${sys:file.separator}parts.upload.csv"
       Policies:
         StepIdTriggeringPolicy: {}
