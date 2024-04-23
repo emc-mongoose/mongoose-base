@@ -7,8 +7,9 @@ import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.rmi.Remote;
 
-public interface FileManager {
+public interface FileManager extends Remote {
 
 	FileManager INSTANCE = new FileManagerImpl();
 
