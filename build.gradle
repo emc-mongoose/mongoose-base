@@ -25,6 +25,7 @@ plugins {
 
 repositories {
 	maven { url "https://maven.google.com" }
+	maven { url "https://jitpack.io" }
 	mavenCentral()
 }
 
@@ -49,7 +50,7 @@ ext {
 		fastutil           : "8.2.2",
 		fiber4j            : "1.1.0",
 		jackson            : "2.9.8",
-		javaCommons        : "2.3.6",
+		//javaCommons        : "2.3.6",
 		jetty              : "9.4.14.v20181114",
 		junit              : "4.12",
 		scala              : "2.12.6",
@@ -172,7 +173,8 @@ dependencies {
 		"com.github.akurilov:confuse:${depVersion.confuse}",
 		"com.github.akurilov:confuse-io-yaml:${depVersion.confuseIoYaml}",
 		"com.github.akurilov:fiber4j:${depVersion.fiber4j}",
-		"com.github.akurilov:java-commons:${depVersion.javaCommons}",
+		//"com.github.akurilov:java-commons:${depVersion.javaCommons}",
+		"com.github.dlarge:java-commons:master-SNAPSHOT",
 		"com.lmax:disruptor:${depVersion.disruptor}",
 		"io.prometheus:simpleclient:${depVersion.prometheus}",
 		"io.prometheus:simpleclient_servlet:${depVersion.prometheus}",
