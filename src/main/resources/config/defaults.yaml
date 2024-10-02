@@ -92,7 +92,7 @@ run:
   node: false
   port: 9999
   scenario: null
-  version: 4.3.6
+  version: 4.3.7
 
 storage:
   auth:
