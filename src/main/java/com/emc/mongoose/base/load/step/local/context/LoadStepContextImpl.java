@@ -513,13 +513,16 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 	@Override
 	protected final void doStop() throws IllegalStateException {
 		if (waitOpFinishBeforeStop) {
-			while ((activeOpCount() != 0) && !Thread.currentThread().isInterrupted()) {
+			var i = 0;
+			var sleep = 1000;
+			for (; ((activeOpCount() != 0) && !Thread.currentThread().isInterrupted()) && i < 10; i++) {
 				try {
-					Thread.sleep(1000);
+					Thread.sleep(sleep);
 				} catch (InterruptedException e) {
 					Loggers.MSG.debug("couldn't put context thread {} to sleep or was interrupted", this);
 				}
 			}
+			Loggers.MSG.info("{}: waited {}ms for ops to finish (active count = {})", id, i * sleep, activeOpCount());
 		}
 
 		driver.stop();
