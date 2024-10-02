@@ -327,6 +327,7 @@ jar {
 			"Main-Class": mainClass,
 			"Implementation-Title": project.description,
 			"Implementation-Version": project.version,
+			"Multi-Release": "true",
 		)
 	}
 	provided3rdPartyClasses.each {
