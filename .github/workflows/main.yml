@@ -25,7 +25,7 @@ jobs:
       - uses: gradle/gradle-build-action@v2
       - name: Build JAR
         run: ./gradlew clean jar
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: artifact-jar
           path: build/libs/mongoose-*.jar
