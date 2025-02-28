@@ -63,6 +63,7 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 	private volatile Output<O> opsResultsOutput;
 	private volatile Output<O> opsMetricsOutput;
 	private final boolean waitOpFinishBeforeStop;
+	private final int waitOpFinishLimit;
 	private final boolean outputDuplicates;
 	private final boolean updateContents;
 	private final ThreadLocal<SplittableRandom> rand = ThreadLocal.withInitial(SplittableRandom::new);
@@ -110,6 +111,7 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 		this.failCountLimit = configFailCount > 0 ? configFailCount : Long.MAX_VALUE;
 		this.failRateLimitFlag = failConfig.boolVal("rate");
 		this.waitOpFinishBeforeStop = opConfig.boolVal("wait-finish");
+		this.waitOpFinishLimit = opConfig.intVal("wait-limit");
 		this.outputDuplicates = opConfig.boolVal("output-duplicates");
 	}
 
@@ -515,14 +517,14 @@ public class LoadStepContextImpl<I extends Item, O extends Operation<I>> extends
 		if (waitOpFinishBeforeStop) {
 			var i = 0;
 			var sleep = 1000;
-			for (; ((activeOpCount() != 0) && !Thread.currentThread().isInterrupted()) && i < 10; i++) {
+			for (; ((activeOpCount() != 0) && !Thread.currentThread().isInterrupted()) && ((i * sleep)/1000D < waitOpFinishLimit); i++) {
 				try {
 					Thread.sleep(sleep);
 				} catch (InterruptedException e) {
 					Loggers.MSG.debug("couldn't put context thread {} to sleep or was interrupted", this);
 				}
 			}
-			Loggers.MSG.info("{}: waited {}ms for ops to finish (active count = {})", id, i * sleep, activeOpCount());
+			Loggers.MSG.info("{}: waited {}s for ops to finish (active count = {})", id, i, activeOpCount());
 		}
 
 		driver.stop();
