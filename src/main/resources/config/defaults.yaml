@@ -53,6 +53,7 @@ load:
     type: create
     wait:
       finish: true
+      limit: 30
   service:
     threads: 0
   step:
@@ -92,7 +93,7 @@ run:
   node: false
   port: 9999
   scenario: null
-  version: 4.3.12
+  version: 4.3.13
 
 storage:
   auth:

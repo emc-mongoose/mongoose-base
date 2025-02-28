@@ -63,6 +63,7 @@ load:
     type: string
     wait:
       finish: boolean
+      limit: int
 output:
   color: boolean
   metrics:
