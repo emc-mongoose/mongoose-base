@@ -95,7 +95,7 @@ run:
   node: false
   port: 9999
   scenario: null
-  version: 4.3.14
+  version: 4.3.15
 
 storage:
   auth:
