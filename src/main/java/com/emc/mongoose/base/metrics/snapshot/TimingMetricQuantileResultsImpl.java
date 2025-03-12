@@ -39,7 +39,7 @@ public class TimingMetricQuantileResultsImpl implements Closeable {
 
     public TimingMetricQuantileResultsImpl(final List<Double> quantileValues, final TimingMetricType metricType,
                                            final int nodeAmount, final String metricsFilesDirPath,
-                                           final String metricsFilePattern) {
+                                           final String metricsFilePattern, final boolean timingPersist) {
         this.metricType = metricType;
         this.metricsFilesDirPath = metricsFilesDirPath;
         this.metricsFilePattern = metricsFilePattern;
@@ -48,6 +48,11 @@ public class TimingMetricQuantileResultsImpl implements Closeable {
         if (0 == listOfMetricsFiles.length) {
             Loggers.ERR.warn("No local timing metrics files found in {} by pattern {}. " +
                             "Skipping lat/dur analysis", metricsFilesDirPath, metricsFilePattern);
+            metricsValues = new LinkedHashMap<>(0);
+            return;
+        }
+
+        if (!timingPersist) { 
             metricsValues = new LinkedHashMap<>(0);
             return;
         }
