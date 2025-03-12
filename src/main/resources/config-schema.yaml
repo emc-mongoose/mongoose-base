@@ -80,6 +80,8 @@ output:
     trace:
       persist: boolean
     threshold: double
+    timing:
+      persist: boolean
     quantiles: list
 run:
   id: long

@@ -24,6 +24,7 @@ import com.emc.mongoose.base.metrics.snapshot.ConcurrencyMetricSnapshot;
 import com.emc.mongoose.base.metrics.snapshot.DistributedAllMetricsSnapshot;
 import com.emc.mongoose.base.metrics.util.PrometheusMetricsExporter;
 import com.emc.mongoose.base.metrics.util.PrometheusMetricsExporterImpl;
+import com.github.akurilov.confuse.Config;
 import com.github.akurilov.fiber4j.ExclusiveFiberBase;
 import com.github.akurilov.fiber4j.Fiber;
 import com.github.akurilov.fiber4j.FibersExecutor;
@@ -58,9 +59,11 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 	private final Map<DistributedMetricsContext, PrometheusMetricsExporter> distributedMetrics = new ConcurrentHashMap<>();
 	private final Set<MetricsContext> selectedMetrics = new TreeSet<>();
 	private final Lock outputLock = new ReentrantLock();
+	private final boolean timingPersist;
 
-	public MetricsManagerImpl(final FibersExecutor instance) {
+	public MetricsManagerImpl(final FibersExecutor instance, final Config config) {
 		super(instance);
+		timingPersist = config.boolVal("output-metrics-timing-persist");
 	}
 
 	@Override
@@ -190,10 +193,10 @@ public class MetricsManagerImpl extends ExclusiveFiberBase implements MetricsMan
 						final String timingMetricsFilePattern = "timingMetrics_" + metricsCtx.loadStepId();
 						latencyQuantiles = new TimingMetricQuantileResultsImpl(distributedMetricsCtx.quantileValues(),
 								LATENCY, distributedMetricsCtx.nodeCount(), timingMetricsDirPath,
-								timingMetricsFilePattern);
+								timingMetricsFilePattern, timingPersist);
 						durationQuantiles = new TimingMetricQuantileResultsImpl(distributedMetricsCtx.quantileValues(),
 								DURATION, distributedMetricsCtx.nodeCount(), timingMetricsDirPath,
-								timingMetricsFilePattern);
+								timingMetricsFilePattern, timingPersist);
 
 					if (null != snapshot) {
 						// file output
