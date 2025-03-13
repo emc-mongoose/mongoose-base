@@ -71,6 +71,8 @@ public interface MetricsContext<S extends AllMetricsSnapshot>
 
 	boolean sumPersistEnabled();
 
+	boolean timingPersistEnabled();
+
 	long outputPeriodMillis();
 
 	long lastOutputTs();

@@ -34,6 +34,7 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 	private final Supplier<List<AllMetricsSnapshot>> snapshotsSupplier;
 	private final boolean avgPersistFlag;
 	private final boolean sumPersistFlag;
+	private final boolean timingPersistFlag;
 	private volatile DistributedMetricsListener metricsListener = null;
 	private final List<Double> quantileValues;
 
@@ -45,6 +46,7 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 					final boolean stdOutColorFlag,
 					final boolean avgPersistFlag,
 					final boolean sumPersistFlag,
+					final boolean timingPersistFlag,
 					final Supplier<List<AllMetricsSnapshot>> snapshotsSupplier,
 					final List<Double> quantileValues) {
 		super(
@@ -56,6 +58,7 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 		this.snapshotsSupplier = snapshotsSupplier;
 		this.avgPersistFlag = avgPersistFlag;
 		this.sumPersistFlag = sumPersistFlag;
+		this.timingPersistFlag = timingPersistFlag;
 		this.quantileValues = quantileValues;
 	}
 
@@ -105,6 +108,11 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 	@Override
 	public boolean sumPersistEnabled() {
 		return sumPersistFlag;
+	}
+
+	@Override
+	public boolean timingPersistEnabled() {
+		return timingPersistFlag;
 	}
 
 	@Override
@@ -238,6 +246,7 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 		private Supplier<List<AllMetricsSnapshot>> snapshotsSupplier;
 		private boolean avgPersistFlag;
 		private boolean sumPersistFlag;
+		private boolean timingPersistFlag;
 		private List<Double> quantileValues;
 		private int concurrencyThreshold;
 		private boolean stdOutColorFlag;
@@ -253,6 +262,7 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 							stdOutColorFlag,
 							avgPersistFlag,
 							sumPersistFlag,
+							timingPersistFlag,
 							snapshotsSupplier,
 							quantileValues
 			);
@@ -328,6 +338,12 @@ public class DistributedMetricsContextImpl<S extends DistributedAllMetricsSnapsh
 		@Override
 		public DistributedContextBuilder sumPersistFlag(final boolean sumPersistFlag) {
 			this.sumPersistFlag = sumPersistFlag;
+			return this;
+		}
+
+		@Override
+		public DistributedContextBuilder timingPersistFlag(final boolean timingPersistFlag) {
+			this.timingPersistFlag = timingPersistFlag;
 			return this;
 		}
 

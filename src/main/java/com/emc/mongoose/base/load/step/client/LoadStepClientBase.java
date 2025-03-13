@@ -373,6 +373,7 @@ implements LoadStepClient {
 		final var concurrencyThreshold = (int) (concurrencyLimit * metricsConfig.doubleVal("threshold"));
 		final var metricsAvgPersistFlag = metricsConfig.boolVal("average-persist");
 		final var metricsSumPersistFlag = metricsConfig.boolVal("summary-persist");
+		final var metricsTimingPersistFlag = metricsConfig.boolVal("timing-persist");
 		// it's not known yet how many nodes are involved, so passing the function "this::sliceCount"
 		// reference for
 		// further usage
@@ -388,6 +389,7 @@ implements LoadStepClient {
 			.stdOutColorFlag(outputColorFlag)
 			.avgPersistFlag(metricsAvgPersistFlag)
 			.sumPersistFlag(metricsSumPersistFlag)
+			.timingPersistFlag(metricsTimingPersistFlag)
 			.snapshotsSupplier(() -> metricsSnapshotsByIndex(originIndex))
 			.quantileValues(quantiles(metricsConfig))
 			.nodeAddrs(remoteNodeAddrs(config))

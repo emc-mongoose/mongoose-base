@@ -164,6 +164,11 @@ public class MetricsContextImpl<S extends AllMetricsSnapshotImpl> extends Metric
 	}
 
 	@Override
+	public final boolean timingPersistEnabled() {
+		return true;
+	}
+
+	@Override
 	@SuppressWarnings("unchecked")
 	public void refreshLastSnapshot() {
 		final var currentTimeMillis = System.currentTimeMillis();
