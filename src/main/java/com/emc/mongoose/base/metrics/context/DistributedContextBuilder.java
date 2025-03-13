@@ -22,4 +22,6 @@ public interface DistributedContextBuilder
 	DistributedContextBuilder avgPersistFlag(final boolean avgPersistFlag);
 
 	DistributedContextBuilder sumPersistFlag(final boolean sumPersistFlag);
+
+	DistributedContextBuilder timingPersistFlag(final boolean timingPersistFlag);
 }
